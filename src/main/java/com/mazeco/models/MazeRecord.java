@@ -10,7 +10,7 @@ public class MazeRecord {
     private String author;
     private Date dateCreated;
     private Date dateModified;
-    private String[][] mazeModel;
+    private MazeModel mazeModel;
 
     public String getId() {
         return id;
@@ -42,10 +42,10 @@ public class MazeRecord {
     public void setDateModified(Date dateModified) {
         this.dateModified = dateModified;
     }
-    public String[][] getMazeModel() {
+    public MazeModel getMazeModel() {
         return mazeModel;
     }
-    public void setMazeModel(String[][] mazeModel) {
+    public void setMazeModel(MazeModel mazeModel) {
         this.mazeModel = mazeModel;
     }
 
