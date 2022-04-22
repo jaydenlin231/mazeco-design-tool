@@ -20,8 +20,12 @@ public class App
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                UIOrchestrator gui = new UIOrchestrator();
-                gui.run();
+                try {
+                    UIOrchestrator gui = new UIOrchestrator();
+                    gui.run();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
     }
