@@ -23,13 +23,11 @@ public class GenerateMazeWindow implements IUserInterface{
     private static final JButton startImageButton = new JButton("Select Image...");;
     private static final JButton endImageButton = new JButton("Select Image...");;
     private static final JButton logoImageButton = new JButton("Select Image...");;
+    private static final JPanel mainPanel = new JPanel(new GridBagLayout());
 
 
     public GenerateMazeWindow(){
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        
         // add components to grid
         GridBagConstraints constraints = new GridBagConstraints();
         // Defaults
@@ -64,9 +62,15 @@ public class GenerateMazeWindow implements IUserInterface{
                 } catch (NumberFormatException e) {
                     System.out.println("number error");
                 }
-                
+                // BrowseWindow test = new BrowseWindow();
+                // test.show();
                 System.out.println(aModel);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+
+                MazeCanvas mazeCanvas = new MazeCanvas(aModel);
+                mazeCanvas.show();
+
+                resetParameters();
             }
         });
 
@@ -83,7 +87,8 @@ public class GenerateMazeWindow implements IUserInterface{
     }
 
     public void resetParameters(){
-
+        mazeWidthInput.setValue(10);
+        mazeHeightInput.setValue(10);
     }
 
     @Override
