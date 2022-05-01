@@ -27,7 +27,8 @@ public class MazeModel {
 
         if(height < MIN_HEIGHT || height > MAX_HEIGHT)
             throw new IllegalArgumentException();
-        
+        this.width = width;
+        this.height = height;
         this.data = new Block[width][height];
 
         for (int i = 0; i < width; i++) {

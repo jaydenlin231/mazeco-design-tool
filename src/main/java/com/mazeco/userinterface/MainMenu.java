@@ -18,18 +18,19 @@ public class MainMenu implements IUserInterface{
     JPanel rightPanel = new JPanel(new BorderLayout());
     JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
-    private static GenerateMazeWindow generateMazeWindow = new GenerateMazeWindow();
-    private static BrowseWindow browseWindow = new BrowseWindow();
-    private static MazeCanvas drawWindow = new MazeCanvas();
 
-    public MainMenu(){
+    private static BrowseWindow browseWindow = new BrowseWindow();
+    private static OptionsMenu drawWindow = new OptionsMenu("Draw");
+    private static OptionsMenu GenerateMenu = new OptionsMenu("Generate");
+
+    public MainMenu() {
         initialiseButtons();
 
         leftPanel.add(generateButton);
         leftPanel.add(drawButton);
-        
+
         rightPanel.add(browseButton, BorderLayout.CENTER);
-        
+
         mainPanel.add(leftPanel);
         mainPanel.add(rightPanel);
 
@@ -61,9 +62,9 @@ public class MainMenu implements IUserInterface{
         public void actionPerformed(ActionEvent e) {
            Component source = (Component) e.getSource();
             if (source == generateButton) {
-                generateMazeWindow.show();
+                GenerateMenu.show();
+                System.out.println("Generate");
             } else if (source == drawButton) {
-                drawWindow.clearModel();
                 drawWindow.show();
                 System.out.println("Draw");
             } else if (source == browseButton) {
