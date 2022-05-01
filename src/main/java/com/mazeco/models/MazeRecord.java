@@ -1,22 +1,36 @@
 package com.mazeco.models;
 
 import java.util.Date;
-
+/**
+ *  Stores the record and the metadata of a successfully created {@code MazeModel}.
+ * 
+ *  @see MazeModel
+ */
 public class MazeRecord {
-
     private String id;
     private String name;
-    // add user class
-    private String author;
+    private User author;
     private Date dateCreated;
     private Date dateModified;
     private MazeModel mazeModel;
 
+    /**
+     * Constructs a MazeRecord with the given {@code name}, {@code author}, and {@code mazeModel}.
+     * @param name name of this {@code MazeRecord}
+     * @param author author of this {@code MazeRecord}
+     * @param mazeModel data and configuration of the maze 
+     * 
+     * @see MazeModel
+     */
+    public MazeRecord(String name, User author, MazeModel mazeModel) {
+        this.name = name;
+        this.author = author;
+        this.mazeModel = mazeModel;
+        this.dateCreated = new Date();
+    }
+
     public String getId() {
         return id;
-    }
-    public void setId(String id) {
-        this.id = id;
     }
     public String getName() {
         return name;
@@ -24,17 +38,11 @@ public class MazeRecord {
     public void setName(String name) {
         this.name = name;
     }
-    public String getAuthor() {
+    public User getAuthor() {
         return author;
-    }
-    public void setAuthor(String author) {
-        this.author = author;
     }
     public Date getDateCreated() {
         return dateCreated;
-    }
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
     }
     public Date getDateModified() {
         return dateModified;
@@ -45,8 +53,4 @@ public class MazeRecord {
     public MazeModel getMazeModel() {
         return mazeModel;
     }
-    public void setMazeModel(MazeModel mazeModel) {
-        this.mazeModel = mazeModel;
-    }
-
 }

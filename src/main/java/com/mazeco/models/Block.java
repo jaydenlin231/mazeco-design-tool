@@ -1,29 +1,21 @@
 package com.mazeco.models;
 
-import javax.swing.*;
+/**
+ * Represents a Block of the grid constrained maze representation,
+ * the elemetary building blocks of the maze
+ * 
+ * @see MazeModel
+ */
+public enum Block {
+    WALL, BLANK, START, END, LOGO;
 
-public class Block {
-    private BlockType type;
-
-    public Block(){
-        this.type = BlockType.BLANK;
-    }
-
-    public Block(BlockType type){
-        this.type = type;
-    }
-
-    public BlockType getType() {
-        return type;
-    }
-
-    public void setType(BlockType type) {
-        this.type = type;
-    }
-
+     /**
+     * Returns String representation of a Block,
+     * the string representation is the starting letter of the enumerate.
+     */
     @Override
     public String toString() {
-        switch (type) {
+        switch (this) {
             case WALL:
                 return "W";
 
@@ -43,6 +35,4 @@ public class Block {
                 return "";
         }
     }
-
-    
 }
