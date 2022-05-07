@@ -7,30 +7,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 import javax.swing.JFrame;
 
 public class OptionsMenu implements IUserInterface {
-    private JFrame window = new JFrame();
+    private final JFrame window = new JFrame();
 
     private final JLabel mazeWidthLabel = new JLabel("Width", SwingConstants.CENTER);
     private final JLabel mazeHeightLabel = new JLabel("Height", SwingConstants.CENTER);
     private final JSpinner mazeWidthInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
-    ;
     private final JSpinner mazeHeightInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
-    ;
-    private final JButton generateButton = new JButton("Generate");
-    ;
 
     private final JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
     private final JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
     private final JLabel LogoImageLabel = new JLabel("Logo Image", SwingConstants.CENTER);
-
     private final JButton startImageButton = new JButton("Select Image...");
-    ;
     private final JButton endImageButton = new JButton("Select Image...");
-    ;
     private final JButton logoImageButton = new JButton("Select Image...");
-    ;
+
+    private final JButton generateButton = new JButton("Generate");
+
     private final JPanel mainPanel = new JPanel(new GridBagLayout());
 
     // Leave blank for Draw options or "Generate" for generate options
@@ -43,10 +39,9 @@ public class OptionsMenu implements IUserInterface {
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.weightx = 1;
         constraints.weighty = 1;
+        constraints.insets = new Insets(1, 2, 1, 2);
 
-
-        if (options == "Generate") {
-            constraints.insets = new Insets(1, 5, 1, 5);
+        if (Objects.equals(options, "Generate")) {
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
@@ -59,7 +54,6 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, logoImageButton, constraints, 1, 3, 3, 1);
             addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         } else {
-            constraints.insets = new Insets(0, 0, 0, 0);
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
@@ -92,10 +86,10 @@ public class OptionsMenu implements IUserInterface {
         window.pack();
 
         // window.setPreferredSize(new Dimension(400, 600));
-        if (options == "Generate") {
-            window.setMinimumSize(new Dimension(400, 600));
+        if (Objects.equals(options, "Generate")) {
+            window.setMinimumSize(new Dimension(400, 400));
         } else {
-            window.setMinimumSize(new Dimension(400, 200));
+            window.setMinimumSize(new Dimension(380, 200));
         }
         window.setResizable(false);
         // Centre the window

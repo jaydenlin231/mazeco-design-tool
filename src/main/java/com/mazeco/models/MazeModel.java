@@ -80,19 +80,19 @@ public class MazeModel {
      */
     @Override
     public String toString() {
-        if(data == null)
+        if (data == null)
             return "null";
-        
+
         String mazeModelString = "";
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Block aBlock = data[i][j];
-                mazeModelString += aBlock.toString() + " " ;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Block aBlock = data[j][i];
+                mazeModelString += aBlock.toString() + " ";
             }
-            mazeModelString += "\n" ;
+            mazeModelString += "\n";
         }
-        
+
         return mazeModelString;
     }
 
