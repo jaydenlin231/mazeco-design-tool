@@ -6,13 +6,17 @@ import javax.swing.*;
 
 import com.mazeco.models.MazeModel;
 
-public class MainMenu implements IUserInterface{
+public class MainMenu implements IUserInterface {
     private static final String TITLE = "MazeCo Design Tool";
     private static final JFrame mainMenu = new JFrame(TITLE);
 
-    private static final JButton generateButton = new JButton("Generate");
-    private static final JButton drawButton = new JButton("Draw");
-    private static final JButton browseButton = new JButton("Browse");
+    private static final Icon generateIcon = new ImageIcon("./public/plus.png");
+    private static final JButton generateButton = new JButton("Generate", generateIcon);
+    private static final Icon drawIcon = new ImageIcon("./public/pen.png");
+    private static final JButton drawButton = new JButton("Draw", drawIcon);
+    private static final Icon browseIcon = new ImageIcon("./public/folder.jpeg");
+    private static final JButton browseButton = new JButton("Browse", browseIcon);
+
 
     JPanel leftPanel = new JPanel(new GridLayout(2, 1));
     JPanel rightPanel = new JPanel(new BorderLayout());
@@ -25,6 +29,14 @@ public class MainMenu implements IUserInterface{
 
     public MainMenu() {
         initialiseButtons();
+
+        generateButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        generateButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        drawButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        drawButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        browseButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        browseButton.setHorizontalTextPosition(SwingConstants.CENTER);
+
 
         leftPanel.add(generateButton);
         leftPanel.add(drawButton);

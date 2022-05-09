@@ -88,7 +88,7 @@ public class MazeModel {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Block aBlock = data[j][i];
-                mazeModelString += aBlock.toString() + " ";
+                mazeModelString += aBlock.toString() + "  ";
             }
             mazeModelString += "\n";
         }

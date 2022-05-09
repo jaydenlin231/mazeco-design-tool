@@ -3,6 +3,7 @@ package com.mazeco.userinterface;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
@@ -48,26 +49,7 @@ public class MazeCanvas implements IUserInterface, ActionListener {
             }
         }
         window.add(mazeCanvasPanel);
-    }
-
-    public void clearCanvas(){
-        if(mazeCanvasPanel != null){
-            window.remove(mazeCanvasPanel);
-            window.repaint();
-        }
-    }
-
-    public void clearModel(){
-        if(mazeModel != null)
-            mazeModel = null;
-    }
-
-
-    @Override
-    public void show() {
-        render();
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+        window.pack();
     }
 
     @Override
@@ -88,5 +70,25 @@ public class MazeCanvas implements IUserInterface, ActionListener {
             mazeModel.setBlock(Block.BLANK, pressedX, pressedY);
             System.out.println(mazeModel);
         }
+    }
+
+    public void clearCanvas() {
+        if (mazeCanvasPanel != null) {
+            window.remove(mazeCanvasPanel);
+            window.repaint();
+        }
+    }
+
+    public void clearModel() {
+        if (mazeModel != null)
+            mazeModel = null;
+    }
+
+
+    @Override
+    public void show() {
+        render();
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
     }
 }
