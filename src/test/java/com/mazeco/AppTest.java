@@ -1,8 +1,9 @@
 package com.mazeco;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+
 
 /**
  * Unit test for simple App.
@@ -15,6 +16,6 @@ public class AppTest
     @Test
     public void shouldAnswerWithTrue()
     {
-        assertTrue( true );
+        assertEquals(true, true);
     }
 }
