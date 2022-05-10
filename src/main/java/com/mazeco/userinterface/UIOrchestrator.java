@@ -7,7 +7,7 @@ public class UIOrchestrator {
     private MainMenu mainMenu = new MainMenu();
 
     public void run(){
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame.setDefaultLookAndFeelDecorated(false);
         
         mainMenu.show();
     }
