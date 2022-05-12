@@ -19,6 +19,8 @@ public class MazeCanvas implements IUserInterface, ActionListener {
     private static final JButton startImgBttn = new JButton("Place Start Image");
     private static final JButton endImgBttn = new JButton("Place End Image");
     private static final JButton sizeBttn = new JButton("Change Maze Size");
+    private static final JButton checkBttn = new JButton("Check Maze");
+    private static final JButton clearBttn = new JButton("Clear Maze");
     private static JPanel sideMenu;
     private static MazeModel mazeModel;
     private static JPanel mazeCanvasPanel;
@@ -38,10 +40,22 @@ public class MazeCanvas implements IUserInterface, ActionListener {
         sideMenu.add(startImgBttn);
         sideMenu.add(endImgBttn);
         sideMenu.add(sizeBttn);
-        for (int i = 0; i < 9; i++) {
+        sideMenu.add(clearBttn);
+
+        clearBttn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                clearModel();
+                show();
+                System.out.println("Cleared");
+            }
+        });
+
+        for (int i = 0; i < 7; i++) {
             JLabel placeHolder = new JLabel();
             sideMenu.add(placeHolder);
         }
+        sideMenu.add(checkBttn);
         sideMenu.add(saveBttn);
         window.add(sideMenu, BorderLayout.WEST);
 
@@ -67,9 +81,9 @@ public class MazeCanvas implements IUserInterface, ActionListener {
     public void render() {
         clearCanvas();
 
-        if (mazeModel == null) {
-            return;
-        }
+//        if (mazeModel == null) {
+//            return;
+//        }
 
         mazeCanvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
 
@@ -129,12 +143,13 @@ public class MazeCanvas implements IUserInterface, ActionListener {
         if (mazeCanvasPanel != null) {
             window.remove(mazeCanvasPanel);
             window.repaint();
+
         }
     }
 
     public void clearModel() {
         if (mazeModel != null)
-            mazeModel = null;
+            mazeModel = new MazeModel(mazeModel.getWidth(), mazeModel.getHeight());
     }
 
 
