@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -14,6 +15,11 @@ public class MazeCanvas implements IUserInterface, ActionListener {
     private static final String TITLE = "Editor";
     private static final JFrame window = new JFrame(TITLE);
     private static final JButton saveBttn = new JButton("Save");
+    private static final JButton logoBttn = new JButton("Place Logo");
+    private static final JButton startImgBttn = new JButton("Place Start Image");
+    private static final JButton endImgBttn = new JButton("Place End Image");
+    private static final JButton sizeBttn = new JButton("Change Maze Size");
+    private static JPanel sideMenu;
     private static MazeModel mazeModel;
     private static JPanel mazeCanvasPanel;
 
@@ -25,7 +31,19 @@ public class MazeCanvas implements IUserInterface, ActionListener {
         window.setResizable(false);
         // Centre the window
         window.setLocationRelativeTo(null);
-        window.add(saveBttn, BorderLayout.SOUTH);
+        sideMenu = new JPanel();
+        sideMenu.setBorder(new EmptyBorder(10, 10, 10, 10));
+        sideMenu.setLayout(new GridLayout(14, 1, 1, 8));
+        sideMenu.add(logoBttn);
+        sideMenu.add(startImgBttn);
+        sideMenu.add(endImgBttn);
+        sideMenu.add(sizeBttn);
+        for (int i = 0; i < 9; i++) {
+            JLabel placeHolder = new JLabel();
+            sideMenu.add(placeHolder);
+        }
+        sideMenu.add(saveBttn);
+        window.add(sideMenu, BorderLayout.WEST);
 
         saveBttn.addActionListener(new ActionListener() {
             @Override
@@ -33,6 +51,7 @@ public class MazeCanvas implements IUserInterface, ActionListener {
                 try {
                     saveMaze(mazeModel);
                     window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+                    System.out.println("Saved");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -60,7 +79,12 @@ public class MazeCanvas implements IUserInterface, ActionListener {
                 aBlock.addActionListener(this);
                 aBlock.setBorderPainted(false);
                 aBlock.setOpaque(true);
-                aBlock.setBackground(Color.WHITE);
+                String block = mazeModel.getBlock(j, i).toString();
+                if (block == "B") {
+                    aBlock.setBackground(Color.WHITE);
+                } else {
+                    aBlock.setBackground(Color.BLACK);
+                }
                 mazeCanvasPanel.add(aBlock);
             }
         }
@@ -94,13 +118,11 @@ public class MazeCanvas implements IUserInterface, ActionListener {
         for (int i = 0; i < maze.getHeight(); i++) {
             for (int j = 0; j < maze.getWidth(); j++) {
                 Block aBlock = maze.getBlock(j, i);
-                String dataString = aBlock.toString();
-                writer.write(dataString);
+                writer.write(aBlock.toString());
             }
             writer.write(System.getProperty("line.separator"));
         }
         writer.close();
-        System.out.println("Saved");
     }
 
     public void clearCanvas() {
