@@ -29,9 +29,9 @@ public class MazeCanvas implements IUserInterface, ActionListener {
         this.mazeModel = mazeModel;
 
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        window.setMinimumSize(new Dimension(800, 800));
+        window.setMinimumSize(new Dimension(900, 800));
         window.setLayout(new BorderLayout());
-        window.setResizable(false);
+        window.setResizable(true);
 
         sideMenu = new JPanel();
         sideMenu.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -78,9 +78,9 @@ public class MazeCanvas implements IUserInterface, ActionListener {
 
         for (int i = 0; i < mazeModel.getHeight(); i++) {
             for (int j = 0; j < mazeModel.getWidth(); j++) {
-                JButton aBlock = new JButton(j + ", " + i);
+                JButton aBlock = new JButton();
                 aBlock.addActionListener(this);
-                aBlock.setBorderPainted(false);
+                aBlock.setBorderPainted(true);
                 aBlock.setOpaque(true);
                 String block = mazeModel.getBlock(j, i).toString();
                 if (block == "B") {
@@ -88,6 +88,16 @@ public class MazeCanvas implements IUserInterface, ActionListener {
                 } else {
                     aBlock.setBackground(Color.BLACK);
                 }
+                aBlock.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+                aBlock.setFocusPainted(false);
+
+                if (mazeModel.getHeight() <= 11) {
+                    aBlock.setPreferredSize(new Dimension(80, 80));
+                } else if (mazeModel.getHeight() <= 15) {
+                    aBlock.setPreferredSize(new Dimension(55, 55));
+                }
+
+
                 mazeCanvasPanel.add(aBlock);
             }
         }

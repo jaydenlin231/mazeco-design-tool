@@ -1,19 +1,21 @@
 package com.mazeco.userinterface;
 
+import com.mazeco.models.MazeModel;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class BrowseWindow implements IUserInterface{
-    private static final String TITLE = "Browse";
-    private static final JFrame window = new JFrame(TITLE);
+public class BrowseWindow implements IUserInterface {
+    private final String TITLE = "Browse";
+    private final JFrame window = new JFrame(TITLE);
+    private final JButton testButton = new JButton("Test button to edit");
 
-    public BrowseWindow(){
-        window.setPreferredSize(new Dimension(1000, 800));
-        window.setMinimumSize(new Dimension(1000, 800));
-        window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        // Centre the window
+    public BrowseWindow() {
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setLocationRelativeTo(null);
+        window.setMinimumSize(new Dimension(380, 200));
+        window.add(testButton);
     }
 
 
@@ -21,7 +23,6 @@ public class BrowseWindow implements IUserInterface{
     public void show() {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-        System.out.println(window);
     }
     
 }
