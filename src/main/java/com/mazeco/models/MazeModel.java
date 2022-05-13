@@ -24,11 +24,11 @@ public class MazeModel {
      * @throws IllegalArgumentException
      */
     public MazeModel(int width, int height) {
-        if(width < MIN_WIDTH || width > MAX_WIDTH)
-            throw new IllegalArgumentException();
+        // if(width < MIN_WIDTH || width > MAX_WIDTH)
+        //     throw new IllegalArgumentException();
 
-        if(height < MIN_HEIGHT || height > MAX_HEIGHT)
-            throw new IllegalArgumentException();
+        // if(height < MIN_HEIGHT || height > MAX_HEIGHT)
+        //     throw new IllegalArgumentException();
 
         this.width = width;
         this.height = height;
