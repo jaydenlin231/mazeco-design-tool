@@ -13,13 +13,15 @@ public class MazeModel {
 
     private int width;
     private int height;
-    private Block[][] data;
+    private Matrix<Block> data;
 
     /**
      * Construct a MazeModel with the given the {@code width} and {@code height} of the maze representation in blocks.
      *
      * @param width width of the maze representation in blocks in the range 10 to 100
      * @param height height of the maze representation in blocks in the range 10 to 100
+     * 
+     * @throws IllegalArgumentException
      */
     public MazeModel(int width, int height) {
         if(width < MIN_WIDTH || width > MAX_WIDTH)
@@ -27,15 +29,11 @@ public class MazeModel {
 
         if(height < MIN_HEIGHT || height > MAX_HEIGHT)
             throw new IllegalArgumentException();
+
         this.width = width;
         this.height = height;
-        this.data = new Block[width][height];
+        this.data = new Matrix<Block>(width, height, Block.BLANK);
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                data[i][j] = Block.BLANK;
-            }
-        }
     }
 
     
@@ -55,8 +53,13 @@ public class MazeModel {
      * @param col index of the column to access
      * @return Block {@code Block} object at the given row and column index of the maze representation
      */
-    public Block getBlock(int row, int col){
-        return this.data[row][col];
+    public Block getBlock(int col, int row){
+        if(col > width - 1)
+            throw new IndexOutOfBoundsException();
+        if(row > height - 1)
+            throw new IndexOutOfBoundsException();
+
+        return data.get(col, row);
     }
 
     /**
@@ -66,8 +69,13 @@ public class MazeModel {
      * @param row index of the row to access
      * @param col index of the column to access
      */
-    public void setBlock(Block block, int row, int col){
-        this.data[row][col] = block;
+    public void setBlock(Block block, int col, int row){
+        if(col > width - 1)
+            throw new IndexOutOfBoundsException();
+        if(row > height - 1)
+            throw new IndexOutOfBoundsException();
+
+        data.insert(block, col, row);
     }
 
 
@@ -80,20 +88,7 @@ public class MazeModel {
      */
     @Override
     public String toString() {
-        if (data == null)
-            return "null";
-
-        String mazeModelString = "";
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Block aBlock = data[j][i];
-                mazeModelString += aBlock.toString() + "  ";
-            }
-            mazeModelString += "\n";
-        }
-
-        return mazeModelString;
+       return data.toString();
     }
 
     
