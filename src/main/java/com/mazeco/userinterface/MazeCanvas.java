@@ -83,7 +83,7 @@ public class MazeCanvas implements IUserInterface, ActionListener {
                 aBlock.setBorderPainted(true);
                 aBlock.setOpaque(true);
                 String block = mazeModel.getBlock(j, i).toString();
-                if (block == "B") {
+                if (block.equals("B")) {
                     aBlock.setBackground(Color.WHITE);
                 } else {
                     aBlock.setBackground(Color.BLACK);

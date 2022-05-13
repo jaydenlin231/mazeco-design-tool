@@ -15,24 +15,6 @@ public enum Block {
      */
     @Override
     public String toString() {
-        switch (this) {
-            case WALL:
-                return "W";
-
-            case BLANK:
-                return "B";
-
-            case START:
-                return "S";
-
-            case END:
-                return "E";
-            
-            case LOGO:
-                return "L";
-        
-            default:
-                return "";
-        }
+        return name().substring(0, 1);
     }
 }
