@@ -10,11 +10,11 @@ public class MainMenu implements IUserInterface {
     private static final String TITLE = "MazeCo Design Tool";
     private static final JFrame mainMenu = new JFrame(TITLE);
 
-    private static final Icon generateIcon = new ImageIcon("./public/plus.png");
+    private static final Icon generateIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/plus.png"));
     private static final JButton generateButton = new JButton("Generate", generateIcon);
-    private static final Icon drawIcon = new ImageIcon("./public/pen.png");
+    private static final Icon drawIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen.png"));
     private static final JButton drawButton = new JButton("Draw", drawIcon);
-    private static final Icon browseIcon = new ImageIcon("./public/folder.jpeg");
+    private static final Icon browseIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/folder.jpeg"));
     private static final JButton browseButton = new JButton("Browse", browseIcon);
 
 
