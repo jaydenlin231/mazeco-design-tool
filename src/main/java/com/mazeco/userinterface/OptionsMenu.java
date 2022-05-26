@@ -31,36 +31,29 @@ public class OptionsMenu implements IUserInterface {
 
     // Leave blank for Draw options or "Generate" for generate options
     public OptionsMenu(String options) {
+        
+        initialisePanel(options);
+
+        initialiseWindow(options);
+
+    }
+
+    private void initialiseWindow(String options) {
         window.setTitle(options + " Configurator");
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        constraints.insets = new Insets(1, 2, 1, 2);
-
+        window.add(mainPanel);
+        window.pack();
         if (Objects.equals(options, "Generate")) {
-            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
-            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, startImageLabel, constraints, 0, 1, 1, 1);
-            addToPanel(mainPanel, startImageButton, constraints, 1, 1, 3, 1);
-            addToPanel(mainPanel, endImageLabel, constraints, 0, 2, 1, 1);
-            addToPanel(mainPanel, endImageButton, constraints, 1, 2, 3, 1);
-            addToPanel(mainPanel, LogoImageLabel, constraints, 0, 3, 1, 1);
-            addToPanel(mainPanel, logoImageButton, constraints, 1, 3, 3, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
+            window.setMinimumSize(new Dimension(400, 400));
         } else {
-            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
-            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 1, 2, 1);
+            window.setMinimumSize(new Dimension(380, 200));
         }
+        window.setResizable(false);
+        // Centre the window
+        window.setLocationRelativeTo(null);
+    }
 
+    private void initialisePanel(String option) {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -82,19 +75,33 @@ public class OptionsMenu implements IUserInterface {
             }
         });
 
-        window.add(mainPanel);
-        window.pack();
+        GridBagConstraints constraints = new GridBagConstraints();
 
-        // window.setPreferredSize(new Dimension(400, 600));
-        if (Objects.equals(options, "Generate")) {
-            window.setMinimumSize(new Dimension(400, 400));
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
+        constraints.insets = new Insets(1, 2, 1, 2);
+
+        if (option.equals("Generate")) {
+            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
+            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
+            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
+            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
+            addToPanel(mainPanel, startImageLabel, constraints, 0, 1, 1, 1);
+            addToPanel(mainPanel, startImageButton, constraints, 1, 1, 3, 1);
+            addToPanel(mainPanel, endImageLabel, constraints, 0, 2, 1, 1);
+            addToPanel(mainPanel, endImageButton, constraints, 1, 2, 3, 1);
+            addToPanel(mainPanel, LogoImageLabel, constraints, 0, 3, 1, 1);
+            addToPanel(mainPanel, logoImageButton, constraints, 1, 3, 3, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         } else {
-            window.setMinimumSize(new Dimension(380, 200));
+            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
+            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
+            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
+            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 1, 2, 1);
         }
-        window.setResizable(false);
-        // Centre the window
-        window.setLocationRelativeTo(null);
-
     }
 
     public void resetParameters() {
