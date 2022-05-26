@@ -3,17 +3,13 @@ package com.mazeco.userinterface;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MouseInputListener;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
-
-import org.mariadb.jdbc.type.Point;
 
 public class MazeCanvas implements IUserInterface {
     private final String TITLE = "Editor";
@@ -27,26 +23,24 @@ public class MazeCanvas implements IUserInterface {
     private final JButton checkBttn = new JButton("Check Maze");
     private final JButton clearBttn = new JButton("Clear Maze");
    
-    private JPanel sidePanel;
-    private JPanel mazeCanvasPanel;
-    
-    private MazeModel mazeModel;
+    private final JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));;
+    private final JPanel canvasPanel;
+    private final MazeModel mazeModel;
 
     public MazeCanvas(MazeModel mazeModel) {
         this.mazeModel = mazeModel;
 
-        initialiseSideMenu();
+        initialiseSidePanel();
+
+        canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
         
-        render();
+        renderCanvasPanel();
 
         initialiseWindow();
-        
     }
 
-    private void initialiseSideMenu() {
-        sidePanel = new JPanel();
+    private void initialiseSidePanel() {
         sidePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        sidePanel.setLayout(new GridLayout(14, 1, 1, 8));
         sidePanel.add(logoBttn);
         sidePanel.add(startImgBttn);
         sidePanel.add(endImgBttn);
@@ -70,33 +64,36 @@ public class MazeCanvas implements IUserInterface {
         window.setMinimumSize(new Dimension(900, 800));
         window.setLayout(new BorderLayout());
         window.setResizable(true);
+
         window.add(sidePanel, BorderLayout.WEST);
-        window.add(mazeCanvasPanel, BorderLayout.CENTER);
+        window.add(canvasPanel, BorderLayout.CENTER);
         window.pack();
     }
 
-    public void render() {
-        clearCanvas();
-        mazeCanvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
-
+    public void renderCanvasPanel() {
         for (int row = 0; row < mazeModel.getHeight(); row++) {
             for (int col = 0; col < mazeModel.getWidth(); col++) {
                 JButton aBlockButton = new JButton();
+
                 aBlockButton.addActionListener(new MazeButtonActionListener());
                 aBlockButton.addMouseListener(new MazeButtonActionListener());
+
                 aBlockButton.setBorderPainted(true);
                 aBlockButton.setOpaque(true);
+
                 Block aBlockModel = mazeModel.getBlock(col, row);
+
                 if (aBlockModel.equals(Block.BLANK)) {
                     aBlockButton.setBackground(Color.WHITE);
                 } else {
                     aBlockButton.setBackground(Color.BLACK);
                 }
+
                 aBlockButton.putClientProperty("position", new Point(col, row));
                 aBlockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
                 aBlockButton.setFocusPainted(false);
 
-                mazeCanvasPanel.add(aBlockButton);
+                canvasPanel.add(aBlockButton);
             }
         }
     }
@@ -114,18 +111,34 @@ public class MazeCanvas implements IUserInterface {
         writer.close();
     }
 
-    public void clearCanvas() {
-        if (mazeCanvasPanel != null) {
-            window.remove(mazeCanvasPanel);
-            window.repaint();
+    public void clearCanvasPanel() {
+        if (canvasPanel != null) {
+            canvasPanel.removeAll();
+            canvasPanel.repaint();
         }
     }
 
-    public void clearModel() {
-        if (mazeModel != null)
-            mazeModel = new MazeModel(mazeModel.getWidth(), mazeModel.getHeight());
+    public void resetCanvasMazeModel() {
+        if (mazeModel != null){
+            mazeModel.resetData();
+        }
     }
 
+    private void setBlockButtonStyle(JButton aBlockButton, Block aBlock){
+        switch (aBlock) {
+            case BLANK:
+                aBlockButton.setBackground(Color.WHITE);
+                break;
+            
+            case WALL:
+                aBlockButton.setBackground(Color.BLACK);
+                break;
+                
+            default:
+                break;
+        }
+
+    }
 
     @Override
     public void show() {
@@ -140,55 +153,48 @@ public class MazeCanvas implements IUserInterface {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            JButton button = (JButton) e.getSource();
+            JButton aBlockButton = (JButton) e.getSource();
+            Point clickedPosition = (Point) aBlockButton.getClientProperty("position");
+            int pressedCol = (int) clickedPosition.getX();
+            int pressedRow = (int) clickedPosition.getY();
             
             if (SwingUtilities.isLeftMouseButton(e)){
-                Point clickedPosition = (Point) button.getClientProperty("position");
-                int pressedCol = (int) clickedPosition.getX();
-                int pressedRow = (int) clickedPosition.getY();
-                
                 if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.BLANK)) {
-                    button.setBackground(Color.BLACK);
-                    button.setForeground(Color.WHITE);
+                    setBlockButtonStyle(aBlockButton, Block.WALL);
                     mazeModel.setBlock(Block.WALL, pressedCol, pressedRow);
                 } 
-                System.out.println(mazeModel);
             }
             else if (SwingUtilities.isRightMouseButton(e)){
-                Point clickedPosition = (Point) button.getClientProperty("position");
-                int pressedCol = (int) clickedPosition.getX();
-                int pressedRow = (int) clickedPosition.getY();
-                
                 if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.WALL)) {
-                    button.setBackground(Color.WHITE);
-                    button.setForeground(Color.BLACK);
+                    setBlockButtonStyle(aBlockButton, Block.BLANK);
                     mazeModel.setBlock(Block.BLANK, pressedCol, pressedRow);
                 }
-                
-                System.out.println(mazeModel);
             }
         }
         
         @Override
         public void mousePressed(MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e)){
-                JButton button = (JButton) e.getSource();
-                Point clickedPosition = (Point) button.getClientProperty("position");
+                JButton aBlockButton = (JButton) e.getSource();
+                Point clickedPosition = (Point) aBlockButton.getClientProperty("position");
                 int pressedCol = (int) clickedPosition.getX();
                 int pressedRow = (int) clickedPosition.getY();
-                
-                if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.BLANK)) {
-                    button.setBackground(Color.BLACK);
-                    button.setForeground(Color.WHITE);
-                    mazeModel.setBlock(Block.WALL, pressedCol, pressedRow);
-                } else if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.WALL)) {
-                    button.setBackground(Color.WHITE);
-                    button.setForeground(Color.BLACK);
-                    mazeModel.setBlock(Block.BLANK, pressedCol, pressedRow);
+
+                switch (mazeModel.getBlock(pressedCol, pressedRow)) {
+                    case BLANK:
+                        setBlockButtonStyle(aBlockButton, Block.WALL);
+                        mazeModel.setBlock(Block.WALL, pressedCol, pressedRow); 
+                        break;
+                    
+                    case WALL:
+                        setBlockButtonStyle(aBlockButton, Block.BLANK);
+                        mazeModel.setBlock(Block.BLANK, pressedCol, pressedRow);
+                        break;
+                        
+                    default:
+                        break;
                 }
             }
-            
-            System.out.println(mazeModel);
         }
         
         @Override
@@ -219,9 +225,13 @@ public class MazeCanvas implements IUserInterface {
                 window.dispose();
                 System.out.println("Saved");
             } else if (source == clearBttn) {
-                clearModel();
-                render();
+                resetCanvasMazeModel();
+                clearCanvasPanel();
+                renderCanvasPanel();
+                window.pack();
                 System.out.println("Cleared");
+                System.out.println(System.identityHashCode(canvasPanel));
+                System.out.println(System.identityHashCode(mazeModel));
             } 
         }
     }
