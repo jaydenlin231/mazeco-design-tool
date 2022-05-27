@@ -1,6 +1,7 @@
 package com.mazeco.userinterface;
 
 import com.mazeco.models.MazeModel;
+import com.mazeco.utilities.MazeGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,11 +28,13 @@ public class OptionsMenu implements IUserInterface {
 
     private final JButton generateButton = new JButton("Generate");
 
+    private MazeCanvas mazeCanvas;
+
     private final JPanel mainPanel = new JPanel(new GridBagLayout());
 
     // Leave blank for Draw options or "Generate" for generate options
     public OptionsMenu(String options) {
-        
+
         initialisePanel(options);
 
         initialiseWindow(options);
@@ -53,22 +56,34 @@ public class OptionsMenu implements IUserInterface {
         window.setLocationRelativeTo(null);
     }
 
-    private void initialisePanel(String option) {
+    private void initialisePanel(String options) {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+
                 MazeModel aModel = null;
+                MazeGenerator maze = null;
                 try {
+
                     Integer w = (Integer) mazeWidthInput.getValue();
                     Integer h = (Integer) mazeHeightInput.getValue();
-                    aModel = new MazeModel(w, h);
+                    if (Objects.equals(options, "Generate")) {
+                        maze = new MazeGenerator(w, h, 1, w - 3);
+                    } else {
+                        aModel = new MazeModel(w, h);
+                    }
+
                 } catch (NumberFormatException e) {
                     System.out.println("number error");
                 }
-                System.out.println(aModel);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+                if (Objects.equals(options, "Generate")) {
+                    mazeCanvas = new MazeCanvas(maze.getMaze());
 
-                MazeCanvas mazeCanvas = new MazeCanvas(aModel);
+                } else {
+                    mazeCanvas = new MazeCanvas(aModel);
+
+                }
                 mazeCanvas.show();
 
                 resetParameters();
@@ -83,7 +98,7 @@ public class OptionsMenu implements IUserInterface {
         constraints.weighty = 1;
         constraints.insets = new Insets(1, 2, 1, 2);
 
-        if (option.equals("Generate")) {
+        if (options.equals("Generate")) {
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
