@@ -69,7 +69,8 @@ public class OptionsMenu implements IUserInterface {
                     if (Objects.equals(options, "Generate")) {
                         maze = new MazeGenerator(w, h, 1, w - 3);
                     } else {
-                        aModel = new MazeModel(w, h);
+                        aModel = new MazeModel(w, h, 1, w - 3);
+                        System.out.println(aModel);
                     }
 
                 } catch (NumberFormatException e) {
@@ -81,7 +82,6 @@ public class OptionsMenu implements IUserInterface {
 
                 } else {
                     mazeCanvas = new MazeCanvas(aModel);
-
                 }
                 mazeCanvas.show();
 

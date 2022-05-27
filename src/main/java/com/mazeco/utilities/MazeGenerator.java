@@ -29,19 +29,12 @@ public class MazeGenerator {
         for (int i = 0; i < maze.getHeight(); i++) {
             for (int j = 0; j < maze.getWidth(); j++) {
                 maze.setBlock(Block.WALL, j, i);
-//                if(i == 0 || i == maze.getHeight() -1){
-//                    maze.setBlock(Block.WALL, j, i);
-//                }
                 if (i == 0 && j == start) {
                     maze.setBlock(Block.START, j, i);
                 }
                 if (i == maze.getHeight() - 1 && j == end) {
                     maze.setBlock(Block.END, j, i);
                 }
-//                if(j == 0 || j == maze.getWidth() -1){
-//                    maze.setBlock(Block.WALL, j, i);
-//                }
-
             }
         }
         return maze;

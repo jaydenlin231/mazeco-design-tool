@@ -21,6 +21,8 @@ public class MazeModel {
     private int height;
     private Matrix<Block> data;
 
+    private int startX;
+    private int endX;
     private Point startPosition;
     private Point endPosition;
     private ArrayList<Point> solution;
@@ -37,7 +39,7 @@ public class MazeModel {
         if(width < MIN_WIDTH || width > MAX_WIDTH)
             throw new IllegalArgumentException();
 
-        if(height < MIN_HEIGHT || height > MAX_HEIGHT)
+        if (height < MIN_HEIGHT || height > MAX_HEIGHT)
             throw new IllegalArgumentException();
 
         this.width = width;
@@ -46,7 +48,26 @@ public class MazeModel {
 
     }
 
-    
+    public MazeModel(int width, int height, int start, int end) {
+        this(width, height);
+        startX = start;
+        endX = end;
+        this.startPosition = new Point(startX, 0);
+        this.endPosition = new Point(endX, height - 1);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (i == 0 && j == startX) {
+                    data.insert(Block.START, j, i);
+                }
+                if (i == data.getHeight() - 1 && j == endX) {
+                    data.insert(Block.END, j, i);
+                }
+            }
+        }
+
+    }
+
+
     public int getWidth() {
         return width;
     }
@@ -57,9 +78,9 @@ public class MazeModel {
 
     public void resetData(){
         data.reset(Block.BLANK);
-
         startPosition = null;
         endPosition = null;
+
     }
 
     public Point getStartPosition(){
