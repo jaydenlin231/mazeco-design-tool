@@ -90,7 +90,17 @@ public class Node{
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Node) && (this.state.equals(((Node) obj).state));
+        // return (obj instanceof Node) && (this.state.equals(((Node) obj).state));
+        if (obj instanceof Node) {
+            Node node = (Node)obj;
+            return this.state.equals(node.state);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.state.hashCode();
     }
 
     
