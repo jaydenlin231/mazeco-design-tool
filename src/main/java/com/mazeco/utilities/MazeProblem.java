@@ -26,7 +26,7 @@ public class MazeProblem {
                 availableActions.add("Right");
             }
         }
-        if((currentCol - 1) > 0){
+        if((currentCol - 1) >= 0){
             if(!mazeModel.getBlock(currentCol - 1, currentRow).equals(Block.WALL)){
                 availableActions.add("Left");
             }
@@ -36,7 +36,7 @@ public class MazeProblem {
                 availableActions.add("Down");
             }
         }
-        if((currentRow - 1) > 0){
+        if((currentRow - 1) >= 0){
             if(!mazeModel.getBlock(currentCol, currentRow - 1).equals(Block.WALL)){
                 availableActions.add("Up");
             }
