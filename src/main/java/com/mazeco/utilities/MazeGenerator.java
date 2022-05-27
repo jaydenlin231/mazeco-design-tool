@@ -32,9 +32,8 @@ public class MazeGenerator {
 //                if(i == 0 || i == maze.getHeight() -1){
 //                    maze.setBlock(Block.WALL, j, i);
 //                }
-                if (i == 1 && j == start) {
+                if (i == 0 && j == start) {
                     maze.setBlock(Block.START, j, i);
-                    maze.setBlock(Block.START, j, i - 1);
                 }
                 if (i == maze.getHeight() - 1 && j == end) {
                     maze.setBlock(Block.END, j, i);
@@ -49,7 +48,7 @@ public class MazeGenerator {
     }
 
     public void generateMaze() {
-//        System.out.println(maze.toString());
+        System.out.println(maze.toString());
         DFS(1, start);
         System.out.println(maze.toString());
     }
@@ -58,7 +57,7 @@ public class MazeGenerator {
         Integer[] randomDirs = generateRandomDirs();
         for (int i = 0; i < randomDirs.length; i++) {
             switch (randomDirs[i]) {
-                case 1: //Up
+                case 1 -> { //Up
                     if (row - 1 == 0 || maze.getBlock(col, row - 2).equals(Block.START)) {
                         continue;
                     }
@@ -72,17 +71,13 @@ public class MazeGenerator {
                         }
 
                     }
-                    break;
-                case 2: //Right
+                }
+                case 2 -> { //Right
                     if (col + 1 == maze.getWidth() - 1 || maze.getBlock(col + 2, row).equals(Block.START)) {
                         continue;
                     }
                     if (!maze.getBlock(col + 2, row).equals(Block.BLANK)) {
-                        if (maze.getBlock(col + 1, row + 1).equals(Block.END)) {
-                            maze.setBlock(Block.END, col + 1, row);
-                        } else {
-                            maze.setBlock(Block.BLANK, col + 1, row);
-                        }
+                        maze.setBlock(Block.BLANK, col + 1, row);
                         if (!(col + 2 == maze.getWidth() - 1)) {
                             maze.setBlock(Block.BLANK, col + 2, row);
 //                            System.out.println("Right");
@@ -90,18 +85,13 @@ public class MazeGenerator {
                             DFS(row, col + 2);
                         }
                     }
-                    break;
-                case 3: //Down
+                }
+                case 3 -> { //Down
                     if (row + 1 == maze.getHeight() - 1 || maze.getBlock(col, row + 2).equals(Block.START)) {
                         continue;
                     }
                     if (!maze.getBlock(col, row + 2).equals(Block.BLANK)) {
-                        if (maze.getBlock(col, row + 2).equals(Block.END)) {
-                            maze.setBlock(Block.END, col, row + 1);
-                        } else {
-                            maze.setBlock(Block.BLANK, col, row + 1);
-                        }
-
+                        maze.setBlock(Block.BLANK, col, row + 1);
                         if (!(row + 2 == maze.getHeight() - 1)) {
                             maze.setBlock(Block.BLANK, col, row + 2);
 //                            System.out.println("Down");
@@ -109,17 +99,13 @@ public class MazeGenerator {
                             DFS(row + 2, col);
                         }
                     }
-                    break;
-                case 4: //Left
+                }
+                case 4 -> { //Left
                     if (col - 1 == 0 || maze.getBlock(col - 2, row).equals(Block.START)) {
                         continue;
                     }
                     if (!maze.getBlock(col - 2, row).equals(Block.BLANK)) {
-                        if (maze.getBlock(col - 1, row + 1).equals(Block.END)) {
-                            maze.setBlock(Block.END, col - 1, row);
-                        } else {
-                            maze.setBlock(Block.BLANK, col - 1, row);
-                        }
+                        maze.setBlock(Block.BLANK, col - 1, row);
                         if (!(col - 2 == maze.getWidth() - 1)) {
                             maze.setBlock(Block.BLANK, col - 2, row);
 //                            System.out.println("Left");
@@ -127,7 +113,7 @@ public class MazeGenerator {
                             DFS(row, col - 2);
                         }
                     }
-                    break;
+                }
             }
         }
     }
@@ -146,8 +132,8 @@ public class MazeGenerator {
     }
 
 
-    public static void main(String[] args) {
-        MazeGenerator maze = new MazeGenerator(10, 10, 3, 4);
-
-    }
+//    public static void main(String[] args) {
+//        MazeGenerator maze = new MazeGenerator(10, 10, 3, 4);
+//
+//    }
 }
