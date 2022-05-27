@@ -87,7 +87,7 @@ public class MazeCanvas implements IUserInterface {
                 aBlockButton.setBorderPainted(true);
                 aBlockButton.setOpaque(true);
                 Block aBlockModel = mazeModel.getBlock(col, row);
-                if (aBlockModel.equals(Block.BLANK)) {
+                if (aBlockModel.equals(Block.BLANK) || aBlockModel.equals(Block.START) || aBlockModel.equals(Block.END)) {
                     aBlockButton.setBackground(Color.WHITE);
                 } else {
                     aBlockButton.setBackground(Color.BLACK);
@@ -149,7 +149,7 @@ public class MazeCanvas implements IUserInterface {
                 
                 if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.BLANK)) {
                     button.setBackground(Color.BLACK);
-                    button.setForeground(Color.WHITE);
+//                    button.setForeground(Color.WHITE);
                     mazeModel.setBlock(Block.WALL, pressedCol, pressedRow);
                 } 
                 System.out.println(mazeModel);
@@ -161,7 +161,7 @@ public class MazeCanvas implements IUserInterface {
                 
                 if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.WALL)) {
                     button.setBackground(Color.WHITE);
-                    button.setForeground(Color.BLACK);
+//                    button.setForeground(Color.BLACK);
                     mazeModel.setBlock(Block.BLANK, pressedCol, pressedRow);
                 }
                 
@@ -179,11 +179,11 @@ public class MazeCanvas implements IUserInterface {
                 
                 if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.BLANK)) {
                     button.setBackground(Color.BLACK);
-                    button.setForeground(Color.WHITE);
+//                    button.setForeground(Color.WHITE);
                     mazeModel.setBlock(Block.WALL, pressedCol, pressedRow);
                 } else if (mazeModel.getBlock(pressedCol, pressedRow).equals(Block.WALL)) {
                     button.setBackground(Color.WHITE);
-                    button.setForeground(Color.BLACK);
+//                    button.setForeground(Color.BLACK);
                     mazeModel.setBlock(Block.BLANK, pressedCol, pressedRow);
                 }
             }
