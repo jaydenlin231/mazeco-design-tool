@@ -7,7 +7,7 @@ package com.mazeco.models;
  * @see MazeModel
  */
 public enum Block {
-    WALL, BLANK, START, END, LOGO;
+    WALL, BLANK, PATH, START, END, LOGO;
 
      /**
      * Returns String representation of a Block,

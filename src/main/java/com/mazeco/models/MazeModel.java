@@ -1,5 +1,11 @@
 package com.mazeco.models;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
+import com.mazeco.utilities.MazeProblem;
+import com.mazeco.utilities.MazeSolver;
+import com.mazeco.utilities.Node;
 /**
  *  Represents the data and configuration of a maze to be stored in {@code MazeRecord}.
  * 
@@ -14,6 +20,10 @@ public class MazeModel {
     private int width;
     private int height;
     private Matrix<Block> data;
+
+    private Point startPosition;
+    private Point endPosition;
+    private ArrayList<Point> solution;
 
     /**
      * Construct a MazeModel with the given the {@code width} and {@code height} of the maze representation in blocks.
@@ -47,6 +57,56 @@ public class MazeModel {
 
     public void resetData(){
         data.reset(Block.BLANK);
+
+        startPosition = null;
+        endPosition = null;
+    }
+
+    public Point getStartPosition(){
+        return startPosition;
+    }
+    
+    public Point getEndPosition(){
+        return endPosition;
+    }
+
+    public void solve(){
+        Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
+
+        solution = solutionNode.getSolutionPoints();
+
+        for (Point aPathPoint : solution) {
+            int currentCol = (int) aPathPoint.getX();
+            int currentRow = (int) aPathPoint.getY();
+
+            if(this.getBlock(currentCol, currentRow).equals(Block.START) 
+            || this.getBlock(currentCol, currentRow).equals(Block.END))
+                continue;
+
+            this.setBlock(Block.PATH, currentCol, currentRow);
+        }
+    }
+
+    public ArrayList<Point> getSolution(){
+        return solution;
+    }
+
+    public void clearSolution(){
+        if(solution == null)
+            return; 
+            
+        for (Point aPathPoint : solution) {
+            int currentCol = (int) aPathPoint.getX();
+            int currentRow = (int) aPathPoint.getY();
+
+            if(this.getBlock(currentCol, currentRow).equals(Block.START) 
+            || this.getBlock(currentCol, currentRow).equals(Block.END))
+                continue;
+
+            this.setBlock(Block.BLANK, currentCol, currentRow);
+        }
+
+        solution = null;
     }
 
     /**
@@ -79,6 +139,12 @@ public class MazeModel {
             throw new IndexOutOfBoundsException();
 
         data.insert(block, col, row);
+
+        if(block.equals(Block.START))
+            startPosition = new Point(col, row);
+
+        if(block.equals(Block.END))
+            endPosition = new Point(col, row);
     }
 
 

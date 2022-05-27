@@ -1,38 +1,73 @@
 package com.mazeco.utilities;
 
-import java.util.List;
-import java.awt.geom.Point2D;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.PriorityQueue;
 
-import com.mazeco.models.MazeModel;
+public class MazeSolver {
+    public static Node aStarGraphSearch(MazeProblem mazeProblem){
+        Node currentNode = new Node(mazeProblem.initial);
+        System.out.println(currentNode);
+        System.out.println(mazeProblem);
+        System.out.println(mazeProblem.initial);
 
-/**
- * Static Utility Class to find the solution of a MazeModel
- */
-public final class MazeSolver {
-    /**
-     * Solves the given {@code aMazeModel} using A star algorithm.
-     * @param aMazeModel the MazeModel to be solved
-     * @return path the list of {@code Point2D} Objects which represents the path from the start to end block.
-     */
-    public static List<Point2D> solveAStar(MazeModel aMazeModel){
+        if(mazeProblem.goalTest(currentNode.getState()))
+            return currentNode;
+
+        HashSet<Node> explored = new HashSet<Node>();
+        PriorityQueue<Node> frontier = new PriorityQueue<Node>(new Comparator<Node>() {
+            @Override
+            public int compare(Node aNode, Node anotherNode) {
+                return Integer.compare(aStarFValue(aNode, mazeProblem), aStarFValue(anotherNode, mazeProblem));
+            }
+            
+        });
+
+        frontier.add(currentNode);
+        
+        while(!frontier.isEmpty()){
+            currentNode = frontier.poll();
+
+            if(mazeProblem.goalTest(currentNode.getState()))
+                return currentNode;
+
+            explored.add(currentNode);
+
+            for (Node aChildNode : currentNode.expand(mazeProblem)) {
+                if(!explored.contains(aChildNode) && !frontier.contains(aChildNode)){
+                    frontier.add(aChildNode);
+                }
+                else if(frontier.contains(aChildNode)){
+                    // The incumbent node that shares the same state as the child node.  
+                    Node existingChildNode = null;
+
+                    // Find existing child node 
+                    for (Node aFrontierNode: frontier){
+                        if(aFrontierNode.equals(aChildNode)){
+                            existingChildNode = aFrontierNode;
+                        }
+                    }
+                    
+                    if(aStarFValue(aChildNode, mazeProblem) < aStarFValue(existingChildNode, mazeProblem)){
+                        // Delete the incumbent node
+                        frontier.remove(existingChildNode);
+                        // Add the new childNode with less g(n) cost
+                        frontier.add(aChildNode);
+                    }
+                }
+            }
+        }
+        // Solution cannot be found
         return null;
     }
 
-    /**
-     * Solves the given {@code aMazeModel} using Dijkstra algorithm.
-     * @param aMazeModel the MazeModel to be solved
-     * @return path the list of {@code Point2D} Objects which represents the path from the start to end block.
-     */
-    public static List<Point2D> solveDijkstra(MazeModel aMazeModel){
-        return null;
-    }
 
-    /**
-     * Calculate of the cost of the solution returned by searching algorithms.
-     * @param path list of {@code Point2D} Objects which represents the path from the start to end block.
-     * @return cost the number of moves required to solve the puzzle with the given path.
-     */
-    public static int getPathCost(List<Point2D> path){
-        return 0;
+    private static int aStarFValue(Node aNode, MazeProblem problem){
+        // f(n) = g(n) + h(n)
+        return aNode.getPathCost() + aStarHeuristicValue(aNode, problem);
+    } 
+
+    private static int aStarHeuristicValue(Node aNode, MazeProblem problem){
+        return Distance.getManhanttanDistance(aNode.getState(), problem.mazeModel.getEndPosition());
     }
 }
