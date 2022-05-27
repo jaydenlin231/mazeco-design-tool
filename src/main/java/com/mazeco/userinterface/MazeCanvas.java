@@ -89,6 +89,10 @@ public class MazeCanvas implements IUserInterface {
                 Block aBlockModel = mazeModel.getBlock(col, row);
                 if (aBlockModel.equals(Block.BLANK)) {
                     aBlockButton.setBackground(Color.WHITE);
+                } else if (aBlockModel.equals(Block.START)) {
+                    aBlockButton.setBackground(Color.RED);
+                } else if (aBlockModel.equals(Block.END)) {
+                    aBlockButton.setBackground(Color.GREEN);
                 } else {
                     aBlockButton.setBackground(Color.BLACK);
                 }
