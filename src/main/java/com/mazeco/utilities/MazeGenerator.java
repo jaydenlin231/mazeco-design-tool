@@ -48,7 +48,6 @@ public class MazeGenerator {
     }
 
     public void generateMaze() {
-        System.out.println(maze.toString());
         DFS(1, start);
         System.out.println(maze.toString());
     }
@@ -75,6 +74,9 @@ public class MazeGenerator {
                 case 2 -> { //Right
                     if (col + 1 == maze.getWidth() - 1 || maze.getBlock(col + 2, row).equals(Block.START)) {
                         continue;
+                    }
+                    if (maze.getBlock(col + 1, row + 1).equals(Block.END)) {
+                        maze.setBlock(Block.BLANK, col + 1, row);
                     }
                     if (!maze.getBlock(col + 2, row).equals(Block.BLANK)) {
                         maze.setBlock(Block.BLANK, col + 1, row);
@@ -103,6 +105,9 @@ public class MazeGenerator {
                 case 4 -> { //Left
                     if (col - 1 == 0 || maze.getBlock(col - 2, row).equals(Block.START)) {
                         continue;
+                    }
+                    if (maze.getBlock(col - 1, row + 1).equals(Block.END)) {
+                        maze.setBlock(Block.BLANK, col - 1, row);
                     }
                     if (!maze.getBlock(col - 2, row).equals(Block.BLANK)) {
                         maze.setBlock(Block.BLANK, col - 1, row);

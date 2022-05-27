@@ -199,11 +199,9 @@ public class MazeCanvas implements IUserInterface {
     }
 
     private void handleRegenerateButton() {
-//        System.out.println("hi");
-
         MazeGenerator genMaze = new MazeGenerator(mazeModel.getWidth(), mazeModel.getHeight(), 1, mazeModel.getWidth() - 3);
         this.mazeModel = genMaze.getMaze();
-        System.out.println(mazeModel);
+//        System.out.println(mazeModel);
         reRenderCanvasPanel();
     }
 
