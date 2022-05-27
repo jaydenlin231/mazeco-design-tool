@@ -35,6 +35,28 @@ public class Matrix<E> extends AbstractCollection<E> {
         }
     }
 
+    public void reset(){
+        reset(null);
+    }
+
+    public void reset(E e){
+        int height = data.size();
+        
+        int width = data.get(0).size();
+        
+        this.data.clear();
+
+        for (int i = 0; i < height; i++) {
+            data.add(new ArrayList<E>());
+        }
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                data.get(row).add(e);
+            }
+        }
+    }
+
     /**
      * Assigns a value to a given cell, specified by its row, column coordinates.
      *

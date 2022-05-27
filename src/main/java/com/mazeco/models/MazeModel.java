@@ -45,6 +45,9 @@ public class MazeModel {
         return height;
     }
 
+    public void resetData(){
+        data.reset(Block.BLANK);
+    }
 
     /**
      * Gets the {@code Block} object with the given row and column index from the maze representation.
