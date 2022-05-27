@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
+import com.mazeco.utilities.MazeGenerator;
+
 
 public class MazeCanvas implements IUserInterface {
     private final String TITLE = "Editor";
@@ -19,21 +21,26 @@ public class MazeCanvas implements IUserInterface {
     private final JButton logoBttn = new JButton("Place Logo");
     private final JButton startImgBttn = new JButton("Place Start Image");
     private final JButton endImgBttn = new JButton("Place End Image");
-    private final JButton sizeBttn = new JButton("Change Maze Size");
+    private final JButton regenBttn = new JButton("Regenerate Maze");
     private final JButton checkBttn = new JButton("Check Maze");
     private final JButton clearBttn = new JButton("Clear Maze");
     private final JButton solutionBttn = new JButton("Toggle Solution");
 
     private final JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));
     private final JPanel canvasPanel;
-    private final MazeModel mazeModel;
+    private MazeModel mazeModel;
 
     private boolean isSolutionVisible = false;
 
     public MazeCanvas(MazeModel mazeModel) {
         this.mazeModel = mazeModel;
 
-        initialiseSidePanel();
+        if (mazeModel.getBlock(0, 0).equals(Block.WALL)) {
+            initialiseSidePanel(true);
+        } else {
+            initialiseSidePanel(false);
+
+        }
 
         canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
 
@@ -42,17 +49,24 @@ public class MazeCanvas implements IUserInterface {
         initialiseWindow();
     }
 
-    private void initialiseSidePanel() {
+    private void initialiseSidePanel(boolean regenerateButton) {
         sidePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         sidePanel.add(logoBttn);
         sidePanel.add(startImgBttn);
         sidePanel.add(endImgBttn);
-        sidePanel.add(sizeBttn);
-        sidePanel.add(clearBttn);
-
-        for (int i = 0; i < 6; i++) {
-            JLabel blankPlaceHolder = new JLabel();
-            sidePanel.add(blankPlaceHolder);
+        if (regenerateButton) {
+            sidePanel.add(regenBttn);
+            sidePanel.add(clearBttn);
+            for (int i = 0; i < 6; i++) {
+                JLabel blankPlaceHolder = new JLabel();
+                sidePanel.add(blankPlaceHolder);
+            }
+        } else {
+            sidePanel.add(clearBttn);
+            for (int i = 0; i < 7; i++) {
+                JLabel blankPlaceHolder = new JLabel();
+                sidePanel.add(blankPlaceHolder);
+            }
         }
 
         sidePanel.add(checkBttn);
@@ -63,6 +77,7 @@ public class MazeCanvas implements IUserInterface {
         checkBttn.addActionListener(new SideMenuActionListener());
         saveBttn.addActionListener(new SideMenuActionListener());
         solutionBttn.addActionListener(new SideMenuActionListener());
+        regenBttn.addActionListener(new SideMenuActionListener());
         
     }
 
@@ -183,6 +198,15 @@ public class MazeCanvas implements IUserInterface {
         // System.out.println(mazeModel);
     }
 
+    private void handleRegenerateButton() {
+//        System.out.println("hi");
+
+        MazeGenerator genMaze = new MazeGenerator(mazeModel.getWidth(), mazeModel.getHeight(), 1, mazeModel.getWidth() - 3);
+        this.mazeModel = genMaze.getMaze();
+        System.out.println(mazeModel);
+        reRenderCanvasPanel();
+    }
+
     private void handleSolutionButton() {
         isSolutionVisible = !isSolutionVisible;
 
@@ -218,6 +242,8 @@ public class MazeCanvas implements IUserInterface {
                 handleSanityCheckButton();
             } else if (source == solutionBttn) {
                 handleSolutionButton();
+            } else if (source == regenBttn) {
+                handleRegenerateButton();
             }
         }
     }

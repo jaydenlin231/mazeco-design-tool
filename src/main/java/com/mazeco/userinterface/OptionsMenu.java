@@ -18,7 +18,6 @@ public class OptionsMenu implements IUserInterface {
     private final JLabel mazeHeightLabel = new JLabel("Height", SwingConstants.CENTER);
     private final JSpinner mazeWidthInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
     private final JSpinner mazeHeightInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
-
     private final JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
     private final JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
     private final JLabel LogoImageLabel = new JLabel("Logo Image", SwingConstants.CENTER);
