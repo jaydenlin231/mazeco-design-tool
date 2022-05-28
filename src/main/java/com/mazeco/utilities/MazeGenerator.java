@@ -4,15 +4,14 @@ import com.mazeco.models.MazeModel;
 import com.mazeco.models.Block;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class MazeGenerator {
     private MazeModel maze;
-    private int width;
-    private int height;
-    private int start;
-    private int end;
+    private final int width;
+    private final int height;
+    private final int start;
+    private final int end;
 
     public MazeGenerator(int width, int height, int start, int end) {
         this.width = width;
@@ -23,21 +22,9 @@ public class MazeGenerator {
         generateMaze();
     }
 
-    public MazeModel initialiseMaze() {
-        maze = new MazeModel(width, height);
-
-        for (int i = 0; i < maze.getHeight(); i++) {
-            for (int j = 0; j < maze.getWidth(); j++) {
-                maze.setBlock(Block.WALL, j, i);
-                if (i == 0 && j == start) {
-                    maze.setBlock(Block.START, j, i);
-                }
-                if (i == maze.getHeight() - 1 && j == end) {
-                    maze.setBlock(Block.END, j, i);
-                }
-            }
-        }
-        return maze;
+    public void initialiseMaze() {
+        maze = new MazeModel(width, height, start, end);
+        maze.prepForGenerator();
     }
 
     public void generateMaze() {
@@ -57,8 +44,6 @@ public class MazeGenerator {
                         maze.setBlock(Block.BLANK, col, row - 1);
                         if (!(row - 2 == maze.getHeight() - 1)) {
                             maze.setBlock(Block.BLANK, col, row - 2);
-//                            System.out.println("Up");
-//                            System.out.println(maze.toString());
                             DFS(row - 2, col);
                         }
 
@@ -75,8 +60,6 @@ public class MazeGenerator {
                         maze.setBlock(Block.BLANK, col + 1, row);
                         if (!(col + 2 == maze.getWidth() - 1)) {
                             maze.setBlock(Block.BLANK, col + 2, row);
-//                            System.out.println("Right");
-//                            System.out.println(maze.toString());
                             DFS(row, col + 2);
                         }
                     }
@@ -89,8 +72,6 @@ public class MazeGenerator {
                         maze.setBlock(Block.BLANK, col, row + 1);
                         if (!(row + 2 == maze.getHeight() - 1)) {
                             maze.setBlock(Block.BLANK, col, row + 2);
-//                            System.out.println("Down");
-//                            System.out.println(maze.toString());
                             DFS(row + 2, col);
                         }
                     }
@@ -106,8 +87,6 @@ public class MazeGenerator {
                         maze.setBlock(Block.BLANK, col - 1, row);
                         if (!(col - 2 == maze.getWidth() - 1)) {
                             maze.setBlock(Block.BLANK, col - 2, row);
-//                            System.out.println("Left");
-//                            System.out.println(maze.toString());
                             DFS(row, col - 2);
                         }
                     }

@@ -76,22 +76,27 @@ public class MazeModel {
         return height;
     }
 
-    public void resetData(){
+    public void resetData() {
         data.reset(Block.BLANK);
-        startPosition = null;
-        endPosition = null;
-
+        data.insert(Block.START, startX, 0);
+        data.insert(Block.END, endX, height - 1);
     }
 
-    public Point getStartPosition(){
+    public void prepForGenerator() {
+        data.reset(Block.WALL);
+        data.insert(Block.START, startX, 0);
+        data.insert(Block.END, endX, height - 1);
+    }
+
+    public Point getStartPosition() {
         return startPosition;
     }
-    
-    public Point getEndPosition(){
+
+    public Point getEndPosition() {
         return endPosition;
     }
 
-    public void solve(){
+    public void solve() {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 
         solution = solutionNode.getSolutionPoints();
