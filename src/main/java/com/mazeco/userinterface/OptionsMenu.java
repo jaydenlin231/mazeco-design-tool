@@ -18,6 +18,13 @@ public class OptionsMenu implements IUserInterface {
     private final JLabel mazeHeightLabel = new JLabel("Height", SwingConstants.CENTER);
     private final JSpinner mazeWidthInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
     private final JSpinner mazeHeightInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
+
+    private final JLabel mazeStartLabel = new JLabel("Start", SwingConstants.CENTER);
+    private final JLabel mazeEndLabel = new JLabel("End", SwingConstants.CENTER);
+    private final JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 100, 2));
+    private final JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 100, 2));
+
+
     private final JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
     private final JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
     private final JLabel LogoImageLabel = new JLabel("Logo Image", SwingConstants.CENTER);
@@ -63,13 +70,14 @@ public class OptionsMenu implements IUserInterface {
                 MazeModel aModel = null;
                 MazeGenerator maze = null;
                 try {
-
                     Integer w = (Integer) mazeWidthInput.getValue();
                     Integer h = (Integer) mazeHeightInput.getValue();
-                    if (Objects.equals(options, "Generate")) {
-                        maze = new MazeGenerator(w, h, 1, w - 3);
-                    } else {
-                        aModel = new MazeModel(w, h, 1, w - 3);
+                    Integer s = (Integer) mazeStartInput.getValue();
+                    Integer e = (Integer) mazeEndInput.getValue();
+                    if (s < w && e < w && Objects.equals(options, "Generate")) {
+                        maze = new MazeGenerator(w, h, s, e);
+                    } else if (s < w && e < w) {
+                        aModel = new MazeModel(w, h, s, e);
                         System.out.println(aModel);
                     }
 
@@ -79,12 +87,10 @@ public class OptionsMenu implements IUserInterface {
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
                 if (Objects.equals(options, "Generate")) {
                     mazeCanvas = new MazeCanvas(maze.getMaze());
-
                 } else {
                     mazeCanvas = new MazeCanvas(aModel);
                 }
                 mazeCanvas.show();
-
                 resetParameters();
             }
         });
@@ -102,19 +108,27 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, startImageLabel, constraints, 0, 1, 1, 1);
-            addToPanel(mainPanel, startImageButton, constraints, 1, 1, 3, 1);
-            addToPanel(mainPanel, endImageLabel, constraints, 0, 2, 1, 1);
-            addToPanel(mainPanel, endImageButton, constraints, 1, 2, 3, 1);
-            addToPanel(mainPanel, LogoImageLabel, constraints, 0, 3, 1, 1);
-            addToPanel(mainPanel, logoImageButton, constraints, 1, 3, 3, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
+            addToPanel(mainPanel, mazeStartLabel, constraints, 0, 1, 1, 1);
+            addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
+            addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
+            addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
+            addToPanel(mainPanel, startImageLabel, constraints, 0, 2, 1, 1);
+            addToPanel(mainPanel, startImageButton, constraints, 1, 2, 3, 1);
+            addToPanel(mainPanel, endImageLabel, constraints, 0, 3, 1, 1);
+            addToPanel(mainPanel, endImageButton, constraints, 1, 3, 3, 1);
+            addToPanel(mainPanel, LogoImageLabel, constraints, 0, 4, 1, 1);
+            addToPanel(mainPanel, logoImageButton, constraints, 1, 4, 3, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 5, 2, 1);
         } else {
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 1, 2, 1);
+            addToPanel(mainPanel, mazeStartLabel, constraints, 0, 1, 1, 1);
+            addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
+            addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
+            addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 2, 2, 1);
         }
     }
 

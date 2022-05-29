@@ -96,6 +96,14 @@ public class MazeModel {
         return endPosition;
     }
 
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getEndX() {
+        return endX;
+    }
+
     public void solve() {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 
