@@ -56,7 +56,7 @@ public class MazeExporter {
                     y += cell;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.PATH)) {
-                    g.setColor(Color.YELLOW);
+                    g.setColor(Color.BLUE);
                     g.fillRect(x, y, cell, cell);
                     y += cell;
                 }
@@ -71,16 +71,20 @@ public class MazeExporter {
         ImageIO.write(image, "png", new File(path));
     }
 
-
-    // Testing
-    public static void main(String[] a) throws IOException {
-        int width = 100;
-        int height = 100;
-        int cellSize = 32;
-
-        MazeGenerator mazeGen = new MazeGenerator(width, height, 1, width - 3);
-        MazeModel maze = mazeGen.getMaze();
-        MazeExporter exporter = new MazeExporter(maze, cellSize);
-        exporter.ExportPNG("./Mazes/test.png");
+    public BufferedImage getBufferedImage() {
+        return image;
     }
+
+
+//    // Testing
+//    public static void main(String[] a) throws IOException {
+//        int width = 100;
+//        int height = 100;
+//        int cellSize = 32;
+//
+//        MazeGenerator mazeGen = new MazeGenerator(width, height, 1, width - 3);
+//        MazeModel maze = mazeGen.getMaze();
+//        MazeExporter exporter = new MazeExporter(maze, cellSize);
+//        exporter.ExportPNG("./Mazes/test.png");
+//    }
 }
