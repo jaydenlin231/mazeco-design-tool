@@ -55,28 +55,32 @@ public class MazeExporter {
                     g.fillRect(x, y, cell, cell);
                     y += cell;
                 }
+                if (mazeModel.getBlock(i, j).equals(Block.PATH)) {
+                    g.setColor(Color.YELLOW);
+                    g.fillRect(x, y, cell, cell);
+                    y += cell;
+                }
+
             }
             x += cell;
             y = 0;
         }
     }
 
-    public void ExportPNG() throws IOException {
-        ImageIO.write(image, "png", new File("./Mazes/test.png"));
+    public void ExportPNG(String path) throws IOException {
+        ImageIO.write(image, "png", new File(path));
     }
 
 
     // Testing
     public static void main(String[] a) throws IOException {
-        int width = 50;
-        int height = 20;
+        int width = 100;
+        int height = 100;
         int cellSize = 32;
 
         MazeGenerator mazeGen = new MazeGenerator(width, height, 1, width - 3);
         MazeModel maze = mazeGen.getMaze();
         MazeExporter exporter = new MazeExporter(maze, cellSize);
-        exporter.ExportPNG();
+        exporter.ExportPNG("./Mazes/test.png");
     }
-
-
 }
