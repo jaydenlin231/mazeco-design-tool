@@ -7,9 +7,14 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
+import com.mazeco.database.JDBCMazeBrowserDataSource;
+import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
+import com.mazeco.models.MazeRecord;
+import com.mazeco.models.User;
 import com.mazeco.utilities.MazeGenerator;
 
 
@@ -212,12 +217,9 @@ public class MazeCanvas implements IUserInterface {
 
     }
 
-    private void handleSaveButton() {
-        try {
-            saveMaze(mazeModel);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+    private void handleSaveButton() throws SQLException {
+        MazeBrowserData dbMazeBrowserData = new MazeBrowserData();
+        dbMazeBrowserData.add(new MazeRecord("Test1", new User("Admin", "User", "tba", "tba"), mazeModel));
         window.dispose();
         System.out.println("Saved");
     }
@@ -233,7 +235,12 @@ public class MazeCanvas implements IUserInterface {
         public void actionPerformed(ActionEvent e) {
             Component source = (Component) e.getSource();
             if (source == saveBttn) {
-                handleSaveButton();
+                try {
+                    handleSaveButton();
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             } else if (source == clearBttn) {
                 handleClearButton();
             } else if (source == checkBttn) {
