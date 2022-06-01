@@ -1,17 +1,24 @@
 package com.mazeco.models;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
 /**
  *  Stores the record and the metadata of a successfully created {@code MazeModel}.
  * 
  *  @see MazeModel
  */
 public class MazeRecord {
-    private String id;
+    private static final long serialVersionUID = -102877324682862507L;
+
+    private UUID id;
     private String name;
     private User author;
-    private Date dateCreated;
-    private Date dateModified;
+    private ZonedDateTime dateTimeCreated;
+    private ZonedDateTime dateTimeModified;
     private MazeModel mazeModel;
 
     /**
@@ -23,13 +30,30 @@ public class MazeRecord {
      * @see MazeModel
      */
     public MazeRecord(String name, User author, MazeModel mazeModel) {
+        this.id = UUID.randomUUID();
         this.name = name;
         this.author = author;
         this.mazeModel = mazeModel;
-        this.dateCreated = new Date();
+        Instant instant = Instant.now();
+        ZoneId zid = ZoneId.systemDefault();
+        this.dateTimeCreated = instant.atZone(zid);
+        this.dateTimeModified = instant.atZone(zid);
     }
 
-    public String getId() {
+    // Deserialise
+    public MazeRecord(String id, String name, String author, ZonedDateTime dateTimeCreated, ZonedDateTime dateTimeModified, MazeModel mazeModel) {
+        this.id = UUID.fromString(id);
+        this.name = name;
+        String[] authorNameSplit = author.split(" ");
+        this.author = new User(authorNameSplit[0], authorNameSplit[1], "tba", "tba");
+
+        this.mazeModel = mazeModel;
+        this.dateTimeCreated = dateTimeCreated;
+        this.dateTimeModified = dateTimeModified;
+        this.mazeModel = mazeModel;
+    }
+
+    public UUID getId() {
         return id;
     }
     public String getName() {
@@ -41,16 +65,22 @@ public class MazeRecord {
     public User getAuthor() {
         return author;
     }
-    public Date getDateCreated() {
-        return dateCreated;
+    public ZonedDateTime getDateTimeCreated() {
+        return dateTimeCreated;
     }
-    public Date getDateModified() {
-        return dateModified;
+    public ZonedDateTime getDateTimeModified() {
+        return dateTimeModified;
     }
-    public void setDateModified(Date dateModified) {
-        this.dateModified = dateModified;
+    public void setDateModified(ZonedDateTime dateModified) {
+        this.dateTimeModified = dateModified;
     }
     public MazeModel getMazeModel() {
         return mazeModel;
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return name + " - " + author + "        " + "MazeCo#" + id.toString();
     }
 }
