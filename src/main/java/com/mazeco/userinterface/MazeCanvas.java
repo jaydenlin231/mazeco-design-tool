@@ -30,6 +30,7 @@ public class MazeCanvas implements IUserInterface {
     private final JButton checkBttn = new JButton("Check Maze");
     private final JButton clearBttn = new JButton("Clear Maze");
     private final JButton solutionBttn = new JButton("Toggle Solution");
+    private final JButton exportBttn = new JButton("Test Export");
 
     private final JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));
     private final JPanel canvasPanel;
@@ -62,18 +63,18 @@ public class MazeCanvas implements IUserInterface {
         if (regenerateButton) {
             sidePanel.add(regenBttn);
             sidePanel.add(clearBttn);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 5; i++) {
                 JLabel blankPlaceHolder = new JLabel();
                 sidePanel.add(blankPlaceHolder);
             }
         } else {
             sidePanel.add(clearBttn);
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 6; i++) {
                 JLabel blankPlaceHolder = new JLabel();
                 sidePanel.add(blankPlaceHolder);
             }
         }
-
+        sidePanel.add(exportBttn);
         sidePanel.add(checkBttn);
         sidePanel.add(solutionBttn);
         sidePanel.add(saveBttn);
@@ -83,6 +84,7 @@ public class MazeCanvas implements IUserInterface {
         saveBttn.addActionListener(new SideMenuActionListener());
         solutionBttn.addActionListener(new SideMenuActionListener());
         regenBttn.addActionListener(new SideMenuActionListener());
+        exportBttn.addActionListener(new SideMenuActionListener());
         
     }
 
@@ -184,6 +186,17 @@ public class MazeCanvas implements IUserInterface {
 
     }
 
+    private void handleExportButton() throws IOException {
+        mazeModel.clearSolution();
+        MazeExporter cleanMaze = new MazeExporter(mazeModel, 32);
+        mazeModel.solve();
+        MazeExporter solvedMaze = new MazeExporter(mazeModel, 32);
+        cleanMaze.ExportPNG("./Mazes/Clean.png");
+        solvedMaze.ExportPNG("./Mazes/Solved.png");
+        window.dispose();
+        System.out.println("Exported");
+    }
+
     private void handleSanityCheckButton() {
         mazeModel.clearSolution();
         mazeModel.solve();
@@ -249,6 +262,12 @@ public class MazeCanvas implements IUserInterface {
                 handleSolutionButton();
             } else if (source == regenBttn) {
                 handleRegenerateButton();
+            } else if (source == exportBttn) {
+                try {
+                    handleExportButton();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
