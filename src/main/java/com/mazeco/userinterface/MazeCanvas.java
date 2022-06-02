@@ -95,7 +95,7 @@ public class MazeCanvas implements IUserInterface {
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setMinimumSize(new Dimension(900, 800));
         window.setLayout(new BorderLayout());
-        window.setResizable(true);
+        window.setResizable(false);
 
         window.add(sidePanel, BorderLayout.WEST);
         window.add(canvasPanel, BorderLayout.CENTER);
@@ -180,7 +180,7 @@ public class MazeCanvas implements IUserInterface {
                 
             case PATH:
                 if(isSolutionVisible)
-                    aBlockButton.setBackground(Color.BLUE);
+                    aBlockButton.setBackground(Color.YELLOW);
                 else
                     aBlockButton.setBackground(Color.WHITE);
                 break;

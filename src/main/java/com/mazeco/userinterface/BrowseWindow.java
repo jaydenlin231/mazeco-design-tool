@@ -59,6 +59,7 @@ public class BrowseWindow implements IUserInterface {
         window.setMinimumSize(new Dimension(500, 400));
         window.pack();
         // Centre the window
+        window.setResizable(false);
         window.setLocationRelativeTo(null);
     }
 
