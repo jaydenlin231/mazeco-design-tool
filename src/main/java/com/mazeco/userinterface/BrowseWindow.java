@@ -15,10 +15,11 @@ import javax.swing.event.ListSelectionListener;
 public class BrowseWindow implements IUserInterface {
     private final String TITLE = "Browse";
     private final JFrame window = new JFrame(TITLE);
-    private final JPanel mazePreviewWindow = new JPanel();
     private final JButton sortMenuPlaceHold = new JButton("Sort Menu Place Holder");
 
-    private final JButton editMazeButton = new JButton("Edit");
+    private final Icon editIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen2.png"));
+
+    private final JButton editMazeButton = new JButton("Edit", editIcon);
     private final JButton toggleSolutionButton = new JButton("Solution");
     private final JButton deleteMazeButton = new JButton("Delete");
     private final JButton exportMazeButton = new JButton("Export");
@@ -27,7 +28,7 @@ public class BrowseWindow implements IUserInterface {
     private final JPanel leftPanel = new JPanel(new BorderLayout());
     private final JPanel rightPanel = new JPanel(new GridLayout(2, 1));
     private final JPanel mainPanel = new JPanel(new GridLayout(1, 2));
-    
+
     private JButton mazePreviewButton = new JButton();
     private boolean isSolutionVisible = false;
 
@@ -37,7 +38,7 @@ public class BrowseWindow implements IUserInterface {
     private JLabel mazeDateTimeCreatedDisplay;
     private JLabel mazeDateTimeModifiedDisplay;
 
-    private final JPanel opButtonsPanel = new JPanel(new GridLayout(1, 3));
+    private final JPanel opButtonsPanel = new JPanel(new GridLayout(1, 4));
 
     private JList mazeList;
 
@@ -64,7 +65,10 @@ public class BrowseWindow implements IUserInterface {
         window.setLocationRelativeTo(null);
     }
 
-    private void initialiseMazeOpButtons(){
+    private void initialiseMazeOpButtons() {
+        opButtonsPanel.setPreferredSize(new Dimension(400, 80));
+        editMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        editMazeButton.setHorizontalTextPosition(SwingConstants.CENTER);
         editMazeButton.addActionListener(new MazeOpButtonActionListener());
         mazePreviewButton.addActionListener(new MazeOpButtonActionListener());
         toggleSolutionButton.addActionListener(new MazeOpButtonActionListener());
@@ -86,6 +90,7 @@ public class BrowseWindow implements IUserInterface {
     private JPanel initialiseMazeOpPanel() {
         JPanel mazeOperationPanel = new JPanel(new BorderLayout());
         initialiseMazeOpButtons();
+
         opButtonsPanel.add(editMazeButton);
         opButtonsPanel.add(deleteMazeButton);
         opButtonsPanel.add(toggleSolutionButton);
@@ -99,7 +104,7 @@ public class BrowseWindow implements IUserInterface {
 
     private JScrollPane initialiseMazeListPanel() {
         mazeList = new JList<MazeRecord>(data.getModel());
-        mazeList.setFixedCellHeight(50);
+        mazeList.setFixedCellHeight(30);
         mazeList.addListSelectionListener(new MazeListListener());
   
         JScrollPane scroller = new JScrollPane(mazeList);
