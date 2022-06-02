@@ -57,7 +57,7 @@ public class MazeExporter {
                     y += cell;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.PATH)) {
-                    g.setColor(Color.BLUE);
+                    g.setColor(Color.YELLOW);
                     g.fillRect(x, y, cell, cell);
                     y += cell;
                 }

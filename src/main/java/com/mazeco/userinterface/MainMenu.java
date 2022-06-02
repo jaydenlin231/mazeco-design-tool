@@ -49,7 +49,7 @@ public class MainMenu implements IUserInterface {
     private void initialiseWindow() {
         window.add(mainPanel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setPreferredSize(new Dimension(1000, 800));
+        window.setPreferredSize(new Dimension(750, 600));
         window.setMinimumSize(new Dimension(500, 400));
         window.pack();
         // Centre the window

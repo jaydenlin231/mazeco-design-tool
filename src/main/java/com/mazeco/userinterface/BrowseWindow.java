@@ -32,6 +32,7 @@ public class BrowseWindow implements IUserInterface {
     private boolean isSolutionVisible = false;
 
     private JLabel mazeNameDisplay;
+    private JLabel mazeSizeDisplay;
     private JLabel mazeAuthorDisplay;
     private JLabel mazeDateTimeCreatedDisplay;
     private JLabel mazeDateTimeModifiedDisplay;
@@ -120,11 +121,13 @@ public class BrowseWindow implements IUserInterface {
   
         JLabel mazeDetailsLabel = new JLabel("<html><b> Maze Details </b></html>");
         JLabel mazeNameLabel = new JLabel("Name");
+        JLabel mazeSizeLabel = new JLabel("Maze Size");
         JLabel mazeAuthorLabel = new JLabel("Author");
         JLabel mazeDateTimeCreatedLabel = new JLabel("Created");
         JLabel mazeDateTimeModifiedLabel = new JLabel("Modified");
-  
+
         mazeNameDisplay = new JLabel("...");
+        mazeSizeDisplay = new JLabel("...");
         mazeAuthorDisplay = new JLabel("...");
         mazeDateTimeCreatedDisplay = new JLabel("...");
         mazeDateTimeModifiedDisplay = new JLabel("...");
@@ -134,26 +137,65 @@ public class BrowseWindow implements IUserInterface {
         constraints.anchor = GridBagConstraints.WEST;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        
+
         constraints.insets = new Insets(0, 10, 0, 10);
 
         // addToPanel(mazeDetailPanel, mazeIdLabel, constraints, 0, 0, 1, 1);
         addToPanel(mazeDetailPanel, mazeDetailsLabel, constraints, 0, 0, 2, 1);
         addToPanel(mazeDetailPanel, mazeNameLabel, constraints, 0, 1, 1, 1);
-        addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 2, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 3, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 4, 1, 1);
+        addToPanel(mazeDetailPanel, mazeSizeLabel, constraints, 0, 2, 1, 1);
+        addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 3, 1, 1);
+        addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 4, 1, 1);
+        addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 5, 1, 1);
         
         constraints.anchor = GridBagConstraints.EAST;
         addToPanel(mazeDetailPanel, mazeNameDisplay, constraints, 1, 1, 1, 1);
-        addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 2, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 3, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 4, 1, 1);
-  
+        addToPanel(mazeDetailPanel, mazeSizeDisplay, constraints, 1, 2, 1, 1);
+        addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 3, 1, 1);
+        addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 4, 1, 1);
+        addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 5, 1, 1);
+
         return mazeDetailPanel;
     }
 
-     /**
+
+    private void displayMazeRecordDetail(MazeRecord mazeRecord){
+        if(mazeRecord == null)
+            return;
+
+        mazePreviewButton.setText("<html><em><b>MazeCo#<b/><em/><html/>" + mazeRecord.getId().toString());
+        mazePreviewButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        mazeNameDisplay.setText(mazeRecord.getName());
+        mazeSizeDisplay.setText(mazeRecord.getMazeModel().getWidth() + " x " + mazeRecord.getMazeModel().getHeight());
+        mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
+        mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
+        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
+        Image scaledCleanImage = mazeRecord.getCleanImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
+        Image scaledSolvedImage = mazeRecord.getSolvedImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
+        if (isSolutionVisible == false)
+            mazePreviewButton.setIcon(new ImageIcon(scaledCleanImage));
+        else
+            mazePreviewButton.setIcon(new ImageIcon(scaledSolvedImage));
+    }
+
+    private void resetMazeRecordDetail(){
+        mazePreviewButton.setText("");
+        mazeNameDisplay.setText("...");
+        mazeSizeDisplay.setText("...");
+        mazeAuthorDisplay.setText("...");
+        mazeDateTimeCreatedDisplay.setText("...");
+        mazeDateTimeModifiedDisplay.setText("...");
+        mazePreviewButton.setIcon(new ImageIcon());
+    }
+
+    @Override
+    public void show() {
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+    }
+
+    /**
      * A convenience method to add a component to given grid bag
      * layout locations. Code due to Cay Horstmann
      *
@@ -172,50 +214,20 @@ public class BrowseWindow implements IUserInterface {
         jp.add(c, constraints);
     }
 
-    private void displayMazeRecordDetail(MazeRecord mazeRecord){
-        if(mazeRecord == null)
-            return;
-        
-        mazePreviewButton.setText("<html><em><b>MazeCo#<b/><em/><html/>" + mazeRecord.getId().toString());
-        mazePreviewButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        mazeNameDisplay.setText(mazeRecord.getName());
-        mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
-        mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
-        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
-        mazePreviewButton.setIcon(mazeRecord.getCleanImage());
-    }
-
-    private void resetMazeRecordDetail(){
-        mazePreviewButton.setText("");
-        mazeNameDisplay.setText("...");
-        mazeAuthorDisplay.setText("...");
-        mazeDateTimeCreatedDisplay.setText("...");
-        mazeDateTimeModifiedDisplay.setText("...");
-        mazePreviewButton.setIcon(new ImageIcon());
-    }
-
-    @Override
-    public void show() {
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-    }
-
     /**
-    * Implements a ListSelectionListener for making the UI respond when a
-    * different name is selected from the list.
-    */
-   private class MazeListListener implements ListSelectionListener {
-
-    /**
-     * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+     * Implements a ListSelectionListener for making the UI respond when a
+     * different name is selected from the list.
      */
+    private class MazeListListener implements ListSelectionListener {
+
+        /**
+         * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+         */
     @Override
     public void valueChanged(ListSelectionEvent e) {
             if (mazeList.getSelectedValue() != null) {
                 MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
                 displayMazeRecordDetail(selectedMazeRecord);
-                isSolutionVisible = false;
             }
         }
     }
@@ -251,20 +263,23 @@ public class BrowseWindow implements IUserInterface {
         private void handleExportMazeButton(){
 
         }
-        private void handleToggleSolutionButton(){
-            if (mazeList.getSelectedValue() == null) 
+        private void handleToggleSolutionButton() {
+            if (mazeList.getSelectedValue() == null)
                 return;
 
             MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
-            mazePreviewButton.setIcon(selectedMazeRecord.getSolvedImage());
-            
+            Image scaledSolvedImage = selectedMazeRecord.getSolvedImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
+            Image scaledCleanImage = selectedMazeRecord.getCleanImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
+
+            mazePreviewButton.setIcon(new ImageIcon(scaledSolvedImage));
+
             isSolutionVisible = !isSolutionVisible;
-            
-            if(isSolutionVisible)
-                mazePreviewButton.setIcon(selectedMazeRecord.getSolvedImage());
+
+            if (isSolutionVisible)
+                mazePreviewButton.setIcon(new ImageIcon(scaledSolvedImage));
             else
-                mazePreviewButton.setIcon(selectedMazeRecord.getCleanImage());
-            
+                mazePreviewButton.setIcon(new ImageIcon(scaledCleanImage));
+
         }
         private void handleEditMazeButton(){
             if (mazeList.getSelectedValue() == null) 
