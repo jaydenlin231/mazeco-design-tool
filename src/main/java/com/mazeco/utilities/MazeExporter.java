@@ -4,6 +4,7 @@ import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -73,6 +74,10 @@ public class MazeExporter {
 
     public BufferedImage getBufferedImage() {
         return image;
+    }
+
+    public ImageIcon getImageIcon(){
+        return new ImageIcon(image);
     }
 
 

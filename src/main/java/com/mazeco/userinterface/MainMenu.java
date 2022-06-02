@@ -2,8 +2,11 @@ package com.mazeco.userinterface;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import javax.swing.*;
 
+import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.MazeModel;
 
 public class MainMenu implements IUserInterface {
@@ -22,11 +25,19 @@ public class MainMenu implements IUserInterface {
     JPanel rightPanel = new JPanel(new BorderLayout());
     JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
-    private static BrowseWindow browseWindow = new BrowseWindow();
+    private BrowseWindow browseWindow;
     private static OptionsMenu drawOptionsMenu = new OptionsMenu("Draw");
     private static OptionsMenu generateOptionsMenu = new OptionsMenu("Generate");
 
     public MainMenu() {
+        try {
+            browseWindow = new BrowseWindow(MazeBrowserData.getInstance());
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+
         initialiseButtons();
 
         initialisePanels();

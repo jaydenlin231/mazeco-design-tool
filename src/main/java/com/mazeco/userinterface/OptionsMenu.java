@@ -86,9 +86,9 @@ public class OptionsMenu implements IUserInterface {
                 }
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
                 if (Objects.equals(options, "Generate")) {
-                    mazeCanvas = new MazeCanvas(maze.getMaze());
+                    mazeCanvas = MazeCanvas.getInstance(maze.getMaze());
                 } else {
-                    mazeCanvas = new MazeCanvas(aModel);
+                    mazeCanvas = MazeCanvas.getInstance(aModel);
                 }
                 mazeCanvas.show();
                 resetParameters();
