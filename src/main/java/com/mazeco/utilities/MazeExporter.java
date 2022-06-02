@@ -15,7 +15,8 @@ public class MazeExporter {
     final int mazeWidth, mazeHeight;
     int width, height;
     int cell;
-    BufferedImage image;
+    BufferedImage imageClean;
+    BufferedImage imageSolved;
 
     public MazeExporter(MazeModel mazeModel, int cellSize) {
         this.mazeModel = mazeModel;
@@ -29,8 +30,8 @@ public class MazeExporter {
     }
 
     public void paint() {
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
+        imageClean = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = imageClean.createGraphics();
         int x = 0;
         int y = 0;
         g.fillRect(0, 0, width - 1, height - 1);
@@ -68,16 +69,21 @@ public class MazeExporter {
         }
     }
 
-    public void ExportPNG(String path) throws IOException {
-        ImageIO.write(image, "png", new File(path));
+    public void ExportPNG(String path, boolean withSolution) throws IOException {
+        if (withSolution == true) {
+            ImageIO.write(imageClean, "png", new File(path));
+            mazeModel.solve();
+            paint();
+            ImageIO.write(imageClean, "png", new File("./Mazes/Solved.png"));
+            mazeModel.clearSolution();
+        } else {
+            ImageIO.write(imageClean, "png", new File(path));
+        }
     }
 
-    public BufferedImage getBufferedImage() {
-        return image;
-    }
 
-    public ImageIcon getImageIcon(){
-        return new ImageIcon(image);
+    public ImageIcon getImageIcon() {
+        return new ImageIcon(imageClean);
     }
 
 
