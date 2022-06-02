@@ -72,6 +72,9 @@ public class MainMenu implements IUserInterface {
     }
 
     private void initialiseButtons(){
+        drawButton.setFocusPainted(false);
+        generateButton.setFocusPainted(false);
+        browseButton.setFocusPainted(false);
         drawButton.addActionListener(new MenuActionListener());
         generateButton.addActionListener(new MenuActionListener());
         browseButton.addActionListener(new MenuActionListener());

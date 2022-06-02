@@ -275,6 +275,8 @@ public class BrowseWindow implements IUserInterface {
                 handleToggleSolutionButton();
             } else if (source == editMazeButton || source == mazePreviewButton) {
                 handleEditMazeButton();
+            } else if (source == exportMazeButton) {
+                handleExportMazeButton();
             }
         }
 
@@ -291,9 +293,16 @@ public class BrowseWindow implements IUserInterface {
             mazeList.setSelectedIndex(index);
         }
 
-        private void handleExportMazeButton(){
+        private void handleExportMazeButton() {
+            if (mazeList.getSelectedValue() == null)
+                return;
 
+            MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
+
+            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel());
+            exportMenu.show();
         }
+
         private void handleToggleSolutionButton() {
             if (mazeList.getSelectedValue() == null)
                 return;
