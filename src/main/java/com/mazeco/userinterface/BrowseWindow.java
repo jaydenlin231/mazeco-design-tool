@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -18,12 +19,16 @@ public class BrowseWindow implements IUserInterface {
     private final JButton sortMenuPlaceHold = new JButton("Sort Menu Place Holder");
 
     private final Icon editIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen2.png"));
+    private final Icon deleteIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/trash.png"));
+    private Icon toggleSolutionIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/toggleOff.png"));
+    private final Icon exportMazeIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/export.png"));
+
 
     private final JButton editMazeButton = new JButton("Edit", editIcon);
-    private final JButton toggleSolutionButton = new JButton("Solution");
-    private final JButton deleteMazeButton = new JButton("Delete");
-    private final JButton exportMazeButton = new JButton("Export");
-    private final JButton test = new JButton("test");
+    private JButton toggleSolutionButton = new JButton("Solution", toggleSolutionIcon);
+    private final JButton deleteMazeButton = new JButton("Delete", deleteIcon);
+    private final JButton exportMazeButton = new JButton("Export", exportMazeIcon);
+//    private final JButton test = new JButton("test");
 
     private final JPanel leftPanel = new JPanel(new BorderLayout());
     private final JPanel rightPanel = new JPanel(new GridLayout(2, 1));
@@ -67,16 +72,37 @@ public class BrowseWindow implements IUserInterface {
 
     private void initialiseMazeOpButtons() {
         opButtonsPanel.setPreferredSize(new Dimension(400, 80));
+        opButtonsPanel.setBackground(Color.white);
+        opButtonsPanel.setBorder(new EmptyBorder(0, 60, 0, 60));
+
         editMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         editMazeButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        deleteMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        deleteMazeButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        toggleSolutionButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        toggleSolutionButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        exportMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        exportMazeButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        editMazeButton.setBorderPainted(false);
+        editMazeButton.setFocusPainted(false);
+        deleteMazeButton.setBorderPainted(false);
+        deleteMazeButton.setFocusPainted(false);
+        toggleSolutionButton.setBorderPainted(false);
+        toggleSolutionButton.setFocusPainted(false);
+        exportMazeButton.setBorderPainted(false);
+        exportMazeButton.setFocusPainted(false);
+        deleteMazeButton.setMargin(new Insets(10, 1, 10, 1));
         editMazeButton.addActionListener(new MazeOpButtonActionListener());
         mazePreviewButton.addActionListener(new MazeOpButtonActionListener());
+        mazePreviewButton.setBorderPainted(false);
+        mazePreviewButton.setFocusPainted(false);
         toggleSolutionButton.addActionListener(new MazeOpButtonActionListener());
         exportMazeButton.addActionListener(new MazeOpButtonActionListener());
         deleteMazeButton.addActionListener(new MazeOpButtonActionListener());
     }
     
     private void initialisePanels() {
+        rightPanel.setBackground(Color.WHITE);
         rightPanel.add(mazePreviewButton);
         rightPanel.add(initialiseMazeOpPanel());
 
@@ -280,11 +306,14 @@ public class BrowseWindow implements IUserInterface {
 
             isSolutionVisible = !isSolutionVisible;
 
-            if (isSolutionVisible)
+            if (isSolutionVisible) {
+                toggleSolutionButton.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/toggleOn.png")));
                 mazePreviewButton.setIcon(new ImageIcon(scaledSolvedImage));
-            else
-                mazePreviewButton.setIcon(new ImageIcon(scaledCleanImage));
 
+            } else {
+                toggleSolutionButton.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/toggleOff.png")));
+                mazePreviewButton.setIcon(new ImageIcon(scaledCleanImage));
+            }
         }
         private void handleEditMazeButton(){
             if (mazeList.getSelectedValue() == null) 

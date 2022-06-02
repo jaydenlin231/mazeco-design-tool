@@ -13,7 +13,7 @@ public class MainMenu implements IUserInterface {
     private static final String TITLE = "MazeCo Design Tool";
     private static final JFrame window = new JFrame(TITLE);
 
-    private static final Icon generateIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/plus.png"));
+    private static final Icon generateIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/laptop.png"));
     private static final Icon drawIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen.png"));
     private static final Icon browseIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/folder.jpeg"));
     
@@ -75,7 +75,6 @@ public class MainMenu implements IUserInterface {
         drawButton.addActionListener(new MenuActionListener());
         generateButton.addActionListener(new MenuActionListener());
         browseButton.addActionListener(new MenuActionListener());
-
         generateButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         generateButton.setHorizontalTextPosition(SwingConstants.CENTER);
         drawButton.setVerticalTextPosition(SwingConstants.BOTTOM);
