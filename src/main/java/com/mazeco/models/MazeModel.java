@@ -1,6 +1,7 @@
 package com.mazeco.models;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.mazeco.utilities.MazeProblem;
@@ -11,7 +12,9 @@ import com.mazeco.utilities.Node;
  * 
  *  @see MazeRecord
  */
-public class MazeModel {
+public class MazeModel implements Serializable{
+    private static final long serialVersionUID = -4565786099626384425L;
+    
     private static final int MIN_WIDTH = 10;
     private static final int MIN_HEIGHT = 10;
     private static final int MAX_WIDTH = 100;

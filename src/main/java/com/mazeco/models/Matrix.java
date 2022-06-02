@@ -1,5 +1,6 @@
 package com.mazeco.models;
 
+import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,7 +9,9 @@ import java.util.Iterator;
  * A generic 2D-matrix.
  * @param <E> the cell type.
  */
-public class Matrix<E> extends AbstractCollection<E> {
+public class Matrix<E> extends AbstractCollection<E> implements Serializable{
+    private static final long serialVersionUID = 2417231980546564746L;
+    
     private ArrayList<ArrayList<E>> data;
 
     /**

@@ -4,49 +4,58 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
+import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
+import com.mazeco.models.MazeRecord;
+import com.mazeco.models.User;
+import com.mazeco.utilities.MazeExporter;
 import com.mazeco.utilities.MazeGenerator;
 
 
 public class MazeCanvas implements IUserInterface {
-    private final String TITLE = "Editor";
-    private final JFrame window = new JFrame(TITLE);
+    private final static String TITLE = "Editor";
+    private final static JFrame window = new JFrame(TITLE);
 
-    private final JButton saveBttn = new JButton("Save");
-    private final JButton logoBttn = new JButton("Place Logo");
-    private final JButton startImgBttn = new JButton("Place Start Image");
-    private final JButton endImgBttn = new JButton("Place End Image");
-    private final JButton regenBttn = new JButton("Regenerate Maze");
-    private final JButton checkBttn = new JButton("Check Maze");
-    private final JButton clearBttn = new JButton("Clear Maze");
-    private final JButton solutionBttn = new JButton("Toggle Solution");
+    private final static JButton saveBttn = new JButton("Save");
+    private final static JButton logoBttn = new JButton("Place Logo");
+    private final static JButton startImgBttn = new JButton("Place Start Image");
+    private final static JButton endImgBttn = new JButton("Place End Image");
+    private final static JButton regenBttn = new JButton("Regenerate Maze");
+    private final static JButton checkBttn = new JButton("Check Maze");
+    private final static JButton clearBttn = new JButton("Clear Maze");
+    private final static JButton solutionBttn = new JButton("Toggle Solution");
+    private final static JButton exportBttn = new JButton("Test Export");
 
-    private final JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));
-    private final JPanel canvasPanel;
-    private MazeModel mazeModel;
+    private static JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));
+    private static JPanel canvasPanel;
+    private static MazeModel mazeModel;
 
-    private boolean isSolutionVisible = false;
+    private static boolean isSolutionVisible = false;
 
-    public MazeCanvas(MazeModel mazeModel) {
-        this.mazeModel = mazeModel;
+    private static MazeCanvas instance = null;
 
+    private MazeCanvas(MazeModel mazeModel) {
+        if(instance != null)
+            return;
+
+        MazeCanvas.mazeModel = mazeModel;
         if (mazeModel.getBlock(0, 0).equals(Block.WALL)) {
             initialiseSidePanel(true);
         } else {
             initialiseSidePanel(false);
 
         }
-
-        canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
-
+        MazeCanvas.canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
         renderCanvasPanelButtons();
 
         initialiseWindow();
+
+        instance = this;
     }
 
     private void initialiseSidePanel(boolean regenerateButton) {
@@ -68,7 +77,6 @@ public class MazeCanvas implements IUserInterface {
                 sidePanel.add(blankPlaceHolder);
             }
         }
-
         sidePanel.add(checkBttn);
         sidePanel.add(solutionBttn);
         sidePanel.add(saveBttn);
@@ -78,14 +86,16 @@ public class MazeCanvas implements IUserInterface {
         saveBttn.addActionListener(new SideMenuActionListener());
         solutionBttn.addActionListener(new SideMenuActionListener());
         regenBttn.addActionListener(new SideMenuActionListener());
+        exportBttn.addActionListener(new SideMenuActionListener());
         
     }
 
     private void initialiseWindow() {
+        window.addWindowListener(new ClosingListener());
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setMinimumSize(new Dimension(900, 800));
         window.setLayout(new BorderLayout());
-        window.setResizable(true);
+        window.setResizable(false);
 
         window.add(sidePanel, BorderLayout.WEST);
         window.add(canvasPanel, BorderLayout.CENTER);
@@ -95,6 +105,8 @@ public class MazeCanvas implements IUserInterface {
     private void reRenderCanvasPanel(){
         removeAllAndRepaintCanvasPanel();
         renderCanvasPanelButtons();
+        canvasPanel.repaint();
+        window.repaint();
         window.pack();
     }
 
@@ -212,20 +224,29 @@ public class MazeCanvas implements IUserInterface {
 
     }
 
-    private void handleSaveButton() {
-        try {
-            saveMaze(mazeModel);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+    private void handleSaveButton() throws SQLException {
+        mazeModel.clearSolution();
+        MazeExporter cleanMaze = new MazeExporter(mazeModel, 32);
+        mazeModel.solve();
+        MazeExporter solvedMaze = new MazeExporter(mazeModel, 32);
+        
+        ImageIcon cleanImage = cleanMaze.getImageIcon();
+        ImageIcon solvedImage = solvedMaze.getImageIcon();
+        
+        MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
+        dbMazeBrowserData.add(new MazeRecord("Test1", new User("Admin", "User", "tba", "tba"), mazeModel, cleanImage, solvedImage));
         window.dispose();
         System.out.println("Saved");
     }
 
     @Override
     public void show() {
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                window.setLocationRelativeTo(null);
+                window.setVisible(true);
+            }
+        });
     }
 
     private class SideMenuActionListener implements ActionListener {
@@ -233,7 +254,12 @@ public class MazeCanvas implements IUserInterface {
         public void actionPerformed(ActionEvent e) {
             Component source = (Component) e.getSource();
             if (source == saveBttn) {
-                handleSaveButton();
+                try {
+                    handleSaveButton();
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             } else if (source == clearBttn) {
                 handleClearButton();
             } else if (source == checkBttn) {
@@ -318,4 +344,36 @@ public class MazeCanvas implements IUserInterface {
         }
 
     }
+
+    /**
+    * Implements the windowClosing method from WindowAdapter/WindowListener to
+    * persist the contents of the data/model.
+    */
+   private class ClosingListener extends WindowAdapter {
+        /**
+         * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+         */
+        public void windowClosing(WindowEvent e) {
+            try {
+                MazeBrowserData.reSyncMazeRecords();
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    public static MazeCanvas getInstance(MazeModel mazeModel) {
+        isSolutionVisible = false;
+
+        if (instance == null) {
+           new MazeCanvas(mazeModel);
+        } else {
+            MazeCanvas.mazeModel = mazeModel;
+            MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
+            instance.reRenderCanvasPanel();
+            // window.repaint();
+        }
+        return instance;
+     }
 }

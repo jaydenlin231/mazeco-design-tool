@@ -29,7 +29,7 @@ public class MazeGenerator {
 
     public void generateMaze() {
         DFS(1, start);
-        System.out.println(maze.toString());
+//        System.out.println(maze.toString());
     }
 
     public void DFS(int row, int col) {
