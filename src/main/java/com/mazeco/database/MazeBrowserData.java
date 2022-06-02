@@ -8,10 +8,12 @@ import javax.swing.ListModel;
 import com.mazeco.models.MazeRecord;
 
 public class MazeBrowserData {
-    DefaultListModel<MazeRecord> listModel;
-    JDBCMazeBrowserDataSource dbMazeBrowserData;
+    static DefaultListModel<MazeRecord> listModel;
+    static JDBCMazeBrowserDataSource dbMazeBrowserData;
 
-    public MazeBrowserData() throws SQLException{
+    private static MazeBrowserData instance = null;
+
+    private MazeBrowserData() throws SQLException{
         listModel = new DefaultListModel<MazeRecord>();
         dbMazeBrowserData = new JDBCMazeBrowserDataSource();
 
@@ -19,6 +21,18 @@ public class MazeBrowserData {
             listModel.addElement(aMazeRecord);
         }
 
+    }
+
+    public static void reSyncMazeRecords() throws SQLException {
+        for(MazeRecord aMazeRecord : dbMazeBrowserData.retrieveAllMazeRecords()){
+            if(listModel.contains(aMazeRecord)){
+                int existingRecordIndex = listModel.indexOf(aMazeRecord);
+                listModel.removeElementAt(existingRecordIndex);
+                listModel.add(existingRecordIndex, aMazeRecord);
+            } else {
+                listModel.addElement(aMazeRecord);
+            }
+        }
     }
 
     public void add(MazeRecord mazeRecord){
@@ -57,5 +71,17 @@ public class MazeBrowserData {
     public ListModel<MazeRecord> getModel() {
         return listModel;
     }
+
+    public static MazeBrowserData getInstance() throws SQLException {
+        if (instance == null)
+            try {
+                return instance = new MazeBrowserData() ;
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        reSyncMazeRecords();
+        return instance;
+     }
 
 }

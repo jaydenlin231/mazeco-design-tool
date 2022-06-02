@@ -6,6 +6,8 @@ import com.mazeco.models.MazeRecord;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.time.format.DateTimeFormatter;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -13,7 +15,7 @@ import javax.swing.event.ListSelectionListener;
 public class BrowseWindow implements IUserInterface {
     private final String TITLE = "Browse";
     private final JFrame window = new JFrame(TITLE);
-    private final JButton mazePreviewPlaceHold = new JButton("Maze Preview Place Holder");
+    private final JPanel mazePreviewWindow = new JPanel();
     private final JButton sortMenuPlaceHold = new JButton("Sort Menu Place Holder");
 
     private final JButton editMazeButton = new JButton("Edit");
@@ -26,9 +28,9 @@ public class BrowseWindow implements IUserInterface {
     private final JPanel rightPanel = new JPanel(new GridLayout(2, 1));
     private final JPanel mainPanel = new JPanel(new GridLayout(1, 2));
     
-    private final JPanel mazePreviewPanel = new JPanel(new BorderLayout());
+    private JButton mazePreviewButton = new JButton();
+    private boolean isSolutionVisible = false;
 
-    private JLabel mazeIdDisplay;
     private JLabel mazeNameDisplay;
     private JLabel mazeAuthorDisplay;
     private JLabel mazeDateTimeCreatedDisplay;
@@ -38,7 +40,7 @@ public class BrowseWindow implements IUserInterface {
 
     private JList mazeList;
 
-    MazeBrowserData data;
+    private MazeBrowserData data;
 
     public BrowseWindow(MazeBrowserData data) {
         this.data = data;
@@ -62,14 +64,14 @@ public class BrowseWindow implements IUserInterface {
 
     private void initialiseMazeOpButtons(){
         editMazeButton.addActionListener(new MazeOpButtonActionListener());
+        mazePreviewButton.addActionListener(new MazeOpButtonActionListener());
         toggleSolutionButton.addActionListener(new MazeOpButtonActionListener());
         exportMazeButton.addActionListener(new MazeOpButtonActionListener());
         deleteMazeButton.addActionListener(new MazeOpButtonActionListener());
     }
     
     private void initialisePanels() {
-        
-        rightPanel.add(mazePreviewPlaceHold);
+        rightPanel.add(mazePreviewButton);
         rightPanel.add(initialiseMazeOpPanel());
 
         leftPanel.add(sortMenuPlaceHold, BorderLayout.NORTH);
@@ -82,6 +84,7 @@ public class BrowseWindow implements IUserInterface {
     private JPanel initialiseMazeOpPanel() {
         JPanel mazeOperationPanel = new JPanel(new BorderLayout());
         initialiseMazeOpButtons();
+        opButtonsPanel.add(editMazeButton);
         opButtonsPanel.add(deleteMazeButton);
         opButtonsPanel.add(toggleSolutionButton);
         opButtonsPanel.add(exportMazeButton);
@@ -114,17 +117,16 @@ public class BrowseWindow implements IUserInterface {
         JPanel mazeDetailPanel = new JPanel(new GridBagLayout());
         mazeDetailPanel.setBackground(Color.WHITE);
   
-        JLabel mazeIdLabel = new JLabel("MazeCo");
+        JLabel mazeDetailsLabel = new JLabel("<html><b> Maze Details </b></html>");
         JLabel mazeNameLabel = new JLabel("Name");
         JLabel mazeAuthorLabel = new JLabel("Author");
         JLabel mazeDateTimeCreatedLabel = new JLabel("Created");
         JLabel mazeDateTimeModifiedLabel = new JLabel("Modified");
   
-        mazeIdDisplay = new JLabel();
-        mazeNameDisplay = new JLabel();
-        mazeAuthorDisplay = new JLabel();
-        mazeDateTimeCreatedDisplay = new JLabel();
-        mazeDateTimeModifiedDisplay = new JLabel();
+        mazeNameDisplay = new JLabel("...");
+        mazeAuthorDisplay = new JLabel("...");
+        mazeDateTimeCreatedDisplay = new JLabel("...");
+        mazeDateTimeModifiedDisplay = new JLabel("...");
 
         GridBagConstraints constraints = new GridBagConstraints();
 
@@ -135,7 +137,7 @@ public class BrowseWindow implements IUserInterface {
         constraints.insets = new Insets(0, 10, 0, 10);
 
         // addToPanel(mazeDetailPanel, mazeIdLabel, constraints, 0, 0, 1, 1);
-        addToPanel(mazeDetailPanel, mazeIdDisplay, constraints, 0, 0, 2, 1);
+        addToPanel(mazeDetailPanel, mazeDetailsLabel, constraints, 0, 0, 2, 1);
         addToPanel(mazeDetailPanel, mazeNameLabel, constraints, 0, 1, 1, 1);
         addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 2, 1, 1);
         addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 3, 1, 1);
@@ -169,15 +171,27 @@ public class BrowseWindow implements IUserInterface {
         jp.add(c, constraints);
     }
 
-    private void showMazeRecordDetail(MazeRecord mazeRecord){
+    private void displayMazeRecordDetail(MazeRecord mazeRecord){
         if(mazeRecord == null)
             return;
         
-        mazeIdDisplay.setText("<html><em><b>MazeCo#<b/><em/><html/>" + mazeRecord.getId().toString());
+        mazePreviewButton.setText("<html><em><b>MazeCo#<b/><em/><html/>" + mazeRecord.getId().toString());
+        mazePreviewButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
         mazeNameDisplay.setText(mazeRecord.getName());
         mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
-        mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreated().toLocalDate().toString());
-        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeCreated().toLocalDate().toString());
+        mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
+        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
+        mazePreviewButton.setIcon(mazeRecord.getCleanImage());
+    }
+
+    private void resetMazeRecordDetail(){
+        mazePreviewButton.setText("");
+        mazeNameDisplay.setText("...");
+        mazeAuthorDisplay.setText("...");
+        mazeDateTimeCreatedDisplay.setText("...");
+        mazeDateTimeModifiedDisplay.setText("...");
+        mazePreviewButton.setIcon(new ImageIcon());
     }
 
     @Override
@@ -197,11 +211,10 @@ public class BrowseWindow implements IUserInterface {
      */
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        // TODO Auto-generated method stub
             if (mazeList.getSelectedValue() != null) {
-            //   display(data.get(mazeList.getSelectedValue()));
                 MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
-                showMazeRecordDetail(selectedMazeRecord);
+                displayMazeRecordDetail(selectedMazeRecord);
+                isSolutionVisible = false;
             }
         }
     }
@@ -216,7 +229,7 @@ public class BrowseWindow implements IUserInterface {
                 handleExportMazeButton();
             } else if (source == toggleSolutionButton) {
                 handleToggleSolutionButton();
-            } else if (source == editMazeButton) {
+            } else if (source == editMazeButton || source == mazePreviewButton) {
                 handleEditMazeButton();
             }
         }
@@ -227,8 +240,9 @@ public class BrowseWindow implements IUserInterface {
             index--;
             if (index == -1) {
                 if (data.getSize() != 0) {
-                index = 0;
+                    index = 0;
                 }
+                resetMazeRecordDetail();
             }
             mazeList.setSelectedIndex(index);
         }
@@ -237,10 +251,28 @@ public class BrowseWindow implements IUserInterface {
 
         }
         private void handleToggleSolutionButton(){
+            if (mazeList.getSelectedValue() == null) 
+                return;
 
+            MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
+            mazePreviewButton.setIcon(selectedMazeRecord.getSolvedImage());
+            
+            isSolutionVisible = !isSolutionVisible;
+            
+            if(isSolutionVisible)
+                mazePreviewButton.setIcon(selectedMazeRecord.getSolvedImage());
+            else
+                mazePreviewButton.setIcon(selectedMazeRecord.getCleanImage());
+            
         }
         private void handleEditMazeButton(){
+            if (mazeList.getSelectedValue() == null) 
+                return;
 
+            MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
+
+            MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel());
+            mazeCanvas.show();
         }
     }
     

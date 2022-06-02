@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
@@ -33,9 +34,12 @@ public class JDBCMazeBrowserDataSource {
                    + "author VARCHAR(30),"
                    + "dateTimeCreated TEXT,"
                    + "dateTimeModified TEXT,"
-                   + "mazeModel BLOB" + ");";
+                   + "mazeModel BLOB," 
+                   + "cleanImage BLOB," 
+                   + "solveImage BLOB" 
+                   + ");";
     
-    private static final String INSERT_MAZE_RECORD = "INSERT INTO maze (id, name, author, dateTimeCreated, dateTimeModified, mazeModel) VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_MAZE_RECORD = "INSERT INTO maze (id, name, author, dateTimeCreated, dateTimeModified, mazeModel, cleanImage, solveImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     private static final String GET_MAZE_RECORD = "SELECT * FROM maze WHERE id=?";
 
@@ -90,6 +94,22 @@ public class JDBCMazeBrowserDataSource {
             insertMazeRecord.setBinaryStream(6, new ByteArrayInputStream(data),
             data.length);
 
+            ByteArrayOutputStream cleanImgByteStream = new ByteArrayOutputStream();
+            ObjectOutputStream cleanImgObjectStream = new ObjectOutputStream(cleanImgByteStream);
+
+            cleanImgObjectStream.writeObject(mazeRecord.getCleanImage());
+            byte[] cleanImageData = cleanImgByteStream.toByteArray();
+            insertMazeRecord.setBinaryStream(7, new ByteArrayInputStream(cleanImageData),
+            cleanImageData.length);
+            
+            ByteArrayOutputStream solveImgByteStream = new ByteArrayOutputStream();
+            ObjectOutputStream solveImgOjectStream = new ObjectOutputStream(solveImgByteStream);
+
+            solveImgOjectStream.writeObject(mazeRecord.getSolvedImage());
+            byte[] solveImageData = solveImgByteStream.toByteArray();
+            insertMazeRecord.setBinaryStream(8, new ByteArrayInputStream(solveImageData),
+            solveImageData.length);
+
             insertMazeRecord.execute();
 
          } catch (SQLException e) {
@@ -102,9 +122,10 @@ public class JDBCMazeBrowserDataSource {
 
     public MazeRecord retrieveMazeRecord(String id) {
         ResultSet rs = null;
-        byte[] data;
         MazeModel mazeModel = null;
         MazeRecord mazeRecord = null;
+        ImageIcon cleanImage = null;
+        ImageIcon solveImage = null;
         try {
             getMazeRecord.setString(1, id);
             rs = getMazeRecord.executeQuery();
@@ -122,14 +143,28 @@ public class JDBCMazeBrowserDataSource {
             ZonedDateTime resultDateTimeCreated = resultInstantCreated.atZone(zid);
             ZonedDateTime resultDateTimeModified = resultInstantModified.atZone(zid);
 
-            byte[] mazeModelbyteArr = rs.getBytes("mazeModel");
             // data = blob.getBytes(1, (int) blob.length());
             // convert bytes back to object stream
+            byte[] mazeModelbyteArr = rs.getBytes("mazeModel");
             ByteArrayInputStream byteStream = new ByteArrayInputStream(mazeModelbyteArr);
             ObjectInputStream objectStream = new ObjectInputStream(byteStream);
             mazeModel = (MazeModel) objectStream.readObject();
 
-            mazeRecord = new MazeRecord(id, resultName, resultAuthor, resultDateTimeCreated,  resultDateTimeModified, mazeModel);
+            byte[] cleanImageByteArr = rs.getBytes("cleanImage");
+            ByteArrayInputStream cleanImgByteStream = new ByteArrayInputStream(cleanImageByteArr);
+            ObjectInputStream cleanImgObjectStream = new ObjectInputStream(cleanImgByteStream);
+            cleanImage = (ImageIcon) cleanImgObjectStream.readObject();
+
+            byte[] solveImageByteArr = rs.getBytes("solveImage");
+            ByteArrayInputStream solveImageByteStream = new ByteArrayInputStream(solveImageByteArr);
+            ObjectInputStream solveImageObjectStream = new ObjectInputStream(solveImageByteStream);
+            solveImage = (ImageIcon) solveImageObjectStream.readObject();
+
+            System.out.println(cleanImage);
+            System.out.println(solveImage);
+
+
+            mazeRecord = new MazeRecord(id, resultName, resultAuthor, resultDateTimeCreated,  resultDateTimeModified, mazeModel, cleanImage, solveImage);
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,7 +179,6 @@ public class JDBCMazeBrowserDataSource {
 
      public  ArrayList<MazeRecord> retrieveAllMazeRecords() throws SQLException {
         ResultSet rs = null;
-        byte[] data;
         ArrayList<MazeRecord> mazeRecords = new ArrayList<MazeRecord>();
         
         // getMazeRecord.setString(1, id);
@@ -173,7 +207,6 @@ public class JDBCMazeBrowserDataSource {
         ResultSet rs = null;
         int rows = 0;
   
-        /* BEGIN MISSING CODE */
         try {
            rs = rowCount.executeQuery();
            rs.next();
@@ -181,18 +214,15 @@ public class JDBCMazeBrowserDataSource {
         } catch (SQLException ex) {
            ex.printStackTrace();
         }
-        /* END MISSING CODE */
   
         return rows;
      }
 
     public void close() {
-        /* BEGIN MISSING CODE */
         try {
            connection.close();
         } catch (SQLException ex) {
            ex.printStackTrace();
         }
-        /* END MISSING CODE */
      }
 }   

@@ -31,11 +31,12 @@ public class MainMenu implements IUserInterface {
 
     public MainMenu() {
         try {
-            browseWindow = new BrowseWindow(new MazeBrowserData());
+            browseWindow = new BrowseWindow(MazeBrowserData.getInstance());
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
 
         initialiseButtons();
 

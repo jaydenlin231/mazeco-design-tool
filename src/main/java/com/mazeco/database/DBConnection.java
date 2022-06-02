@@ -37,8 +37,7 @@ public class DBConnection {
          String schema = props.getProperty("jdbc.schema");
 
          // get a connection
-         // instance = DriverManager.getConnection(url + "/" + schema, username, password);
-         instance = DriverManager.getConnection(url, username, password);
+         instance = DriverManager.getConnection(url + "/" + schema, username, password);
       } catch (SQLException sqle) {
          System.err.println(sqle);
       } catch (FileNotFoundException fnfe) {
