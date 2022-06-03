@@ -3,9 +3,12 @@ package com.mazeco.userinterface;
 import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
+import com.mazeco.utilities.SortCriteria;
+import com.mazeco.utilities.SortOrder;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
@@ -16,7 +19,11 @@ public class BrowseWindow implements IUserInterface {
     private final String TITLE = "Browse";
     private final JFrame window = new JFrame(TITLE);
     private final JPanel mazePreviewWindow = new JPanel();
-    private final JButton sortMenuPlaceHold = new JButton("Sort Menu Place Holder");
+    private final SortCriteria[] mazeSortOptions = SortCriteria.class.getEnumConstants();
+    private final JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
+    private SortCriteria selectedMazeSortCriteria;
+    private SortOrder selectedMazeSortOrder = SortOrder.ASC;
+    private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.label);
 
     private final JButton editMazeButton = new JButton("Edit");
     private final JButton toggleSolutionButton = new JButton("Solution");
@@ -38,7 +45,7 @@ public class BrowseWindow implements IUserInterface {
 
     private final JPanel opButtonsPanel = new JPanel(new GridLayout(1, 3));
 
-    private JList mazeList;
+    private JList<MazeRecord> mazeList;
 
     private MazeBrowserData data;
 
@@ -74,10 +81,8 @@ public class BrowseWindow implements IUserInterface {
     private void initialisePanels() {
         rightPanel.add(mazePreviewButton);
         rightPanel.add(initialiseMazeOpPanel());
-
-        leftPanel.add(sortMenuPlaceHold, BorderLayout.NORTH);
+        leftPanel.add(initialiseMazeSortPanel(), BorderLayout.NORTH);
         leftPanel.add(initialiseMazeListPanel(), BorderLayout.CENTER);
-
         mainPanel.add(leftPanel);
         mainPanel.add(rightPanel);
     }
@@ -94,6 +99,16 @@ public class BrowseWindow implements IUserInterface {
         mazeOperationPanel.add(opButtonsPanel, BorderLayout.SOUTH);
         
         return mazeOperationPanel;
+    }
+
+    private JPanel initialiseMazeSortPanel(){
+        JPanel mazeSortPanel = new JPanel(new GridLayout(1, 2));
+        mazeSortDropdown.addItemListener(new MazeSortListener());
+        mazeSortOrderButton.addActionListener(new MazeSortListener());
+        mazeSortPanel.add(mazeSortDropdown);
+        mazeSortPanel.add(mazeSortOrderButton);
+        
+        return mazeSortPanel;
     }
 
     private JScrollPane initialiseMazeListPanel() {
@@ -218,6 +233,45 @@ public class BrowseWindow implements IUserInterface {
                 isSolutionVisible = false;
             }
         }
+    }
+
+    private class MazeSortListener implements ItemListener, ActionListener{
+        @Override
+        public void itemStateChanged(ItemEvent event) {
+           if (event.getStateChange() == ItemEvent.SELECTED) {
+            selectedMazeSortCriteria = (SortCriteria)event.getItem();
+              
+            try {
+                if(selectedMazeSortCriteria == null || selectedMazeSortOrder == null)
+                    return;
+                
+                    MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, selectedMazeSortOrder);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+           }
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                if(selectedMazeSortCriteria == null || selectedMazeSortOrder == null)
+                    return;
+
+                if(selectedMazeSortOrder == SortOrder.ASC){
+                    MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.DSC);
+                    selectedMazeSortOrder = SortOrder.DSC;
+                    mazeSortOrderButton.setText(selectedMazeSortOrder.label);
+                    return;
+                }
+                
+                MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.ASC);
+                selectedMazeSortOrder = SortOrder.ASC;
+                mazeSortOrderButton.setText(selectedMazeSortOrder.label);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }       
     }
 
     private class MazeOpButtonActionListener implements ActionListener {

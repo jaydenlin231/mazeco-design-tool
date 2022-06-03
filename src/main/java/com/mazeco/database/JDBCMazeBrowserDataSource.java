@@ -160,8 +160,6 @@ public class JDBCMazeBrowserDataSource {
             ObjectInputStream solveImageObjectStream = new ObjectInputStream(solveImageByteStream);
             solveImage = (ImageIcon) solveImageObjectStream.readObject();
 
-            System.out.println(cleanImage);
-            System.out.println(solveImage);
 
 
             mazeRecord = new MazeRecord(id, resultName, resultAuthor, resultDateTimeCreated,  resultDateTimeModified, mazeModel, cleanImage, solveImage);
