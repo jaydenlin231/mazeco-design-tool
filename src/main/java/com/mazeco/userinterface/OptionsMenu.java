@@ -11,6 +11,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
 import javax.swing.JFrame;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class OptionsMenu implements IUserInterface {
     private final JFrame window = new JFrame();
@@ -71,7 +74,6 @@ public class OptionsMenu implements IUserInterface {
     }
 
     private void initialisePanel() {
-        generateButton.addActionListener(new GenerateButtonListener());
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -119,6 +121,17 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
             addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
+        generateButton.addActionListener(new GenerateButtonListener());
+        mazeNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
+            mazeNameField.setBorder(UIManager.getBorder("TextField.border"));
+        });
+        firstNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
+            firstNameField.setBorder(UIManager.getBorder("TextField.border"));
+        });
+        lastNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
+            lastNameField.setBorder(UIManager.getBorder("TextField.border"));
+        });
+
     }
 
     public void resetParameters() {
@@ -133,23 +146,49 @@ public class OptionsMenu implements IUserInterface {
         System.out.println(window);
     }
 
+    private interface TextFieldDocumentListener extends DocumentListener {
+        void update(DocumentEvent e);
+
+        @Override
+        default void insertUpdate(DocumentEvent e) {
+            update(e);
+        }
+
+        @Override
+        default void removeUpdate(DocumentEvent e) {
+            update(e);
+        }
+
+        @Override
+        default void changedUpdate(DocumentEvent e) {
+            update(e);
+        }
+    }
+
     private class GenerateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             MazeModel aModel = null;
             MazeGenerator maze = null;
-            String mazeName = null;
-            String firstName = null;
-            String lastName = null;
+
+            String mazeName = mazeNameField.getText();
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
+            if (mazeName.equals("") || firstName.equals("") || lastName.equals("")) {
+                if (mazeName.equals(""))
+                    mazeNameField.setBorder(new LineBorder(Color.RED, 1));
+                if (firstName.equals(""))
+                    firstNameField.setBorder(new LineBorder(Color.RED, 1));
+                if (lastName.equals(""))
+                    lastNameField.setBorder(new LineBorder(Color.RED, 1));
+                return;
+            }
             try {
                 Integer w = (Integer) mazeWidthInput.getValue();
                 Integer h = (Integer) mazeHeightInput.getValue();
                 Integer s = (Integer) mazeStartInput.getValue();
                 Integer e = (Integer) mazeEndInput.getValue();
-                mazeName = mazeNameField.getText();
-                firstName = firstNameField.getText();
-                lastName = lastNameField.getText();
-                System.out.println(mazeName);
+
                 if (s < w && e < w && Objects.equals(options, "Generate")) {
                     maze = new MazeGenerator(w, h, s, e);
                 } else if (s < w && e < w) {
