@@ -73,8 +73,7 @@ public class BrowseWindow implements IUserInterface {
     private void initialiseMazeOpButtons() {
         opButtonsPanel.setPreferredSize(new Dimension(400, 80));
         opButtonsPanel.setBackground(Color.white);
-        opButtonsPanel.setBorder(new EmptyBorder(0, 60, 0, 60));
-
+        opButtonsPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
         editMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         editMazeButton.setHorizontalTextPosition(SwingConstants.CENTER);
         deleteMazeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
