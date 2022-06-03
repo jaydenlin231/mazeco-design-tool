@@ -112,6 +112,12 @@ public class MazeRecord {
         // TODO Auto-generated method stub
         return id.equals(((MazeRecord) obj).getId());
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     @Override
     public String toString() {
         // TODO Auto-generated method stub

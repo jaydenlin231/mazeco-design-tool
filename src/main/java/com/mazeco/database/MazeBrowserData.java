@@ -1,13 +1,17 @@
 package com.mazeco.database;
 
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.UUID;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.ListModel;
 
+import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.SortCriteria;
 import com.mazeco.utilities.SortOrder;
@@ -94,6 +98,11 @@ public class MazeBrowserData {
             listModel.addElement(mazeRecord);
             dbMazeBrowserData.insertMazeRecord(mazeRecord);
          }
+    }
+
+    public void update(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage) throws SQLException{
+        dbMazeBrowserData.updateMazeRecord(mazeID, mazeModel, cleanImage, solvedImage);
+        reSyncMazeRecords();
     }
 
     public void remove(MazeRecord mazeRecord){

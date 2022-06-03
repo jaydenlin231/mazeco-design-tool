@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
+
 import javax.swing.ImageIcon;
 
 import com.mazeco.models.MazeModel;
@@ -41,6 +43,8 @@ public class JDBCMazeBrowserDataSource {
     
     private static final String INSERT_MAZE_RECORD = "INSERT INTO maze (id, name, author, dateTimeCreated, dateTimeModified, mazeModel, cleanImage, solveImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
+    private static final String UPDATE_MAZE_RECORD = "UPDATE maze SET dateTimeModified = ?, mazeModel = ?, cleanImage = ?, solveImage = ? WHERE id = ?";
+    
     private static final String GET_MAZE_RECORD = "SELECT * FROM maze WHERE id=?";
 
     private static final String GET_ALL_MAZE_RECORD = "SELECT * FROM maze";
@@ -51,6 +55,8 @@ public class JDBCMazeBrowserDataSource {
 
 
     private PreparedStatement insertMazeRecord;
+
+    private PreparedStatement updatetMazeRecord;
 
     private PreparedStatement getMazeRecord;
 
@@ -69,6 +75,7 @@ public class JDBCMazeBrowserDataSource {
             st.execute(CREATE_TABLE);
             // connection.commit();
             insertMazeRecord = connection.prepareStatement(INSERT_MAZE_RECORD);
+            updatetMazeRecord = connection.prepareStatement(UPDATE_MAZE_RECORD);
             getMazeRecord = connection.prepareStatement(GET_MAZE_RECORD);
             getAllMazeRecords = connection.prepareStatement(GET_ALL_MAZE_RECORD);
             deleteMazeRecord = connection.prepareStatement(DELETE_MAZE_RECORD);
@@ -118,6 +125,45 @@ public class JDBCMazeBrowserDataSource {
             e.printStackTrace();
         }
 
+    }
+
+    public void updateMazeRecord(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage){
+        try {
+            updatetMazeRecord.setObject(1, ZonedDateTime.now().toInstant());
+
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
+
+            objectStream.writeObject(mazeModel);
+            byte[] data = byteStream.toByteArray();
+            updatetMazeRecord.setBinaryStream(2, new ByteArrayInputStream(data),
+            data.length);
+
+            ByteArrayOutputStream cleanImgByteStream = new ByteArrayOutputStream();
+            ObjectOutputStream cleanImgObjectStream = new ObjectOutputStream(cleanImgByteStream);
+
+            cleanImgObjectStream.writeObject(cleanImage);
+            byte[] cleanImageData = cleanImgByteStream.toByteArray();
+            updatetMazeRecord.setBinaryStream(3, new ByteArrayInputStream(cleanImageData),
+            cleanImageData.length);
+            
+            ByteArrayOutputStream solveImgByteStream = new ByteArrayOutputStream();
+            ObjectOutputStream solveImgOjectStream = new ObjectOutputStream(solveImgByteStream);
+
+            solveImgOjectStream.writeObject(solvedImage);
+            byte[] solveImageData = solveImgByteStream.toByteArray();
+            updatetMazeRecord.setBinaryStream(4, new ByteArrayInputStream(solveImageData),
+            solveImageData.length);
+
+            updatetMazeRecord.setString(5, mazeID.toString());
+
+            updatetMazeRecord.execute();
+
+         } catch (SQLException e) {
+            e.printStackTrace();
+         } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public MazeRecord retrieveMazeRecord(String id) {

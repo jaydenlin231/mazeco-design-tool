@@ -1,12 +1,13 @@
 package com.mazeco.utilities;
 
-public enum SortOrder {
-    ASC("Ascending"),
-    DSC("Descending");
+public enum CanvasMode {
+    GENERATE("Generate"),
+    DRAW("Draw"),
+    EDIT("Edit");
 
     private final String label;
 
-    private SortOrder(String label){
+    private CanvasMode(String label){
         this.label = label;
     }
 

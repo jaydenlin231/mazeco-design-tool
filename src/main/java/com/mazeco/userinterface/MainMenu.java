@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.MazeModel;
+import com.mazeco.utilities.CanvasMode;
 
 public class MainMenu implements IUserInterface {
     private static final String TITLE = "MazeCo Design Tool";
@@ -26,8 +27,8 @@ public class MainMenu implements IUserInterface {
     JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
     private BrowseWindow browseWindow;
-    private static OptionsMenu drawOptionsMenu = new OptionsMenu("Draw");
-    private static OptionsMenu generateOptionsMenu = new OptionsMenu("Generate");
+    private static OptionsMenu drawOptionsMenu = new OptionsMenu(CanvasMode.DRAW);
+    private static OptionsMenu generateOptionsMenu = new OptionsMenu(CanvasMode.GENERATE);
 
     public MainMenu() {
         try {

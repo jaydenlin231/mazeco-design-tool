@@ -7,12 +7,14 @@ import javax.swing.border.EmptyBorder;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
 import com.mazeco.models.User;
+import com.mazeco.utilities.CanvasMode;
 import com.mazeco.utilities.MazeExporter;
 import com.mazeco.utilities.MazeGenerator;
 
@@ -42,20 +44,19 @@ public class MazeCanvas implements IUserInterface {
     private static String mazeName = null;
     private static User user = null;
 
-    private MazeCanvas(MazeModel mazeModel, String mazeName, User user) {
-        if (instance != null)
+    private static CanvasMode mode;
+    private static UUID currentMazeID;
+
+    private MazeCanvas(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
+        if(instance != null)
             return;
 
+        initSidePanelActionListeners();
+        
         MazeCanvas.mazeModel = mazeModel;
-        this.mazeName = mazeName;
-        this.user = user;
-
-        if (mazeModel.getBlock(0, 0).equals(Block.WALL)) {
-            initialiseSidePanel(true);
-        } else {
-            initialiseSidePanel(false);
-
-        }
+        MazeCanvas.mazeName = mazeName;
+        MazeCanvas.user = user;
+        initialiseSidePanel(mode);
         MazeCanvas.canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
         renderCanvasPanelButtons();
 
@@ -64,21 +65,32 @@ public class MazeCanvas implements IUserInterface {
         instance = this;
     }
 
-    private void initialiseSidePanel(boolean regenerateButton) {
+    private void initSidePanelActionListeners() {
+        clearBttn.addActionListener(new SideMenuActionListener());
+        checkBttn.addActionListener(new SideMenuActionListener());
+        saveBttn.addActionListener(new SideMenuActionListener());
+        solutionBttn.addActionListener(new SideMenuActionListener());
+        regenBttn.addActionListener(new SideMenuActionListener());
+        exportBttn.addActionListener(new SideMenuActionListener());
+    }
+
+    private void initialiseSidePanel(CanvasMode mode) {
         sidePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         sidePanel.add(logoBttn);
         sidePanel.add(startImgBttn);
         sidePanel.add(endImgBttn);
-        if (regenerateButton) {
-            sidePanel.add(regenBttn);
+        // Draw
+        if (mode == CanvasMode.DRAW) {
             sidePanel.add(clearBttn);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 JLabel blankPlaceHolder = new JLabel();
                 sidePanel.add(blankPlaceHolder);
             }
+        // Generate and Edit 
         } else {
+            sidePanel.add(regenBttn);
             sidePanel.add(clearBttn);
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 6; i++) {
                 JLabel blankPlaceHolder = new JLabel();
                 sidePanel.add(blankPlaceHolder);
             }
@@ -86,14 +98,6 @@ public class MazeCanvas implements IUserInterface {
         sidePanel.add(checkBttn);
         sidePanel.add(solutionBttn);
         sidePanel.add(saveBttn);
-
-        clearBttn.addActionListener(new SideMenuActionListener());
-        checkBttn.addActionListener(new SideMenuActionListener());
-        saveBttn.addActionListener(new SideMenuActionListener());
-        solutionBttn.addActionListener(new SideMenuActionListener());
-        regenBttn.addActionListener(new SideMenuActionListener());
-        exportBttn.addActionListener(new SideMenuActionListener());
-        
     }
 
     private void initialiseWindow() {
@@ -105,6 +109,15 @@ public class MazeCanvas implements IUserInterface {
 
         window.add(sidePanel, BorderLayout.WEST);
         window.add(canvasPanel, BorderLayout.CENTER);
+        window.pack();
+        
+    }
+
+    private void reRenderSidePanel(CanvasMode mode){
+        removeAllAndRepaintSidePanel();
+        initialiseSidePanel(mode);
+        sidePanel.repaint();
+        window.repaint();
         window.pack();
     }
 
@@ -157,6 +170,13 @@ public class MazeCanvas implements IUserInterface {
         if (canvasPanel != null) {
             canvasPanel.removeAll();
             canvasPanel.repaint();
+        }
+    }
+
+    private void removeAllAndRepaintSidePanel() {
+        if (sidePanel != null) {
+            sidePanel.removeAll();
+            sidePanel.repaint();
         }
     }
 
@@ -241,7 +261,12 @@ public class MazeCanvas implements IUserInterface {
         ImageIcon solvedImage = solvedMaze.getImageIcon();
 
         MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
-        dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
+        if(mode == CanvasMode.EDIT && currentMazeID != null){
+            System.out.println(currentMazeID);
+            dbMazeBrowserData.update(currentMazeID, mazeModel, cleanImage, solvedImage);
+        } else {
+            dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
+        }
         window.dispose();
         System.out.println("Saved");
     }
@@ -370,17 +395,24 @@ public class MazeCanvas implements IUserInterface {
         }
     }
 
-    public static MazeCanvas getInstance(MazeModel mazeModel, String mazeName, User user) {
+    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
         isSolutionVisible = false;
-
+        MazeCanvas.mode = mode;
+        
         if (instance == null) {
-            new MazeCanvas(mazeModel, mazeName, user);
+           new MazeCanvas(mazeModel, mode, mazeName, user);
         } else {
             MazeCanvas.mazeModel = mazeModel;
             MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
+            instance.reRenderSidePanel(mode);
             instance.reRenderCanvasPanel();
-            // window.repaint();
         }
+        return instance;
+     }
+
+    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, UUID mazeID, String mazeName, User user) {
+        instance = getInstance(mazeModel, mode, mazeName, user);
+        MazeCanvas.currentMazeID = mazeID;
         return instance;
      }
 }
