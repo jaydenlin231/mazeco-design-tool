@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MazeExporter {
     final MazeModel mazeModel;
@@ -69,15 +71,21 @@ public class MazeExporter {
         }
     }
 
-    public void ExportPNG(String path, boolean withSolution) throws IOException {
+    public void ExportPNG(File path, String name, boolean withSolution) throws IOException {
+        String solved = name + "Solved";
+        String fileNameClean = name + ".png";
+        String fileNameSolved = solved + ".png";
+        Path currentPath = Paths.get(String.valueOf(path));
+        Path filePath = Paths.get(currentPath.toString(), fileNameClean);
         if (withSolution == true) {
-            ImageIO.write(imageClean, "png", new File(path));
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
             mazeModel.solve();
             paint();
-            ImageIO.write(imageClean, "png", new File("./Mazes/Solved.png"));
+            filePath = Paths.get(currentPath.toString(), fileNameSolved);
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
             mazeModel.clearSolution();
         } else {
-            ImageIO.write(imageClean, "png", new File(path));
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
         }
     }
 

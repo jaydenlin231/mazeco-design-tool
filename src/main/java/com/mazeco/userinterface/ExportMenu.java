@@ -1,6 +1,7 @@
 package com.mazeco.userinterface;
 
 import com.mazeco.models.MazeModel;
+import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.MazeExporter;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 
 public class ExportMenu implements IUserInterface {
@@ -19,21 +21,24 @@ public class ExportMenu implements IUserInterface {
     private final JLabel cellSizeLabel = new JLabel("Cell Size", SwingConstants.CENTER);
     private final JLabel solutionLabel = new JLabel("Solution", SwingConstants.CENTER);
     private final JLabel cellSizeDescription = new JLabel("");
+
     private final JSpinner cellSizeInput = new JSpinner(new SpinnerNumberModel(32, 1, 200, 1));
     private final JButton exportButton = new JButton("Export");
+    private final JButton browseButton = new JButton("Choose folder...");
     private final JToggleButton solutionButton = new JToggleButton("Saving with solution");
-    private final JSpinner cellSizeInput = new JSpinner(new SpinnerNumberModel(32, 0, 200, 1));
 
-    private final JButton exportButton = new JButton("Export");
-    private JToggleButton solutionbutton = new JToggleButton("Saving with solution");
 
     private final MazeModel maze;
+    private final String mazeName;
     private MazeExporter exporter;
+
+    private File path;
 
     private boolean saveWithSolution = true;
 
-    public ExportMenu(MazeModel mazeModel) {
+    public ExportMenu(MazeModel mazeModel, String mazeName) {
         this.maze = mazeModel;
+        this.mazeName = mazeName;
         initialisePanel();
         initialiseWindow();
     }
@@ -66,6 +71,7 @@ public class ExportMenu implements IUserInterface {
         constraints.weighty = 1;
         constraints.insets = new Insets(1, 2, 1, 2);
         addToPanel(mainPanel, directoryLabel, constraints, 0, 0, 1, 1);
+        addToPanel(mainPanel, browseButton, constraints, 1, 0, 1, 1);
         addToPanel(mainPanel, cellSizeLabel, constraints, 0, 1, 1, 1);
         addToPanel(mainPanel, cellSizeInput, constraints, 1, 1, 1, 1);
         addToPanel(mainPanel, cellSizeDescription, constraints, 1, 2, 1, 1);
@@ -76,6 +82,7 @@ public class ExportMenu implements IUserInterface {
         solutionButton.addItemListener(new ToggleListener());
         cellSizeInput.addChangeListener(new SpinnerListener());
         exportButton.addActionListener(new ExportButtonListener());
+        browseButton.addActionListener(new BrowseButtonListener());
 
     }
 
@@ -95,10 +102,24 @@ public class ExportMenu implements IUserInterface {
                 System.out.println("Number error");
             }
             try {
-                exporter.ExportPNG("./Mazes/Clean.png", saveWithSolution);
+                exporter.ExportPNG(path, mazeName, saveWithSolution);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class BrowseButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int option = fileChooser.showOpenDialog(window);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                path = fileChooser.getSelectedFile();
+                browseButton.setText("Selected: " + path.getName());
             }
         }
     }

@@ -298,7 +298,7 @@ public class BrowseWindow implements IUserInterface {
 
             MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
 
-            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel());
+            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName());
             exportMenu.show();
         }
 
