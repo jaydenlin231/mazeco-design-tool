@@ -9,13 +9,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MazeExporter {
     final MazeModel mazeModel;
     final int mazeWidth, mazeHeight;
     int width, height;
     int cell;
-    BufferedImage image;
+    BufferedImage imageClean;
+    BufferedImage imageSolved;
 
     public MazeExporter(MazeModel mazeModel, int cellSize) {
         this.mazeModel = mazeModel;
@@ -29,8 +32,8 @@ public class MazeExporter {
     }
 
     public void paint() {
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
+        imageClean = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = imageClean.createGraphics();
         int x = 0;
         int y = 0;
         g.fillRect(0, 0, width - 1, height - 1);
@@ -57,7 +60,7 @@ public class MazeExporter {
                     y += cell;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.PATH)) {
-                    g.setColor(Color.BLUE);
+                    g.setColor(Color.YELLOW);
                     g.fillRect(x, y, cell, cell);
                     y += cell;
                 }
@@ -68,16 +71,27 @@ public class MazeExporter {
         }
     }
 
-    public void ExportPNG(String path) throws IOException {
-        ImageIO.write(image, "png", new File(path));
+    public void ExportPNG(File path, String name, boolean withSolution) throws IOException {
+        String solved = name + "Solved";
+        String fileNameClean = name + ".png";
+        String fileNameSolved = solved + ".png";
+        Path currentPath = Paths.get(String.valueOf(path));
+        Path filePath = Paths.get(currentPath.toString(), fileNameClean);
+        if (withSolution == true) {
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
+            mazeModel.solve();
+            paint();
+            filePath = Paths.get(currentPath.toString(), fileNameSolved);
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
+            mazeModel.clearSolution();
+        } else {
+            ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
+        }
     }
 
-    public BufferedImage getBufferedImage() {
-        return image;
-    }
 
-    public ImageIcon getImageIcon(){
-        return new ImageIcon(image);
+    public ImageIcon getImageIcon() {
+        return new ImageIcon(imageClean);
     }
 
 

@@ -229,10 +229,11 @@ public class MazeCanvas implements IUserInterface {
         MazeExporter cleanMaze = new MazeExporter(mazeModel, 32);
         mazeModel.solve();
         MazeExporter solvedMaze = new MazeExporter(mazeModel, 32);
-        
+        mazeModel.clearSolution();
+
         ImageIcon cleanImage = cleanMaze.getImageIcon();
         ImageIcon solvedImage = solvedMaze.getImageIcon();
-        
+
         MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
         dbMazeBrowserData.add(new MazeRecord("Test1", new User("Admin", "User", "tba", "tba"), mazeModel, cleanImage, solvedImage));
         window.dispose();
