@@ -10,11 +10,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.Objects;
 import javax.swing.JFrame;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultFormatter;
 
 public class OptionsMenu implements IUserInterface {
     private final JFrame window = new JFrame();
@@ -26,8 +28,8 @@ public class OptionsMenu implements IUserInterface {
 
     private final JLabel mazeStartLabel = new JLabel("Start", SwingConstants.CENTER);
     private final JLabel mazeEndLabel = new JLabel("End", SwingConstants.CENTER);
-    private final JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 100, 2));
-    private final JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 100, 2));
+    private final JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 9, 2));
+    private final JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 9, 2));
 
     private final JLabel firstNameLabel = new JLabel("First Name", SwingConstants.CENTER);
     private final JTextField firstNameField = new JTextField();
@@ -52,7 +54,6 @@ public class OptionsMenu implements IUserInterface {
 
     private final JPanel mainPanel = new JPanel(new GridBagLayout());
 
-    // Leave blank for Draw options or "Generate" for generate options
     public OptionsMenu(CanvasMode mode) {
         this.mode = mode;
         initialisePanel(mode);
@@ -77,45 +78,7 @@ public class OptionsMenu implements IUserInterface {
     }
 
     private void initialisePanel(CanvasMode mode) {
-        generateButton.addActionListener(new GenerateButtonListener(mode));
-        // generateButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent event) {
-
-        //         MazeModel aModel = null;
-        //         MazeGenerator maze = null;
-        //         try {
-        //             Integer w = (Integer) mazeWidthInput.getValue();
-        //             Integer h = (Integer) mazeHeightInput.getValue();
-        //             Integer s = (Integer) mazeStartInput.getValue();
-        //             Integer e = (Integer) mazeEndInput.getValue();
-        //             if (s < w && e < w && mode == CanvasMode.GENERATE) {
-        //                 maze = new MazeGenerator(w, h, s, e);
-        //             } else if (s < w && e < w) {
-        //                 aModel = new MazeModel(w, h, s, e);
-        //                 System.out.println(aModel);
-        //             }
-
-        //         } catch (NumberFormatException e) {
-        //             System.out.println("number error");
-        //         }
-        //         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-        //         // if (mode == CanvasMode.GENERATE) {
-        //         String mazeName = mazeNameField.getText();
-        //         String firstName = firstNameField.getText();
-        //         String lastName = lastNameField.getText();
-
-        //         mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mode, );
-        //         // } else {
-        //             // mazeCanvas = MazeCanvas.getInstance(aModel, CanvasMode.DRAW);
-        //         // }
-        //         mazeCanvas.show();
-        //         resetParameters();
-        //     }
-        // });
-
         GridBagConstraints constraints = new GridBagConstraints();
-
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.weightx = 1;
@@ -161,6 +124,7 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
             addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
+        generateButton.addActionListener(new GenerateButtonListener(mode));
         mazeNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
             mazeNameField.setBorder(UIManager.getBorder("TextField.border"));
         });
@@ -170,7 +134,8 @@ public class OptionsMenu implements IUserInterface {
         lastNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
             lastNameField.setBorder(UIManager.getBorder("TextField.border"));
         });
-
+        configSpinners(mazeWidthInput);
+        configSpinners(mazeHeightInput);
     }
 
     public void resetParameters() {
@@ -251,6 +216,38 @@ public class OptionsMenu implements IUserInterface {
             mazeCanvas.show();
             resetParameters();
         }
+    }
+
+    private void configSpinners(JSpinner spinner) {
+        JComponent comp = spinner.getEditor();
+        JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
+        DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
+        formatter.setCommitsOnValidEdit(true);
+        spinner.addChangeListener(new SpinnerChangeListener());
+    }
+
+    private class SpinnerChangeListener implements ChangeListener {
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            JSpinner source = (JSpinner) e.getSource();
+            if (source == mazeWidthInput)
+                handleWidthInput(source);
+            else if (source == mazeHeightInput)
+                handleHeightInput(source);
+        }
+    }
+
+    private void handleWidthInput(JSpinner source) {
+        mazeHeightInput.setValue(source.getValue());
+        mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
+        mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
+    }
+
+    private void handleHeightInput(JSpinner source) {
+        mazeWidthInput.setValue(source.getValue());
+        mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
+        mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
     }
 
 
