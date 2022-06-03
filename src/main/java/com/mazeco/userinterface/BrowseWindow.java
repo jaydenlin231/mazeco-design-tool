@@ -384,7 +384,7 @@ public class BrowseWindow implements IUserInterface {
 
             MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
 
-            MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel());
+            MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName(), selectedMazeRecord.getAuthor());
             mazeCanvas.show();
         }
     }

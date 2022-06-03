@@ -39,11 +39,17 @@ public class MazeCanvas implements IUserInterface {
 
     private static MazeCanvas instance = null;
 
-    private MazeCanvas(MazeModel mazeModel) {
-        if(instance != null)
+    private static String mazeName = null;
+    private static User user = null;
+
+    private MazeCanvas(MazeModel mazeModel, String mazeName, User user) {
+        if (instance != null)
             return;
 
         MazeCanvas.mazeModel = mazeModel;
+        this.mazeName = mazeName;
+        this.user = user;
+
         if (mazeModel.getBlock(0, 0).equals(Block.WALL)) {
             initialiseSidePanel(true);
         } else {
@@ -235,7 +241,7 @@ public class MazeCanvas implements IUserInterface {
         ImageIcon solvedImage = solvedMaze.getImageIcon();
 
         MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
-        dbMazeBrowserData.add(new MazeRecord("Test1", new User("Admin", "User", "tba", "tba"), mazeModel, cleanImage, solvedImage));
+        dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
         window.dispose();
         System.out.println("Saved");
     }
@@ -364,11 +370,11 @@ public class MazeCanvas implements IUserInterface {
         }
     }
 
-    public static MazeCanvas getInstance(MazeModel mazeModel) {
+    public static MazeCanvas getInstance(MazeModel mazeModel, String mazeName, User user) {
         isSolutionVisible = false;
 
         if (instance == null) {
-           new MazeCanvas(mazeModel);
+            new MazeCanvas(mazeModel, mazeName, user);
         } else {
             MazeCanvas.mazeModel = mazeModel;
             MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));

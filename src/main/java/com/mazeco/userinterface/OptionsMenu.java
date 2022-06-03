@@ -1,6 +1,7 @@
 package com.mazeco.userinterface;
 
 import com.mazeco.models.MazeModel;
+import com.mazeco.models.User;
 import com.mazeco.utilities.MazeGenerator;
 
 import javax.swing.*;
@@ -24,6 +25,13 @@ public class OptionsMenu implements IUserInterface {
     private final JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 100, 2));
     private final JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 100, 2));
 
+    private final JLabel firstNameLabel = new JLabel("First Name", SwingConstants.CENTER);
+    private final JTextField firstNameField = new JTextField();
+    private final JLabel lastNameLabel = new JLabel("Last Name", SwingConstants.CENTER);
+    private final JTextField lastNameField = new JTextField();
+    private final JLabel mazeNameLabel = new JLabel("Maze Name", SwingConstants.CENTER);
+    private final JTextField mazeNameField = new JTextField();
+
 
     private final JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
     private final JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
@@ -36,65 +44,34 @@ public class OptionsMenu implements IUserInterface {
 
     private MazeCanvas mazeCanvas;
 
+    private String options;
+
     private final JPanel mainPanel = new JPanel(new GridBagLayout());
 
     // Leave blank for Draw options or "Generate" for generate options
     public OptionsMenu(String options) {
-
-        initialisePanel(options);
-
-        initialiseWindow(options);
-
+        this.options = options;
+        initialisePanel();
+        initialiseWindow();
     }
 
-    private void initialiseWindow(String options) {
+    private void initialiseWindow() {
         window.setTitle(options + " Configurator");
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         window.add(mainPanel);
         window.pack();
         if (Objects.equals(options, "Generate")) {
-            window.setMinimumSize(new Dimension(400, 400));
+            window.setMinimumSize(new Dimension(400, 370));
         } else {
-            window.setMinimumSize(new Dimension(380, 200));
+            window.setMinimumSize(new Dimension(380, 250));
         }
         window.setResizable(false);
         // Centre the window
         window.setLocationRelativeTo(null);
     }
 
-    private void initialisePanel(String options) {
-        generateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-
-                MazeModel aModel = null;
-                MazeGenerator maze = null;
-                try {
-                    Integer w = (Integer) mazeWidthInput.getValue();
-                    Integer h = (Integer) mazeHeightInput.getValue();
-                    Integer s = (Integer) mazeStartInput.getValue();
-                    Integer e = (Integer) mazeEndInput.getValue();
-                    if (s < w && e < w && Objects.equals(options, "Generate")) {
-                        maze = new MazeGenerator(w, h, s, e);
-                    } else if (s < w && e < w) {
-                        aModel = new MazeModel(w, h, s, e);
-                        System.out.println(aModel);
-                    }
-
-                } catch (NumberFormatException e) {
-                    System.out.println("number error");
-                }
-                window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-                if (Objects.equals(options, "Generate")) {
-                    mazeCanvas = MazeCanvas.getInstance(maze.getMaze());
-                } else {
-                    mazeCanvas = MazeCanvas.getInstance(aModel);
-                }
-                mazeCanvas.show();
-                resetParameters();
-            }
-        });
-
+    private void initialisePanel() {
+        generateButton.addActionListener(new GenerateButtonListener());
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -118,7 +95,13 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, endImageButton, constraints, 1, 3, 3, 1);
             addToPanel(mainPanel, LogoImageLabel, constraints, 0, 4, 1, 1);
             addToPanel(mainPanel, logoImageButton, constraints, 1, 4, 3, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 5, 2, 1);
+            addToPanel(mainPanel, firstNameLabel, constraints, 0, 5, 1, 1);
+            addToPanel(mainPanel, firstNameField, constraints, 1, 5, 1, 1);
+            addToPanel(mainPanel, lastNameLabel, constraints, 2, 5, 1, 1);
+            addToPanel(mainPanel, lastNameField, constraints, 3, 5, 1, 1);
+            addToPanel(mainPanel, mazeNameLabel, constraints, 0, 6, 1, 1);
+            addToPanel(mainPanel, mazeNameField, constraints, 1, 6, 2, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 7, 2, 1);
         } else {
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
@@ -128,7 +111,13 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
             addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
             addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 2, 2, 1);
+            addToPanel(mainPanel, firstNameLabel, constraints, 0, 2, 1, 1);
+            addToPanel(mainPanel, firstNameField, constraints, 1, 2, 1, 1);
+            addToPanel(mainPanel, lastNameLabel, constraints, 2, 2, 1, 1);
+            addToPanel(mainPanel, lastNameField, constraints, 3, 2, 1, 1);
+            addToPanel(mainPanel, mazeNameLabel, constraints, 0, 3, 1, 1);
+            addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
+            addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
     }
 
@@ -142,6 +131,44 @@ public class OptionsMenu implements IUserInterface {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         System.out.println(window);
+    }
+
+    private class GenerateButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            MazeModel aModel = null;
+            MazeGenerator maze = null;
+            String mazeName = null;
+            String firstName = null;
+            String lastName = null;
+            try {
+                Integer w = (Integer) mazeWidthInput.getValue();
+                Integer h = (Integer) mazeHeightInput.getValue();
+                Integer s = (Integer) mazeStartInput.getValue();
+                Integer e = (Integer) mazeEndInput.getValue();
+                mazeName = mazeNameField.getText();
+                firstName = firstNameField.getText();
+                lastName = lastNameField.getText();
+                System.out.println(mazeName);
+                if (s < w && e < w && Objects.equals(options, "Generate")) {
+                    maze = new MazeGenerator(w, h, s, e);
+                } else if (s < w && e < w) {
+                    aModel = new MazeModel(w, h, s, e);
+                    System.out.println(aModel);
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("number error");
+            }
+            window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+            if (Objects.equals(options, "Generate")) {
+                mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mazeName, new User(firstName, lastName, "tba", "tba"));
+            } else {
+                mazeCanvas = MazeCanvas.getInstance(aModel, mazeName, new User(firstName, lastName, "tba", "tba"));
+            }
+            mazeCanvas.show();
+            resetParameters();
+        }
     }
 
 
