@@ -3,6 +3,7 @@ package com.mazeco.userinterface;
 import com.mazeco.database.MazeBrowserData;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
+import com.mazeco.utilities.CanvasMode;
 import com.mazeco.utilities.SortCriteria;
 import com.mazeco.utilities.SortOrder;
 
@@ -24,7 +25,7 @@ public class BrowseWindow implements IUserInterface {
     private final JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
     private SortCriteria selectedMazeSortCriteria;
     private SortOrder selectedMazeSortOrder = SortOrder.ASC;
-    private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.label);
+    private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.toString());
 
     private final Icon editIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen2.png"));
     private final Icon deleteIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/trash.png"));
@@ -216,7 +217,7 @@ public class BrowseWindow implements IUserInterface {
         mazeSizeDisplay.setText(mazeRecord.getMazeModel().getWidth() + " x " + mazeRecord.getMazeModel().getHeight());
         mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
         mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
-        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
+        mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeModifiedString("yyyy-MM-dd HH:mm:ss"));
         Image scaledCleanImage = mazeRecord.getCleanImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
         Image scaledSolvedImage = mazeRecord.getSolvedImage().getImage().getScaledInstance(320, 320, java.awt.Image.SCALE_SMOOTH);
         if (isSolutionVisible == false)
@@ -304,13 +305,13 @@ public class BrowseWindow implements IUserInterface {
                 if(selectedMazeSortOrder == SortOrder.ASC){
                     MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.DSC);
                     selectedMazeSortOrder = SortOrder.DSC;
-                    mazeSortOrderButton.setText(selectedMazeSortOrder.label);
+                    mazeSortOrderButton.setText(selectedMazeSortOrder.toString());
                     return;
                 }
                 
                 MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.ASC);
                 selectedMazeSortOrder = SortOrder.ASC;
-                mazeSortOrderButton.setText(selectedMazeSortOrder.label);
+                mazeSortOrderButton.setText(selectedMazeSortOrder.toString());
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
@@ -382,7 +383,7 @@ public class BrowseWindow implements IUserInterface {
 
             MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
 
-            MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName(), selectedMazeRecord.getAuthor());
+            MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel(), CanvasMode.EDIT, selectedMazeRecord.getId(),selectedMazeRecord.getName(), selectedMazeRecord.getAuthor());
             mazeCanvas.show();
         }
     }

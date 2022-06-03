@@ -2,6 +2,7 @@ package com.mazeco.userinterface;
 
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.User;
+import com.mazeco.utilities.CanvasMode;
 import com.mazeco.utilities.MazeGenerator;
 
 import javax.swing.*;
@@ -47,24 +48,26 @@ public class OptionsMenu implements IUserInterface {
 
     private MazeCanvas mazeCanvas;
 
-    private String options;
+    private CanvasMode mode;
 
     private final JPanel mainPanel = new JPanel(new GridBagLayout());
 
     // Leave blank for Draw options or "Generate" for generate options
-    public OptionsMenu(String options) {
-        this.options = options;
-        initialisePanel();
-        initialiseWindow();
+    public OptionsMenu(CanvasMode mode) {
+        this.mode = mode;
+        initialisePanel(mode);
+
+        initialiseWindow(mode);
+
     }
 
-    private void initialiseWindow() {
-        window.setTitle(options + " Configurator");
+    private void initialiseWindow(CanvasMode mode) {
+        window.setTitle(mode + " Configurator");
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         window.add(mainPanel);
         window.pack();
-        if (Objects.equals(options, "Generate")) {
-            window.setMinimumSize(new Dimension(400, 370));
+        if (mode == CanvasMode.GENERATE) {
+            window.setMinimumSize(new Dimension(400, 400));
         } else {
             window.setMinimumSize(new Dimension(380, 250));
         }
@@ -73,7 +76,44 @@ public class OptionsMenu implements IUserInterface {
         window.setLocationRelativeTo(null);
     }
 
-    private void initialisePanel() {
+    private void initialisePanel(CanvasMode mode) {
+        generateButton.addActionListener(new GenerateButtonListener(mode));
+        // generateButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent event) {
+
+        //         MazeModel aModel = null;
+        //         MazeGenerator maze = null;
+        //         try {
+        //             Integer w = (Integer) mazeWidthInput.getValue();
+        //             Integer h = (Integer) mazeHeightInput.getValue();
+        //             Integer s = (Integer) mazeStartInput.getValue();
+        //             Integer e = (Integer) mazeEndInput.getValue();
+        //             if (s < w && e < w && mode == CanvasMode.GENERATE) {
+        //                 maze = new MazeGenerator(w, h, s, e);
+        //             } else if (s < w && e < w) {
+        //                 aModel = new MazeModel(w, h, s, e);
+        //                 System.out.println(aModel);
+        //             }
+
+        //         } catch (NumberFormatException e) {
+        //             System.out.println("number error");
+        //         }
+        //         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+        //         // if (mode == CanvasMode.GENERATE) {
+        //         String mazeName = mazeNameField.getText();
+        //         String firstName = firstNameField.getText();
+        //         String lastName = lastNameField.getText();
+
+        //         mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mode, );
+        //         // } else {
+        //             // mazeCanvas = MazeCanvas.getInstance(aModel, CanvasMode.DRAW);
+        //         // }
+        //         mazeCanvas.show();
+        //         resetParameters();
+        //     }
+        // });
+
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -82,7 +122,7 @@ public class OptionsMenu implements IUserInterface {
         constraints.weighty = 1;
         constraints.insets = new Insets(1, 2, 1, 2);
 
-        if (options.equals("Generate")) {
+        if (mode == CanvasMode.GENERATE) {
             addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
             addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
             addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
@@ -121,7 +161,6 @@ public class OptionsMenu implements IUserInterface {
             addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
             addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
-        generateButton.addActionListener(new GenerateButtonListener());
         mazeNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
             mazeNameField.setBorder(UIManager.getBorder("TextField.border"));
         });
@@ -166,6 +205,10 @@ public class OptionsMenu implements IUserInterface {
     }
 
     private class GenerateButtonListener implements ActionListener {
+        CanvasMode mode;
+        public GenerateButtonListener(CanvasMode mode){
+            this.mode = mode;
+        }
         @Override
         public void actionPerformed(ActionEvent event) {
             MazeModel aModel = null;
@@ -189,7 +232,7 @@ public class OptionsMenu implements IUserInterface {
                 Integer s = (Integer) mazeStartInput.getValue();
                 Integer e = (Integer) mazeEndInput.getValue();
 
-                if (s < w && e < w && Objects.equals(options, "Generate")) {
+                if (s < w && e < w && mode == CanvasMode.GENERATE) {
                     maze = new MazeGenerator(w, h, s, e);
                 } else if (s < w && e < w) {
                     aModel = new MazeModel(w, h, s, e);
@@ -200,10 +243,10 @@ public class OptionsMenu implements IUserInterface {
                 System.out.println("number error");
             }
             window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-            if (Objects.equals(options, "Generate")) {
-                mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mazeName, new User(firstName, lastName, "tba", "tba"));
+            if (mode == CanvasMode.GENERATE) {
+                mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mode, mazeName, new User(firstName, lastName, "tba", "tba"));
             } else {
-                mazeCanvas = MazeCanvas.getInstance(aModel, mazeName, new User(firstName, lastName, "tba", "tba"));
+                mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName, "tba", "tba"));
             }
             mazeCanvas.show();
             resetParameters();
