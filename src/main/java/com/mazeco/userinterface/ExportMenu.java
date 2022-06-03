@@ -22,6 +22,10 @@ public class ExportMenu implements IUserInterface {
     private final JSpinner cellSizeInput = new JSpinner(new SpinnerNumberModel(32, 1, 200, 1));
     private final JButton exportButton = new JButton("Export");
     private final JToggleButton solutionButton = new JToggleButton("Saving with solution");
+    private final JSpinner cellSizeInput = new JSpinner(new SpinnerNumberModel(32, 0, 200, 1));
+
+    private final JButton exportButton = new JButton("Export");
+    private JToggleButton solutionbutton = new JToggleButton("Saving with solution");
 
     private final MazeModel maze;
     private MazeExporter exporter;
