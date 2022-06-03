@@ -22,7 +22,7 @@ jobs:
         java-version: '17'
         distribution: 'corretto'
         cache: maven
-    - run: mvn --batch-mode --update-snapshots verify
+    - run: mvn --batch-mode --update-snapshots package
     - run: mkdir staging && cp target/*.jar staging
     - uses: actions/upload-artifact@v3
       with:
