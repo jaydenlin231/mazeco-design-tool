@@ -37,6 +37,8 @@ public class MazeExporter {
         int x = 0;
         int y = 0;
         g.fillRect(0, 0, width - 1, height - 1);
+        g.setColor(Color.BLACK);
+        g.drawRect(1, 1, width - 2, height - 2);
         for (int i = 0; i < mazeModel.getWidth(); i++) {
             for (int j = 0; j < mazeModel.getHeight(); j++) {
                 if (mazeModel.getBlock(i, j).equals(Block.WALL)) {
@@ -69,19 +71,20 @@ public class MazeExporter {
             x += cell;
             y = 0;
         }
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, width - 1, height - 1);
     }
 
-    public void ExportPNG(File path, String name, boolean withSolution) throws IOException {
-        String solved = name + "Solved";
-        String fileNameClean = name + ".png";
-        String fileNameSolved = solved + ".png";
+    public void ExportPNG(File path, String name, String firstName, String lastName, String date, boolean withSolution) throws IOException {
+        String solvedName = name + "Solved" + "_" + lastName + "_" + firstName + "_" + date + ".png";
+        String fileNameClean = name + "_" + lastName + "_" + firstName + "_" + date + ".png";
         Path currentPath = Paths.get(String.valueOf(path));
         Path filePath = Paths.get(currentPath.toString(), fileNameClean);
         if (withSolution == true) {
             ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
             mazeModel.solve();
             paint();
-            filePath = Paths.get(currentPath.toString(), fileNameSolved);
+            filePath = Paths.get(currentPath.toString(), solvedName);
             ImageIO.write(imageClean, "png", new File(String.valueOf(filePath)));
             mazeModel.clearSolution();
         } else {

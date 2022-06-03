@@ -329,8 +329,6 @@ public class BrowseWindow implements IUserInterface {
                 handleToggleSolutionButton();
             } else if (source == editMazeButton || source == mazePreviewButton) {
                 handleEditMazeButton();
-            } else if (source == exportMazeButton) {
-                handleExportMazeButton();
             }
         }
 
@@ -351,9 +349,9 @@ public class BrowseWindow implements IUserInterface {
             if (mazeList.getSelectedValue() == null)
                 return;
 
-            MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
+            MazeRecord selectedMazeRecord = mazeList.getSelectedValue();
 
-            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName());
+            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName(), selectedMazeRecord.getAuthor(), selectedMazeRecord.getDateTimeCreatedString("yyyy:MM:dd-HH-mm"));
             exportMenu.show();
         }
 

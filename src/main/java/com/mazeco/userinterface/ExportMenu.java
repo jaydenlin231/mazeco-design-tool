@@ -1,7 +1,7 @@
 package com.mazeco.userinterface;
 
 import com.mazeco.models.MazeModel;
-import com.mazeco.models.MazeRecord;
+import com.mazeco.models.User;
 import com.mazeco.utilities.MazeExporter;
 
 import javax.swing.*;
@@ -31,14 +31,19 @@ public class ExportMenu implements IUserInterface {
     private final MazeModel maze;
     private final String mazeName;
     private MazeExporter exporter;
+    private final User user;
+    private String dateTime;
+
 
     private File path;
 
     private boolean saveWithSolution = true;
 
-    public ExportMenu(MazeModel mazeModel, String mazeName) {
+    public ExportMenu(MazeModel mazeModel, String mazeName, User author, String dateTime) {
         this.maze = mazeModel;
         this.mazeName = mazeName;
+        this.user = author;
+        this.dateTime = dateTime;
         initialisePanel();
         initialiseWindow();
     }
@@ -77,7 +82,7 @@ public class ExportMenu implements IUserInterface {
         addToPanel(mainPanel, cellSizeDescription, constraints, 1, 2, 1, 1);
         addToPanel(mainPanel, solutionLabel, constraints, 0, 3, 1, 1);
         addToPanel(mainPanel, solutionButton, constraints, 1, 3, 1, 1);
-        addToPanel(mainPanel, exportButton, constraints, 0, 4, 2, 1);
+        addToPanel(mainPanel, exportButton, constraints, 1, 4, 1, 1);
 
         solutionButton.addItemListener(new ToggleListener());
         cellSizeInput.addChangeListener(new SpinnerListener());
@@ -102,7 +107,7 @@ public class ExportMenu implements IUserInterface {
                 System.out.println("Number error");
             }
             try {
-                exporter.ExportPNG(path, mazeName, saveWithSolution);
+                exporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, saveWithSolution);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
             } catch (IOException e) {
                 e.printStackTrace();

@@ -174,12 +174,12 @@ public class OptionsMenu implements IUserInterface {
             String mazeName = mazeNameField.getText();
             String firstName = firstNameField.getText();
             String lastName = lastNameField.getText();
-            if (mazeName.equals("") || firstName.equals("") || lastName.equals("")) {
-                if (mazeName.equals(""))
+            if (mazeName.trim().isEmpty() || firstName.trim().isEmpty() || lastName.trim().isEmpty()) {
+                if (mazeName.trim().isEmpty())
                     mazeNameField.setBorder(new LineBorder(Color.RED, 1));
-                if (firstName.equals(""))
+                if (firstName.trim().isEmpty())
                     firstNameField.setBorder(new LineBorder(Color.RED, 1));
-                if (lastName.equals(""))
+                if (lastName.trim().isEmpty())
                     lastNameField.setBorder(new LineBorder(Color.RED, 1));
                 return;
             }
