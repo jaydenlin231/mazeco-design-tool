@@ -6,14 +6,15 @@ import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.CanvasMode;
 import com.mazeco.utilities.SortCriteria;
 import com.mazeco.utilities.SortOrder;
-import com.mazeco.userinterface.LayoutHelper;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,10 +22,9 @@ import javax.swing.event.ListSelectionListener;
 public class BrowseWindow implements IUserInterface {
     private final String TITLE = "Browse";
     private final JFrame window = new JFrame(TITLE);
-    private final JPanel mazePreviewWindow = new JPanel();
-    private final SortCriteria[] mazeSortOptions = SortCriteria.class.getEnumConstants();
-    private final JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
-    private static SortCriteria selectedMazeSortCriteria;
+    private final static SortCriteria[] mazeSortOptions = SortCriteria.class.getEnumConstants();
+    private final static JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
+    private static SortCriteria selectedMazeSortCriteria = SortCriteria.BY_CREATED;
     private static SortOrder selectedMazeSortOrder = SortOrder.ASC;
     private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.toString());
 
@@ -77,6 +77,7 @@ public class BrowseWindow implements IUserInterface {
         }
         
         mazeList.setSelectedIndex(0);
+        mazeSortDropdown.setSelectedIndex(Arrays.asList(mazeSortOptions).indexOf(selectedMazeSortCriteria));
 
         return instance;
     }
@@ -168,6 +169,7 @@ public class BrowseWindow implements IUserInterface {
     private JScrollPane initialiseMazeListPanel() {
         mazeList = new JList<MazeRecord>(data.getModel());
         mazeList.setFixedCellHeight(30);
+        mazeList.setBorder(BorderFactory.createEmptyBorder());
         mazeList.addListSelectionListener(new MazeListListener());
   
         JScrollPane scroller = new JScrollPane(mazeList);

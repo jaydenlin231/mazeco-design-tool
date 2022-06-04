@@ -85,13 +85,14 @@ public class OptionsMenu implements IUserInterface {
         window.setTitle(mode + " Configurator");
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         window.add(mainPanel);
-        window.pack();
         if (mode == CanvasMode.GENERATE) {
             window.setMinimumSize(new Dimension(400, 400));
         } else {
             window.setMinimumSize(new Dimension(380, 250));
         }
+        window.repaint();
         window.setResizable(false);
+        window.pack();
         // Centre the window
         window.setLocationRelativeTo(null);
     }
