@@ -23,13 +23,14 @@ public class MazeModel implements Serializable{
     private int width;
     private int height;
     private Matrix<Block> data;
-
+    
     private int startX;
     private int endX;
     private Point startPosition;
     private Point endPosition;
     private ArrayList<Point> solution;
-
+    private double solutionPercentage;
+    
     /**
      * Construct a MazeModel with the given the {@code width} and {@code height} of the maze representation in blocks.
      *
@@ -122,6 +123,29 @@ public class MazeModel implements Serializable{
 
             this.setBlock(Block.PATH, currentCol, currentRow);
         }
+    }
+
+    public Double getSolutionPercentage(){
+        solve();
+        int pathCount = 0;
+        int explorableblockCount = 0;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (getBlock(j, i) == Block.PATH) {
+                    pathCount++;
+                    explorableblockCount++;
+                }
+                else if (getBlock(j, i) == Block.BLANK) {
+                    explorableblockCount++;
+                }
+            }
+        }
+        
+        solutionPercentage = (((double) pathCount / (double) explorableblockCount) * 100);
+        // truncate
+        int temp = (int)(solutionPercentage*100.0);
+        solutionPercentage = ((double)temp)/100.0;
+        return solutionPercentage;
     }
 
     public ArrayList<Point> getSolution(){

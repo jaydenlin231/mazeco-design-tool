@@ -49,6 +49,7 @@ public class BrowseWindow implements IUserInterface {
 
     private JLabel mazeNameDisplay;
     private JLabel mazeSizeDisplay;
+    private JLabel mazeSolutionPercentDisplay;
     private JLabel mazeAuthorDisplay;
     private JLabel mazeDateTimeCreatedDisplay;
     private JLabel mazeDateTimeModifiedDisplay;
@@ -192,12 +193,14 @@ public class BrowseWindow implements IUserInterface {
         JLabel mazeDetailsLabel = new JLabel("<html><b> Maze Details </b></html>");
         JLabel mazeNameLabel = new JLabel("Name");
         JLabel mazeSizeLabel = new JLabel("Maze Size");
+        JLabel mazeSolutionPercentLabel = new JLabel("Optimal Solution");
         JLabel mazeAuthorLabel = new JLabel("Author");
         JLabel mazeDateTimeCreatedLabel = new JLabel("Created");
         JLabel mazeDateTimeModifiedLabel = new JLabel("Modified");
 
         mazeNameDisplay = new JLabel("...");
         mazeSizeDisplay = new JLabel("...");
+        mazeSolutionPercentDisplay = new JLabel("...");
         mazeAuthorDisplay = new JLabel("...");
         mazeDateTimeCreatedDisplay = new JLabel("...");
         mazeDateTimeModifiedDisplay = new JLabel("...");
@@ -214,16 +217,18 @@ public class BrowseWindow implements IUserInterface {
         LayoutHelper.addToPanel(mazeDetailPanel, mazeDetailsLabel, constraints, 0, 0, 2, 1);
         LayoutHelper.addToPanel(mazeDetailPanel, mazeNameLabel, constraints, 0, 1, 1, 1);
         LayoutHelper.addToPanel(mazeDetailPanel, mazeSizeLabel, constraints, 0, 2, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 3, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 4, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 5, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeSolutionPercentLabel, constraints, 0, 3, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 4, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 5, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 6, 1, 1);
         
         constraints.anchor = GridBagConstraints.EAST;
         LayoutHelper.addToPanel(mazeDetailPanel, mazeNameDisplay, constraints, 1, 1, 1, 1);
         LayoutHelper.addToPanel(mazeDetailPanel, mazeSizeDisplay, constraints, 1, 2, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 3, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 4, 1, 1);
-        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 5, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeSolutionPercentDisplay, constraints, 1, 3, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 4, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 5, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 6, 1, 1);
         
         return mazeDetailPanel;
     }
@@ -238,6 +243,7 @@ public class BrowseWindow implements IUserInterface {
         mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
         mazeNameDisplay.setText(mazeRecord.getName());
         mazeSizeDisplay.setText(mazeRecord.getMazeModel().getWidth() + " x " + mazeRecord.getMazeModel().getHeight());
+        mazeSolutionPercentDisplay.setText(mazeRecord.getMazeModel().getSolutionPercentage().toString() + "%");
         mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
         mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
         mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeModifiedString("yyyy-MM-dd HH:mm:ss"));
