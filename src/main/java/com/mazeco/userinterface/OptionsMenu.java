@@ -85,44 +85,37 @@ public class OptionsMenu implements IUserInterface {
         constraints.weighty = 1;
         constraints.insets = new Insets(1, 2, 1, 2);
 
+        LayoutHelper.addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeStartLabel, constraints, 0, 1, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
+        LayoutHelper.addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
+
         if (mode == CanvasMode.GENERATE) {
-            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
-            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, mazeStartLabel, constraints, 0, 1, 1, 1);
-            addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
-            addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
-            addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
-            addToPanel(mainPanel, startImageLabel, constraints, 0, 2, 1, 1);
-            addToPanel(mainPanel, startImageButton, constraints, 1, 2, 3, 1);
-            addToPanel(mainPanel, endImageLabel, constraints, 0, 3, 1, 1);
-            addToPanel(mainPanel, endImageButton, constraints, 1, 3, 3, 1);
-            addToPanel(mainPanel, LogoImageLabel, constraints, 0, 4, 1, 1);
-            addToPanel(mainPanel, logoImageButton, constraints, 1, 4, 3, 1);
-            addToPanel(mainPanel, firstNameLabel, constraints, 0, 5, 1, 1);
-            addToPanel(mainPanel, firstNameField, constraints, 1, 5, 1, 1);
-            addToPanel(mainPanel, lastNameLabel, constraints, 2, 5, 1, 1);
-            addToPanel(mainPanel, lastNameField, constraints, 3, 5, 1, 1);
-            addToPanel(mainPanel, mazeNameLabel, constraints, 0, 6, 1, 1);
-            addToPanel(mainPanel, mazeNameField, constraints, 1, 6, 2, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 7, 2, 1);
+            LayoutHelper.addToPanel(mainPanel, startImageLabel, constraints, 0, 2, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, startImageButton, constraints, 1, 2, 3, 1);
+            LayoutHelper.addToPanel(mainPanel, endImageLabel, constraints, 0, 3, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, endImageButton, constraints, 1, 3, 3, 1);
+            LayoutHelper.addToPanel(mainPanel, LogoImageLabel, constraints, 0, 4, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, logoImageButton, constraints, 1, 4, 3, 1);
+            LayoutHelper.addToPanel(mainPanel, firstNameLabel, constraints, 0, 5, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, firstNameField, constraints, 1, 5, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, lastNameLabel, constraints, 2, 5, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, lastNameField, constraints, 3, 5, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, mazeNameLabel, constraints, 0, 6, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, mazeNameField, constraints, 1, 6, 2, 1);
+            LayoutHelper.addToPanel(mainPanel, generateButton, constraints, 1, 7, 2, 1);
         } else {
-            addToPanel(mainPanel, mazeWidthLabel, constraints, 0, 0, 1, 1);
-            addToPanel(mainPanel, mazeWidthInput, constraints, 1, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightLabel, constraints, 2, 0, 1, 1);
-            addToPanel(mainPanel, mazeHeightInput, constraints, 3, 0, 1, 1);
-            addToPanel(mainPanel, mazeStartLabel, constraints, 0, 1, 1, 1);
-            addToPanel(mainPanel, mazeStartInput, constraints, 1, 1, 1, 1);
-            addToPanel(mainPanel, mazeEndLabel, constraints, 2, 1, 1, 1);
-            addToPanel(mainPanel, mazeEndInput, constraints, 3, 1, 1, 1);
-            addToPanel(mainPanel, firstNameLabel, constraints, 0, 2, 1, 1);
-            addToPanel(mainPanel, firstNameField, constraints, 1, 2, 1, 1);
-            addToPanel(mainPanel, lastNameLabel, constraints, 2, 2, 1, 1);
-            addToPanel(mainPanel, lastNameField, constraints, 3, 2, 1, 1);
-            addToPanel(mainPanel, mazeNameLabel, constraints, 0, 3, 1, 1);
-            addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
-            addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
+            LayoutHelper.addToPanel(mainPanel, firstNameLabel, constraints, 0, 2, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, firstNameField, constraints, 1, 2, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, lastNameLabel, constraints, 2, 2, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, lastNameField, constraints, 3, 2, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, mazeNameLabel, constraints, 0, 3, 1, 1);
+            LayoutHelper.addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
+            LayoutHelper.addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
         generateButton.addActionListener(new GenerateButtonListener(mode));
         mazeNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
@@ -250,23 +243,4 @@ public class OptionsMenu implements IUserInterface {
         mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
     }
 
-
-    /**
-     * A convenience method to add a component to given grid bag
-     * layout locations. Code due to Cay Horstmann
-     *
-     * @param c           the component to add
-     * @param constraints the grid bag constraints to use
-     * @param x           the x grid position
-     * @param y           the y grid position
-     * @param w           the grid width of the component
-     * @param h           the grid height of the component
-     */
-    private void addToPanel(JPanel jp, Component c, GridBagConstraints constraints, int x, int y, int w, int h) {
-        constraints.gridx = x;
-        constraints.gridy = y;
-        constraints.gridwidth = w;
-        constraints.gridheight = h;
-        jp.add(c, constraints);
-    }
 }

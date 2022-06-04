@@ -6,6 +6,7 @@ import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.CanvasMode;
 import com.mazeco.utilities.SortCriteria;
 import com.mazeco.utilities.SortOrder;
+import com.mazeco.userinterface.LayoutHelper;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -188,20 +189,20 @@ public class BrowseWindow implements IUserInterface {
         constraints.insets = new Insets(0, 10, 0, 10);
 
         // addToPanel(mazeDetailPanel, mazeIdLabel, constraints, 0, 0, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDetailsLabel, constraints, 0, 0, 2, 1);
-        addToPanel(mazeDetailPanel, mazeNameLabel, constraints, 0, 1, 1, 1);
-        addToPanel(mazeDetailPanel, mazeSizeLabel, constraints, 0, 2, 1, 1);
-        addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 3, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 4, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 5, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDetailsLabel, constraints, 0, 0, 2, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeNameLabel, constraints, 0, 1, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeSizeLabel, constraints, 0, 2, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorLabel, constraints, 0, 3, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedLabel, constraints, 0, 4, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedLabel, constraints, 0, 5, 1, 1);
         
         constraints.anchor = GridBagConstraints.EAST;
-        addToPanel(mazeDetailPanel, mazeNameDisplay, constraints, 1, 1, 1, 1);
-        addToPanel(mazeDetailPanel, mazeSizeDisplay, constraints, 1, 2, 1, 1);
-        addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 3, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 4, 1, 1);
-        addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 5, 1, 1);
-
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeNameDisplay, constraints, 1, 1, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeSizeDisplay, constraints, 1, 2, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeAuthorDisplay, constraints, 1, 3, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeCreatedDisplay, constraints, 1, 4, 1, 1);
+        LayoutHelper.addToPanel(mazeDetailPanel, mazeDateTimeModifiedDisplay, constraints, 1, 5, 1, 1);
+        
         return mazeDetailPanel;
     }
 
@@ -210,7 +211,7 @@ public class BrowseWindow implements IUserInterface {
         if(mazeRecord == null)
             return;
 
-        mazePreviewButton.setText("<html><em><b>MazeCo#<b/><em/><html/>" + mazeRecord.getId().toString());
+        mazePreviewButton.setText("<html><b>MazeCo#<b/><html/>" + mazeRecord.getId().toString());
         mazePreviewButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
         mazeNameDisplay.setText(mazeRecord.getName());
@@ -242,24 +243,6 @@ public class BrowseWindow implements IUserInterface {
         window.setVisible(true);
     }
 
-    /**
-     * A convenience method to add a component to given grid bag
-     * layout locations. Code due to Cay Horstmann
-     *
-     * @param c           the component to add
-     * @param constraints the grid bag constraints to use
-     * @param x           the x grid position
-     * @param y           the y grid position
-     * @param w           the grid width of the component
-     * @param h           the grid height of the component
-     */
-    private void addToPanel(JPanel jp, Component c, GridBagConstraints constraints, int x, int y, int w, int h) {
-        constraints.gridx = x;
-        constraints.gridy = y;
-        constraints.gridwidth = w;
-        constraints.gridheight = h;
-        jp.add(c, constraints);
-    }
 
     /**
      * Implements a ListSelectionListener for making the UI respond when a
@@ -276,6 +259,9 @@ public class BrowseWindow implements IUserInterface {
                 MazeRecord selectedMazeRecord = (MazeRecord) mazeList.getSelectedValue();
                 displayMazeRecordDetail(selectedMazeRecord);
             }
+
+            if(mazeList.isSelectionEmpty())
+                resetMazeRecordDetail();
         }
     }
 
@@ -385,6 +371,7 @@ public class BrowseWindow implements IUserInterface {
 
             MazeCanvas mazeCanvas = MazeCanvas.getInstance(selectedMazeRecord.getMazeModel(), CanvasMode.EDIT, selectedMazeRecord.getId(),selectedMazeRecord.getName(), selectedMazeRecord.getAuthor());
             mazeCanvas.show();
+            mazeList.setSelectedIndex(mazeList.getSelectedIndex());
         }
     }
     

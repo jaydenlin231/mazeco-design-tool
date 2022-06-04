@@ -268,6 +268,7 @@ public class MazeCanvas implements IUserInterface {
             dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
         }
         window.dispose();
+        MazeBrowserData.reSyncMazeRecords();
         System.out.println("Saved");
     }
 
