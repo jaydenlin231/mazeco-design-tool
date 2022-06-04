@@ -26,25 +26,20 @@ public class MainMenu implements IUserInterface {
     JPanel rightPanel = new JPanel(new BorderLayout());
     JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
-    private BrowseWindow browseWindow;
-    private static OptionsMenu drawOptionsMenu = new OptionsMenu(CanvasMode.DRAW);
-    private static OptionsMenu generateOptionsMenu = new OptionsMenu(CanvasMode.GENERATE);
+    private static MainMenu instance;
 
-    public MainMenu() {
-        try {
-            browseWindow = new BrowseWindow(MazeBrowserData.getInstance());
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-
+    private MainMenu() {
+        instance = this;
         initialiseButtons();
-
         initialisePanels();
-
         initialiseWindow();
+    }
 
+    public static MainMenu getInstance(){
+        if(instance == null){
+            new MainMenu();
+        }
+        return instance;
     }
 
     private void initialiseWindow() {
@@ -87,17 +82,21 @@ public class MainMenu implements IUserInterface {
         browseButton.setHorizontalTextPosition(SwingConstants.CENTER);
     }
 
-    // Might need to create a separate class if we want to use these same actions at top menu bar.
     private class MenuActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
            Component source = (Component) e.getSource();
             if (source == generateButton) {
-                generateOptionsMenu.show();
+                OptionsMenu.getInstance(CanvasMode.GENERATE).show();
             } else if (source == drawButton) {
-                drawOptionsMenu.show();
+                OptionsMenu.getInstance(CanvasMode.DRAW).show();
             } else if (source == browseButton) {
-                browseWindow.show();
+                try {
+                    BrowseWindow.getInstance(MazeBrowserData.getInstance()).show();
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         }
     }

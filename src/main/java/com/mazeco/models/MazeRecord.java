@@ -121,6 +121,6 @@ public class MazeRecord {
     @Override
     public String toString() {
         // TODO Auto-generated method stub
-        return name + " - " + author + "        " + "MazeCo#" + id.toString();
+        return name + " - " + author;
     }
 }

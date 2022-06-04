@@ -24,8 +24,8 @@ public class BrowseWindow implements IUserInterface {
     private final JPanel mazePreviewWindow = new JPanel();
     private final SortCriteria[] mazeSortOptions = SortCriteria.class.getEnumConstants();
     private final JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
-    private SortCriteria selectedMazeSortCriteria;
-    private SortOrder selectedMazeSortOrder = SortOrder.ASC;
+    private static SortCriteria selectedMazeSortCriteria;
+    private static SortOrder selectedMazeSortOrder = SortOrder.ASC;
     private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.toString());
 
     private final Icon editIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen2.png"));
@@ -55,18 +55,38 @@ public class BrowseWindow implements IUserInterface {
 
     private final JPanel opButtonsPanel = new JPanel(new GridLayout(1, 4));
 
-    private JList<MazeRecord> mazeList;
+    private static JList<MazeRecord> mazeList;
 
     private MazeBrowserData data;
 
-    public BrowseWindow(MazeBrowserData data) {
-        this.data = data;
+    private static BrowseWindow instance = null;
 
+    private BrowseWindow(MazeBrowserData data) {
+        this.data = data;
+        BrowseWindow.instance = this;
         initialisePanels();
 
         initialiseWindow();
 
         mazeList.setSelectedIndex(0);
+    }
+
+    public static BrowseWindow getInstance(MazeBrowserData data){
+        if(instance == null){
+            new BrowseWindow(data);
+        }
+        
+        mazeList.setSelectedIndex(0);
+
+        return instance;
+    }
+
+    public static SortCriteria getSelectedMazeSortCriteria() {
+        return selectedMazeSortCriteria;
+    }
+
+    public static SortOrder getSelectedMazeSortOrder() {
+        return selectedMazeSortOrder;
     }
 
     private void initialiseWindow() {
@@ -374,5 +394,4 @@ public class BrowseWindow implements IUserInterface {
             mazeList.setSelectedIndex(mazeList.getSelectedIndex());
         }
     }
-    
 }

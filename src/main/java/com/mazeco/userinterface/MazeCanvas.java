@@ -65,6 +65,29 @@ public class MazeCanvas implements IUserInterface {
         instance = this;
     }
 
+    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
+        isSolutionVisible = false;
+        MazeCanvas.mode = mode;
+        MazeCanvas.mazeName = mazeName;
+        MazeCanvas.user = user;
+        
+        if (instance == null) {
+           new MazeCanvas(mazeModel, mode, mazeName, user);
+        } else {
+            MazeCanvas.mazeModel = mazeModel;
+            MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
+            instance.reRenderSidePanel(mode);
+            instance.reRenderCanvasPanel();
+        }
+        return instance;
+     }
+
+    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, UUID mazeID, String mazeName, User user) {
+        instance = getInstance(mazeModel, mode, mazeName, user);
+        MazeCanvas.currentMazeID = mazeID;
+        return instance;
+     }
+
     private void initSidePanelActionListeners() {
         clearBttn.addActionListener(new SideMenuActionListener());
         checkBttn.addActionListener(new SideMenuActionListener());
@@ -153,19 +176,6 @@ public class MazeCanvas implements IUserInterface {
         }
     }
 
-    private void saveMaze(MazeModel maze) throws IOException {
-        FileWriter writer = new FileWriter("./Mazes/saveTest.txt");
-
-        for (int i = 0; i < maze.getHeight(); i++) {
-            for (int j = 0; j < maze.getWidth(); j++) {
-                Block aBlock = maze.getBlock(j, i);
-                writer.write(aBlock.toString());
-            }
-            writer.write(System.getProperty("line.separator"));
-        }
-        writer.close();
-    }
-
     private void removeAllAndRepaintCanvasPanel() {
         if (canvasPanel != null) {
             canvasPanel.removeAll();
@@ -238,7 +248,7 @@ public class MazeCanvas implements IUserInterface {
 
     private void handleRegenerateButton() {
         MazeGenerator genMaze = new MazeGenerator(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX());
-        this.mazeModel = genMaze.getMaze();
+        MazeCanvas.mazeModel = genMaze.getMaze();
 //        System.out.println(mazeModel);
         reRenderCanvasPanel();
     }
@@ -268,6 +278,7 @@ public class MazeCanvas implements IUserInterface {
             dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
         }
         window.dispose();
+        MazeBrowserData.sortMazeRecords(BrowseWindow.getSelectedMazeSortCriteria(), BrowseWindow.getSelectedMazeSortOrder());
         MazeBrowserData.reSyncMazeRecords();
         System.out.println("Saved");
     }
@@ -388,6 +399,8 @@ public class MazeCanvas implements IUserInterface {
          */
         public void windowClosing(WindowEvent e) {
             try {
+                
+                MazeBrowserData.sortMazeRecords(BrowseWindow.getSelectedMazeSortCriteria(), BrowseWindow.getSelectedMazeSortOrder());
                 MazeBrowserData.reSyncMazeRecords();
             } catch (SQLException e1) {
                 // TODO Auto-generated catch block
@@ -396,24 +409,4 @@ public class MazeCanvas implements IUserInterface {
         }
     }
 
-    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
-        isSolutionVisible = false;
-        MazeCanvas.mode = mode;
-        
-        if (instance == null) {
-           new MazeCanvas(mazeModel, mode, mazeName, user);
-        } else {
-            MazeCanvas.mazeModel = mazeModel;
-            MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
-            instance.reRenderSidePanel(mode);
-            instance.reRenderCanvasPanel();
-        }
-        return instance;
-     }
-
-    public static MazeCanvas getInstance(MazeModel mazeModel, CanvasMode mode, UUID mazeID, String mazeName, User user) {
-        instance = getInstance(mazeModel, mode, mazeName, user);
-        MazeCanvas.currentMazeID = mazeID;
-        return instance;
-     }
 }

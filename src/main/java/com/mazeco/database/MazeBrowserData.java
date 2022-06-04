@@ -32,6 +32,14 @@ public class MazeBrowserData {
 
     }
 
+    public static MazeBrowserData getInstance() throws SQLException {
+        if (instance == null)
+            return instance = new MazeBrowserData() ;
+       
+        reSyncMazeRecords();
+        return instance;
+     }
+
     public static void reSyncMazeRecords() throws SQLException {
         for(MazeRecord aMazeRecord : dbMazeBrowserData.retrieveAllMazeRecords()){
             if(listModel.contains(aMazeRecord)){
@@ -134,13 +142,5 @@ public class MazeBrowserData {
     public ListModel<MazeRecord> getModel() {
         return listModel;
     }
-
-    public static MazeBrowserData getInstance() throws SQLException {
-        if (instance == null)
-            return instance = new MazeBrowserData() ;
-       
-        reSyncMazeRecords();
-        return instance;
-     }
 
 }

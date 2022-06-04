@@ -7,9 +7,7 @@ import com.mazeco.utilities.MazeGenerator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
@@ -19,50 +17,71 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultFormatter;
 
 public class OptionsMenu implements IUserInterface {
-    private final JFrame window = new JFrame();
+    private final static JFrame window = new JFrame();
 
-    private final JLabel mazeWidthLabel = new JLabel("Width", SwingConstants.CENTER);
-    private final JLabel mazeHeightLabel = new JLabel("Height", SwingConstants.CENTER);
-    private final JSpinner mazeWidthInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
-    private final JSpinner mazeHeightInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
+    private final static JLabel mazeWidthLabel = new JLabel("Width", SwingConstants.CENTER);
+    private final static JLabel mazeHeightLabel = new JLabel("Height", SwingConstants.CENTER);
+    private final static JSpinner mazeWidthInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
+    private final static JSpinner mazeHeightInput = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
 
-    private final JLabel mazeStartLabel = new JLabel("Start", SwingConstants.CENTER);
-    private final JLabel mazeEndLabel = new JLabel("End", SwingConstants.CENTER);
-    private final JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 9, 2));
-    private final JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 9, 2));
+    private final static JLabel mazeStartLabel = new JLabel("Start", SwingConstants.CENTER);
+    private final static JLabel mazeEndLabel = new JLabel("End", SwingConstants.CENTER);
+    private final static JSpinner mazeStartInput = new JSpinner(new SpinnerNumberModel(1, 1, 9, 2));
+    private final static JSpinner mazeEndInput = new JSpinner(new SpinnerNumberModel(7, 1, 9, 2));
 
-    private final JLabel firstNameLabel = new JLabel("First Name", SwingConstants.CENTER);
-    private final JTextField firstNameField = new JTextField();
-    private final JLabel lastNameLabel = new JLabel("Last Name", SwingConstants.CENTER);
-    private final JTextField lastNameField = new JTextField();
-    private final JLabel mazeNameLabel = new JLabel("Maze Name", SwingConstants.CENTER);
-    private final JTextField mazeNameField = new JTextField();
+    private final static JLabel firstNameLabel = new JLabel("First Name", SwingConstants.CENTER);
+    private final static JTextField firstNameField = new JTextField();
+    private final static JLabel lastNameLabel = new JLabel("Last Name", SwingConstants.CENTER);
+    private final static JTextField lastNameField = new JTextField();
+    private final static JLabel mazeNameLabel = new JLabel("Maze Name", SwingConstants.CENTER);
+    private final static JTextField mazeNameField = new JTextField();
 
 
-    private final JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
-    private final JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
-    private final JLabel LogoImageLabel = new JLabel("Logo Image", SwingConstants.CENTER);
-    private final JButton startImageButton = new JButton("Select Image...");
-    private final JButton endImageButton = new JButton("Select Image...");
-    private final JButton logoImageButton = new JButton("Select Image...");
+    private final static JLabel startImageLabel = new JLabel("Start Image", SwingConstants.CENTER);
+    private final static JLabel endImageLabel = new JLabel("End Image", SwingConstants.CENTER);
+    private final static JLabel LogoImageLabel = new JLabel("Logo Image", SwingConstants.CENTER);
+    private final static JButton startImageButton = new JButton("Select Image...");
+    private final static JButton endImageButton = new JButton("Select Image...");
+    private final static JButton logoImageButton = new JButton("Select Image...");
 
-    private final JButton generateButton = new JButton("Generate");
+    private final static JButton generateButton = new JButton("Generate");
 
-    private MazeCanvas mazeCanvas;
+    private static MazeCanvas mazeCanvas;
 
-    private CanvasMode mode;
+    private static CanvasMode mode;
 
-    private final JPanel mainPanel = new JPanel(new GridBagLayout());
+    private final static JPanel mainPanel = new JPanel(new GridBagLayout());
 
-    public OptionsMenu(CanvasMode mode) {
-        this.mode = mode;
+    private static OptionsMenu instance = null;
+    
+    private static GenerateButtonListener genrateButtonListener;
+
+    private OptionsMenu(CanvasMode mode) {
+        OptionsMenu.mode = mode;
+        genrateButtonListener  = new GenerateButtonListener(mode);
+        generateButton.addActionListener(genrateButtonListener);
+        OptionsMenu.instance = this;
         initialisePanel(mode);
-
         initialiseWindow(mode);
-
     }
 
-    private void initialiseWindow(CanvasMode mode) {
+    public static OptionsMenu getInstance(CanvasMode mode){
+        if(instance == null){
+            new OptionsMenu(mode);
+        } else {
+            OptionsMenu.mode = mode;
+            reRenderPanel(mode);
+            initialiseWindow(mode);
+        }
+        generateButton.removeActionListener(genrateButtonListener);
+        genrateButtonListener = new GenerateButtonListener(mode);
+        generateButton.addActionListener(genrateButtonListener);
+        
+        return instance;
+    }
+
+
+    private static void initialiseWindow(CanvasMode mode) {
         window.setTitle(mode + " Configurator");
         window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         window.add(mainPanel);
@@ -77,7 +96,22 @@ public class OptionsMenu implements IUserInterface {
         window.setLocationRelativeTo(null);
     }
 
-    private void initialisePanel(CanvasMode mode) {
+    private static void reRenderPanel(CanvasMode mode) {
+        removeAllAndRepaintPanel();
+        initialisePanel(mode);
+        mainPanel.repaint();
+        window.repaint();
+        window.pack();
+    }
+
+    private static void removeAllAndRepaintPanel() {
+        if (mainPanel != null) {
+            mainPanel.removeAll();
+            mainPanel.repaint();
+        }
+    }
+
+    private static void initialisePanel(CanvasMode mode) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.CENTER;
@@ -117,7 +151,6 @@ public class OptionsMenu implements IUserInterface {
             LayoutHelper.addToPanel(mainPanel, mazeNameField, constraints, 1, 3, 2, 1);
             LayoutHelper.addToPanel(mainPanel, generateButton, constraints, 1, 4, 2, 1);
         }
-        generateButton.addActionListener(new GenerateButtonListener(mode));
         mazeNameField.getDocument().addDocumentListener((TextFieldDocumentListener) e -> {
             mazeNameField.setBorder(UIManager.getBorder("TextField.border"));
         });
@@ -131,9 +164,10 @@ public class OptionsMenu implements IUserInterface {
         configSpinners(mazeHeightInput);
     }
 
-    public void resetParameters() {
+    public static void resetParameters() {
         mazeWidthInput.setValue(10);
         mazeHeightInput.setValue(10);
+        mazeNameField.setText("");
     }
 
     @Override
@@ -162,7 +196,7 @@ public class OptionsMenu implements IUserInterface {
         }
     }
 
-    private class GenerateButtonListener implements ActionListener {
+    private static class GenerateButtonListener implements ActionListener {
         CanvasMode mode;
         public GenerateButtonListener(CanvasMode mode){
             this.mode = mode;
@@ -211,7 +245,7 @@ public class OptionsMenu implements IUserInterface {
         }
     }
 
-    private void configSpinners(JSpinner spinner) {
+    private static void configSpinners(JSpinner spinner) {
         JComponent comp = spinner.getEditor();
         JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
         DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
@@ -219,7 +253,7 @@ public class OptionsMenu implements IUserInterface {
         spinner.addChangeListener(new SpinnerChangeListener());
     }
 
-    private class SpinnerChangeListener implements ChangeListener {
+    private static class SpinnerChangeListener implements ChangeListener {
 
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -231,13 +265,13 @@ public class OptionsMenu implements IUserInterface {
         }
     }
 
-    private void handleWidthInput(JSpinner source) {
+    private static void handleWidthInput(JSpinner source) {
         mazeHeightInput.setValue(source.getValue());
         mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
         mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
     }
 
-    private void handleHeightInput(JSpinner source) {
+    private static void handleHeightInput(JSpinner source) {
         mazeWidthInput.setValue(source.getValue());
         mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
         mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
