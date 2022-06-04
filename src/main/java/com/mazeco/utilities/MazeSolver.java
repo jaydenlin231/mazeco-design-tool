@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-public class MazeSolver {
+public final class MazeSolver {
     public static Node aStarGraphSearch(MazeProblem mazeProblem){
         Node currentNode = new Node(mazeProblem.initial);
         System.out.println(currentNode);

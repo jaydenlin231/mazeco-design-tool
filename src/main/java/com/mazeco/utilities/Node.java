@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class Node{
+public final class Node{
     private Point state;
     private Node parentNode;
     private String action;

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MazeExporter {
+public final class MazeExporter {
     final MazeModel mazeModel;
     final int mazeWidth, mazeHeight;
     int width, height;

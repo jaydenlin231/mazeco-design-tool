@@ -6,7 +6,7 @@ import com.mazeco.models.MazeModel;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class MazeProblem {
+public final class MazeProblem {
     MazeModel mazeModel;
     Point initial;
 

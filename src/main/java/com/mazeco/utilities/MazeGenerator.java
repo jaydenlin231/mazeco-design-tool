@@ -6,7 +6,7 @@ import com.mazeco.models.Block;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MazeGenerator {
+public final class MazeGenerator {
     private MazeModel maze;
     private final int width;
     private final int height;
