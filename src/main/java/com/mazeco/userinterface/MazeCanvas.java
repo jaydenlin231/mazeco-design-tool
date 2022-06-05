@@ -239,16 +239,10 @@ public class MazeCanvas implements IUserInterface {
     private void handleClearButton() {
         resetCanvasMazeModel();
         reRenderCanvasPanel();
-
-        // System.out.println("Cleared");
-        // System.out.println(System.identityHashCode(canvasPanel));
-        // System.out.println(System.identityHashCode(mazeModel));
-        // System.out.println(mazeModel);
     }
 
     private void handleRegenerateButton() {
-        MazeGenerator genMaze = new MazeGenerator(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX());
-        MazeCanvas.mazeModel = genMaze.getMaze();
+        MazeCanvas.mazeModel = MazeGenerator.generateMaze(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX());
 //        System.out.println(mazeModel);
         reRenderCanvasPanel();
     }
@@ -262,13 +256,11 @@ public class MazeCanvas implements IUserInterface {
 
     private void handleSaveButton() throws SQLException {
         mazeModel.clearSolution();
-        MazeExporter cleanMaze = new MazeExporter(mazeModel, 32);
+        ImageIcon cleanImage = new ImageIcon(MazeExporter.paint(mazeModel, 32));
         mazeModel.solve();
-        MazeExporter solvedMaze = new MazeExporter(mazeModel, 32);
+        ImageIcon solvedImage = new ImageIcon(MazeExporter.paint(mazeModel, 32));
         mazeModel.clearSolution();
 
-        ImageIcon cleanImage = cleanMaze.getImageIcon();
-        ImageIcon solvedImage = solvedMaze.getImageIcon();
 
         MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
         if(mode == CanvasMode.EDIT && currentMazeID != null){
@@ -399,9 +391,10 @@ public class MazeCanvas implements IUserInterface {
          */
         public void windowClosing(WindowEvent e) {
             try {
-                
-                MazeBrowserData.sortMazeRecords(BrowseWindow.getSelectedMazeSortCriteria(), BrowseWindow.getSelectedMazeSortOrder());
-                MazeBrowserData.reSyncMazeRecords();
+                if(mode == CanvasMode.EDIT){
+                    MazeBrowserData.sortMazeRecords(BrowseWindow.getSelectedMazeSortCriteria(), BrowseWindow.getSelectedMazeSortOrder());
+                    MazeBrowserData.reSyncMazeRecords();
+                }
             } catch (SQLException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

@@ -205,7 +205,6 @@ public class OptionsMenu implements IUserInterface {
         @Override
         public void actionPerformed(ActionEvent event) {
             MazeModel aModel = null;
-            MazeGenerator maze = null;
 
             String mazeName = mazeNameField.getText();
             String firstName = firstNameField.getText();
@@ -220,15 +219,17 @@ public class OptionsMenu implements IUserInterface {
                 return;
             }
             try {
-                Integer w = (Integer) mazeWidthInput.getValue();
-                Integer h = (Integer) mazeHeightInput.getValue();
-                Integer s = (Integer) mazeStartInput.getValue();
-                Integer e = (Integer) mazeEndInput.getValue();
+                Integer inputWidth = (Integer) mazeWidthInput.getValue();
+                Integer inputHeight = (Integer) mazeHeightInput.getValue();
+                Integer inputStartIndex = (Integer) mazeStartInput.getValue();
+                Integer inputEndIndex = (Integer) mazeEndInput.getValue();
+                if(!(inputStartIndex < inputWidth && inputEndIndex < inputWidth)){
 
-                if (s < w && e < w && mode == CanvasMode.GENERATE) {
-                    maze = new MazeGenerator(w, h, s, e);
-                } else if (s < w && e < w) {
-                    aModel = new MazeModel(w, h, s, e);
+                }
+                if (inputStartIndex < inputWidth && inputEndIndex < inputWidth && mode == CanvasMode.GENERATE) {
+                    aModel = MazeGenerator.generateMaze(inputWidth, inputHeight, inputStartIndex, inputEndIndex);
+                } else if (inputStartIndex < inputWidth && inputEndIndex < inputWidth) {
+                    aModel = new MazeModel(inputWidth, inputHeight, inputStartIndex, inputEndIndex);
                     System.out.println(aModel);
                 }
 
@@ -236,11 +237,7 @@ public class OptionsMenu implements IUserInterface {
                 System.out.println("number error");
             }
             window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-            if (mode == CanvasMode.GENERATE) {
-                mazeCanvas = MazeCanvas.getInstance(maze.getMaze(), mode, mazeName, new User(firstName, lastName, "tba", "tba"));
-            } else {
-                mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName, "tba", "tba"));
-            }
+            mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName, "tba", "tba"));
             mazeCanvas.show();
             resetParameters();
         }
@@ -264,18 +261,18 @@ public class OptionsMenu implements IUserInterface {
             else if (source == mazeHeightInput)
                 handleHeightInput(source);
         }
-    }
 
-    private static void handleWidthInput(JSpinner source) {
-        mazeHeightInput.setValue(source.getValue());
-        mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
-        mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
-    }
-
-    private static void handleHeightInput(JSpinner source) {
-        mazeWidthInput.setValue(source.getValue());
-        mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
-        mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
+        private static void handleWidthInput(JSpinner source) {
+            mazeHeightInput.setValue(source.getValue());
+            mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
+            mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
+        }
+    
+        private static void handleHeightInput(JSpinner source) {
+            mazeWidthInput.setValue(source.getValue());
+            mazeStartInput.setModel(new SpinnerNumberModel(1, 1, (int) source.getValue() - 1, 2));
+            mazeEndInput.setModel(new SpinnerNumberModel((int) source.getValue() - 3, 1, (int) source.getValue() - 1, 2));
+        }
     }
 
 }

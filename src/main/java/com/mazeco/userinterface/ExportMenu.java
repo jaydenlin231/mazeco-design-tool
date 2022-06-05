@@ -30,7 +30,6 @@ public class ExportMenu implements IUserInterface {
 
     private final MazeModel maze;
     private final String mazeName;
-    private MazeExporter exporter;
     private final User user;
     private String dateTime;
 
@@ -100,14 +99,9 @@ public class ExportMenu implements IUserInterface {
     private class ExportButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
+            int cellSize = (int) cellSizeInput.getValue();
             try {
-                int cellSize = (int) cellSizeInput.getValue();
-                exporter = new MazeExporter(maze, cellSize);
-            } catch (NumberFormatException e) {
-                System.out.println("Number error");
-            }
-            try {
-                exporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, saveWithSolution);
+                MazeExporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, maze, cellSize, saveWithSolution);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
             } catch (IOException e) {
                 e.printStackTrace();

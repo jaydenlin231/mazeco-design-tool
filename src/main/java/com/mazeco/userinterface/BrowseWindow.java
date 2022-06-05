@@ -259,6 +259,7 @@ public class BrowseWindow implements IUserInterface {
         mazePreviewButton.setText("");
         mazeNameDisplay.setText("...");
         mazeSizeDisplay.setText("...");
+        mazeSolutionPercentDisplay.setText("...");
         mazeAuthorDisplay.setText("...");
         mazeDateTimeCreatedDisplay.setText("...");
         mazeDateTimeModifiedDisplay.setText("...");
