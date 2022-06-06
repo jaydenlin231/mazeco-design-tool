@@ -1,5 +1,6 @@
 package com.mazeco.userinterface;
 
+import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.User;
 import com.mazeco.utilities.MazeExporter;
@@ -103,8 +104,13 @@ public class ExportMenu implements IUserInterface {
             try {
                 MazeExporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, maze, cellSize, saveWithSolution);
                 window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-            } catch (IOException e) {
-                e.printStackTrace();
+            }
+            catch (IOException  e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                // e.printStackTrace();
+            } catch (UnsolvableMazeException  e) {
+                // Unsolvable mazes are never saved in DB
+                throw new IllegalStateException();
             }
         }
     }

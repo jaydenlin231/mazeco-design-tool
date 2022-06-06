@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import javax.swing.*;
 
 import com.mazeco.database.MazeBrowserData;
-import com.mazeco.models.MazeModel;
 import com.mazeco.utilities.CanvasMode;
 
 public class MainMenu implements IUserInterface {
@@ -44,6 +43,7 @@ public class MainMenu implements IUserInterface {
 
     private void initialiseWindow() {
         window.add(mainPanel);
+        window.addWindowListener(new ClosingListener());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(750, 600));
         window.setMinimumSize(new Dimension(500, 400));
@@ -85,19 +85,37 @@ public class MainMenu implements IUserInterface {
     private class MenuActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-           Component source = (Component) e.getSource();
-            if (source == generateButton) {
-                OptionsMenu.getInstance(CanvasMode.GENERATE).show();
-            } else if (source == drawButton) {
-                OptionsMenu.getInstance(CanvasMode.DRAW).show();
-            } else if (source == browseButton) {
-                try {
+            try {
+                Component source = (Component) e.getSource();
+                if (source == generateButton) {
+                    OptionsMenu.getInstance(CanvasMode.GENERATE).show();
+                } else if (source == drawButton) {
+                    OptionsMenu.getInstance(CanvasMode.DRAW).show();
+                } else if (source == browseButton) {
                     BrowseWindow.getInstance(MazeBrowserData.getInstance()).show();
-                } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
                 }
+            } 
+            catch (SQLException exception) {
+                // TODO Auto-generated catch block
+                exception.printStackTrace();
+                JOptionPane.showMessageDialog(window, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } 
+        }
+    }
+
+    private class ClosingListener extends WindowAdapter {
+
+        /**
+         * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+         */
+        public void windowClosing(WindowEvent e) {
+            try {
+                MazeBrowserData.persist();
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
+            System.exit(0);
         }
     }
 }

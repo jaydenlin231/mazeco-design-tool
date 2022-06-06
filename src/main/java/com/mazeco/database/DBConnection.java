@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 
 public class DBConnection {
 
@@ -38,12 +39,14 @@ public class DBConnection {
 
          // get a connection
          instance = DriverManager.getConnection(url + "/" + schema, username, password);
-      } catch (SQLException sqle) {
-         System.err.println(sqle);
-      } catch (FileNotFoundException fnfe) {
-         System.err.println(fnfe);
-      } catch (IOException ex) {
-         ex.printStackTrace();
+      } catch (SQLException exception) {
+         exception.printStackTrace();
+      } catch (NullPointerException exception) {
+         JOptionPane.showMessageDialog(null, "Database configuration file \"db.props\" not found in \"resources/config\" directory", "Error", JOptionPane.ERROR_MESSAGE);
+      } catch (FileNotFoundException exception) {
+         exception.printStackTrace();
+      } catch (IOException exception) {
+         exception.printStackTrace();
       }
    }
 

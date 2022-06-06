@@ -23,9 +23,10 @@ import javax.swing.ImageIcon;
 
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
+import com.mazeco.utilities.MazeExporter;
 
 public class JDBCMazeBrowserDataSource {
-    private Connection connection;
+    private static Connection connection;
 
     public static final String CREATE_DB = "CREATE DATABASE mazeco;";
 
@@ -66,8 +67,9 @@ public class JDBCMazeBrowserDataSource {
 
    private PreparedStatement rowCount;
 
-    
-    public JDBCMazeBrowserDataSource() {
+    private static JDBCMazeBrowserDataSource instance = null;
+
+    private JDBCMazeBrowserDataSource() {
         connection = DBConnection.getInstance();
         try {
             Statement st = connection.createStatement();
@@ -83,9 +85,19 @@ public class JDBCMazeBrowserDataSource {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        instance = this;
     }
 
-    public void insertMazeRecord(MazeRecord mazeRecord){
+    public static JDBCMazeBrowserDataSource getInstance() {
+        if (instance == null){
+            new JDBCMazeBrowserDataSource();
+        } else {
+            connection = DBConnection.getInstance();
+        }
+        return instance;
+    }
+
+    public void insertMazeRecord(MazeRecord mazeRecord) throws SQLException {
         try {
             insertMazeRecord.setString(1, mazeRecord.getId().toString());
             insertMazeRecord.setString(2, mazeRecord.getName());
@@ -118,16 +130,12 @@ public class JDBCMazeBrowserDataSource {
             solveImageData.length);
 
             insertMazeRecord.execute();
-
-         } catch (SQLException e) {
-            e.printStackTrace();
-         } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public void updateMazeRecord(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage){
+    public void updateMazeRecord(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage) throws SQLException {
         try {
             updatetMazeRecord.setObject(1, ZonedDateTime.now().toInstant());
 
@@ -158,20 +166,17 @@ public class JDBCMazeBrowserDataSource {
             updatetMazeRecord.setString(5, mazeID.toString());
 
             updatetMazeRecord.execute();
-
-         } catch (SQLException e) {
-            e.printStackTrace();
-         } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public MazeRecord retrieveMazeRecord(String id) {
+    public MazeRecord retrieveMazeRecord(String id) throws SQLException {
         ResultSet rs = null;
-        MazeModel mazeModel = null;
+        MazeModel mazeModel = new MazeModel();
         MazeRecord mazeRecord = null;
-        ImageIcon cleanImage = null;
-        ImageIcon solveImage = null;
+        ImageIcon cleanImage = new ImageIcon(MazeExporter.paint(mazeModel, 32));
+        ImageIcon solveImage = new ImageIcon(MazeExporter.paint(mazeModel, 32));
         try {
             getMazeRecord.setString(1, id);
             rs = getMazeRecord.executeQuery();
@@ -192,26 +197,29 @@ public class JDBCMazeBrowserDataSource {
             // data = blob.getBytes(1, (int) blob.length());
             // convert bytes back to object stream
             byte[] mazeModelbyteArr = rs.getBytes("mazeModel");
-            ByteArrayInputStream byteStream = new ByteArrayInputStream(mazeModelbyteArr);
-            ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-            mazeModel = (MazeModel) objectStream.readObject();
+            ByteArrayInputStream byteStream;
 
-            byte[] cleanImageByteArr = rs.getBytes("cleanImage");
-            ByteArrayInputStream cleanImgByteStream = new ByteArrayInputStream(cleanImageByteArr);
-            ObjectInputStream cleanImgObjectStream = new ObjectInputStream(cleanImgByteStream);
-            cleanImage = (ImageIcon) cleanImgObjectStream.readObject();
+            try {
+                byteStream = new ByteArrayInputStream(mazeModelbyteArr);
+                ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+                mazeModel = (MazeModel) objectStream.readObject();
 
-            byte[] solveImageByteArr = rs.getBytes("solveImage");
-            ByteArrayInputStream solveImageByteStream = new ByteArrayInputStream(solveImageByteArr);
-            ObjectInputStream solveImageObjectStream = new ObjectInputStream(solveImageByteStream);
-            solveImage = (ImageIcon) solveImageObjectStream.readObject();
+                byte[] cleanImageByteArr = rs.getBytes("cleanImage");
+                ByteArrayInputStream cleanImgByteStream = new ByteArrayInputStream(cleanImageByteArr);
+                ObjectInputStream cleanImgObjectStream = new ObjectInputStream(cleanImgByteStream);
+                cleanImage = (ImageIcon) cleanImgObjectStream.readObject();
 
+                byte[] solveImageByteArr = rs.getBytes("solveImage");
+                ByteArrayInputStream solveImageByteStream = new ByteArrayInputStream(solveImageByteArr);
+                ObjectInputStream solveImageObjectStream = new ObjectInputStream(solveImageByteStream);
+                solveImage = (ImageIcon) solveImageObjectStream.readObject();
 
+            } catch (NullPointerException e) {
+                resultName = "CORRUPTED RECORD";
+            }
 
             mazeRecord = new MazeRecord(id, resultName, resultAuthor, resultDateTimeCreated,  resultDateTimeModified, mazeModel, cleanImage, solveImage);
             
-        } catch (SQLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e){
@@ -238,13 +246,9 @@ public class JDBCMazeBrowserDataSource {
         return mazeRecords;
     }
 
-    public void deleteMazeRecord(String id){
-        try {
-            deleteMazeRecord.setString(1, id);
-            deleteMazeRecord.executeUpdate();
-         } catch (SQLException e) {
-            e.printStackTrace();
-         }
+    public void deleteMazeRecord(String id) throws SQLException{
+        deleteMazeRecord.setString(1, id);
+        deleteMazeRecord.executeUpdate();
     }
 
     public int getSize() {
