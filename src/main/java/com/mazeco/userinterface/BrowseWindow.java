@@ -1,6 +1,7 @@
 package com.mazeco.userinterface;
 
 import com.mazeco.database.MazeBrowserData;
+import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.CanvasMode;
@@ -9,6 +10,7 @@ import com.mazeco.utilities.SortOrder;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -243,7 +245,11 @@ public class BrowseWindow implements IUserInterface {
         mazePreviewButton.setHorizontalTextPosition(SwingConstants.CENTER);
         mazeNameDisplay.setText(mazeRecord.getName());
         mazeSizeDisplay.setText(mazeRecord.getMazeModel().getWidth() + " x " + mazeRecord.getMazeModel().getHeight());
-        mazeSolutionPercentDisplay.setText(mazeRecord.getMazeModel().getSolutionPercentage().toString() + "%");
+        try {
+            mazeSolutionPercentDisplay.setText(mazeRecord.getMazeModel().getSolutionPercentage().toString() + "%");
+        } catch (UnsolvableMazeException e) {
+            mazeSolutionPercentDisplay.setText("Cannot be determined.");
+        }
         mazeAuthorDisplay.setText(mazeRecord.getAuthor().getFirstName() + " " + mazeRecord.getAuthor().getLastName());
         mazeDateTimeCreatedDisplay.setText(mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HH:mm:ss"));
         mazeDateTimeModifiedDisplay.setText(mazeRecord.getDateTimeModifiedString("yyyy-MM-dd HH:mm:ss"));
@@ -304,7 +310,7 @@ public class BrowseWindow implements IUserInterface {
                 if(selectedMazeSortCriteria == null || selectedMazeSortOrder == null)
                     return;
                 
-                    MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, selectedMazeSortOrder);
+                MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, selectedMazeSortOrder);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -337,18 +343,26 @@ public class BrowseWindow implements IUserInterface {
         @Override
         public void actionPerformed(ActionEvent e) {
             Component source = (Component) e.getSource();
-            if (source == deleteMazeButton) {
-                handleDeleteMazeButton();
-            } else if (source == exportMazeButton) {
-                handleExportMazeButton();
-            } else if (source == toggleSolutionButton) {
-                handleToggleSolutionButton();
-            } else if (source == editMazeButton || source == mazePreviewButton) {
-                handleEditMazeButton();
-            }
+            try {
+                if (source == deleteMazeButton) {
+                    handleDeleteMazeButton();
+                } else if (source == exportMazeButton) {
+                    handleExportMazeButton();
+                } else if (source == toggleSolutionButton) {
+                    handleToggleSolutionButton();
+                } else if (source == editMazeButton || source == mazePreviewButton) {
+                    handleEditMazeButton();
+                }
+            } catch (SQLException exception) {
+                // TODO Auto-generated catch block
+                JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                // JOptionPane.showMessageDialog(null, "Database file is corrupted. Please delete \"mazeco.db\" and restart the application.", "Error", JOptionPane.ERROR_MESSAGE);
+                // System.exit(0);
+                // MainMenu.browseButton.setEnabled(false);
+            } 
         }
 
-        private void handleDeleteMazeButton(){
+        private void handleDeleteMazeButton() throws SQLException{
             int index = mazeList.getSelectedIndex();
             data.remove((MazeRecord) mazeList.getSelectedValue());
             index--;

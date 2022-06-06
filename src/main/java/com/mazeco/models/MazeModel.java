@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.utilities.MazeProblem;
 import com.mazeco.utilities.MazeSolver;
 import com.mazeco.utilities.Node;
@@ -15,6 +16,8 @@ import com.mazeco.utilities.Node;
 public class MazeModel implements Serializable{
     private static final long serialVersionUID = -4565786099626384425L;
     
+    private static final int DEFAULT_WIDTH = 10;
+    private static final int DEFAULT_HEIGHT = 10;
     private static final int MIN_WIDTH = 10;
     private static final int MIN_HEIGHT = 10;
     private static final int MAX_WIDTH = 100;
@@ -50,6 +53,9 @@ public class MazeModel implements Serializable{
         this.height = height;
         this.data = new Matrix<Block>(width, height, Block.BLANK);
 
+    }
+    public MazeModel() {
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, 7);
     }
 
     public MazeModel(int width, int height, int start, int end) {
@@ -108,7 +114,7 @@ public class MazeModel implements Serializable{
         return endX;
     }
 
-    public void solve() {
+    public void solve() throws UnsolvableMazeException {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 
         solution = solutionNode.getSolutionPoints();
@@ -125,7 +131,7 @@ public class MazeModel implements Serializable{
         }
     }
 
-    public Double getSolutionPercentage(){
+    public Double getSolutionPercentage() throws UnsolvableMazeException{
         solve();
         int pathCount = 0;
         int explorableblockCount = 0;

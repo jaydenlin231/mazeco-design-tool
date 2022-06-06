@@ -18,30 +18,30 @@ import com.mazeco.utilities.SortOrder;
 
 public class MazeBrowserData {
     private static DefaultListModel<MazeRecord> listModel;
-    private static JDBCMazeBrowserDataSource dbMazeBrowserData;
+    // private static JDBCMazeBrowserDataSource dbMazeBrowserData;
 
     private static MazeBrowserData instance = null;
 
-    private MazeBrowserData() throws SQLException{
+    private MazeBrowserData() throws SQLException {
         listModel = new DefaultListModel<MazeRecord>();
-        dbMazeBrowserData = new JDBCMazeBrowserDataSource();
+        // dbMazeBrowserData = JDBCMazeBrowserDataSource();
 
-        for(MazeRecord aMazeRecord : dbMazeBrowserData.retrieveAllMazeRecords()){
+        for(MazeRecord aMazeRecord : JDBCMazeBrowserDataSource.getInstance().retrieveAllMazeRecords()){
             listModel.addElement(aMazeRecord);
         }
-
+        instance = this;
     }
 
     public static MazeBrowserData getInstance() throws SQLException {
         if (instance == null)
-            return instance = new MazeBrowserData() ;
+            new MazeBrowserData() ;
        
         reSyncMazeRecords();
         return instance;
      }
 
     public static void reSyncMazeRecords() throws SQLException {
-        for(MazeRecord aMazeRecord : dbMazeBrowserData.retrieveAllMazeRecords()){
+        for(MazeRecord aMazeRecord : JDBCMazeBrowserDataSource.getInstance().retrieveAllMazeRecords()){
             if(listModel.contains(aMazeRecord)){
                 int existingRecordIndex = listModel.indexOf(aMazeRecord);
                 listModel.removeElementAt(existingRecordIndex);
@@ -53,8 +53,8 @@ public class MazeBrowserData {
     }
 
     
-    public static void sortMazeRecords(SortCriteria criteria, SortOrder order) throws SQLException{
-        ArrayList<MazeRecord> mazeRecords = dbMazeBrowserData.retrieveAllMazeRecords();
+    public static void sortMazeRecords(SortCriteria criteria, SortOrder order) throws SQLException {
+        ArrayList<MazeRecord> mazeRecords = JDBCMazeBrowserDataSource.getInstance().retrieveAllMazeRecords();
         switch (criteria) {
             case BY_AUTHOR:
                 break;
@@ -82,56 +82,42 @@ public class MazeBrowserData {
 
         for (MazeRecord aMazeRecord : mazeRecords) {
             listModel.addElement(aMazeRecord);
-            System.out.println(aMazeRecord);
         }
-        System.out.println("------");
 
     }
 
-    public static void reverseMazeRecords() throws SQLException{
-        ArrayList<MazeRecord> mazeRecords = dbMazeBrowserData.retrieveAllMazeRecords();
-        
-        listModel.removeAllElements();
-
-        for (MazeRecord aMazeRecord : mazeRecords) {
-            listModel.addElement(aMazeRecord);
-            System.out.println(aMazeRecord);
-        }
-        System.out.println("------");
-        
-    }
-
-    public void add(MazeRecord mazeRecord){
+    public void add(MazeRecord mazeRecord) throws SQLException {
         if (!listModel.contains(mazeRecord)) {
             listModel.addElement(mazeRecord);
-            dbMazeBrowserData.insertMazeRecord(mazeRecord);
+            JDBCMazeBrowserDataSource.getInstance().insertMazeRecord(mazeRecord);
          }
     }
 
-    public void update(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage) throws SQLException{
-        dbMazeBrowserData.updateMazeRecord(mazeID, mazeModel, cleanImage, solvedImage);
+    public void update(UUID mazeID, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage) throws SQLException {
+        JDBCMazeBrowserDataSource.getInstance().updateMazeRecord(mazeID, mazeModel, cleanImage, solvedImage);
         reSyncMazeRecords();
     }
 
-    public void remove(MazeRecord mazeRecord){
+    public void remove(MazeRecord mazeRecord) throws SQLException {
         listModel.removeElement(mazeRecord);
-        dbMazeBrowserData.deleteMazeRecord(mazeRecord.getId().toString());
+        JDBCMazeBrowserDataSource.getInstance().deleteMazeRecord(mazeRecord.getId().toString());
     }
 
-    public MazeRecord get(String id) {
-        return dbMazeBrowserData.retrieveMazeRecord(id);
+    public MazeRecord get(String id) throws SQLException {
+        return JDBCMazeBrowserDataSource.getInstance().retrieveMazeRecord(id);
     }
 
-    public int getSize() {
-        return dbMazeBrowserData.getSize();
+    public int getSize() throws SQLException {
+        return JDBCMazeBrowserDataSource.getInstance().getSize();
      }
 
     /**
     * Saves the data in the address book using a persistence
     * mechanism.
+     * @throws SQLException
     */
-    public void persist() {
-        dbMazeBrowserData.close();
+    public static void persist() throws SQLException  {
+        JDBCMazeBrowserDataSource.getInstance().close();
     }
 
     /**

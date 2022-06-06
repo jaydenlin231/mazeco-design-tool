@@ -4,8 +4,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
+import com.mazeco.exception.UnsolvableMazeException;
+
 public final class MazeSolver {
-    public static Node aStarGraphSearch(MazeProblem mazeProblem){
+    public static Node aStarGraphSearch(MazeProblem mazeProblem) throws UnsolvableMazeException{
         Node currentNode = new Node(mazeProblem.initial);
         System.out.println(currentNode);
         System.out.println(mazeProblem);
@@ -58,7 +60,7 @@ public final class MazeSolver {
             }
         }
         // Solution cannot be found
-        return null;
+        throw new UnsolvableMazeException("This maze configuration is unsolvable. Please modify and try again.");
     }
 
 

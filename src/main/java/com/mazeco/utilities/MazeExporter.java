@@ -1,5 +1,6 @@
 package com.mazeco.utilities;
 
+import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
 
@@ -7,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,7 +62,7 @@ public final class MazeExporter {
         return image;
     }
 
-    public static void ExportPNG(File path, String name, String firstName, String lastName, String date, MazeModel mazeModel, int cellSize,  boolean withSolution) throws IOException {
+    public static void ExportPNG(File path, String name, String firstName, String lastName, String date, MazeModel mazeModel, int cellSize,  boolean withSolution) throws IOException, UnsolvableMazeException{
         String solvedName = name + "Solved" + "_" + lastName + "_" + firstName + "_" + date + ".png";
         String fileNameClean = name + "_" + lastName + "_" + firstName + "_" + date + ".png";
         Path currentPath = Paths.get(String.valueOf(path));
