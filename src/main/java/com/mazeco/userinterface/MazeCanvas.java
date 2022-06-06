@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -47,21 +45,25 @@ public class MazeCanvas implements IUserInterface {
     private static CanvasMode mode;
     private static UUID currentMazeID;
 
+    private static ImageIcon startImageIcon;
+    private static ImageIcon endImageIcon;
+
+
     private MazeCanvas(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
-        if(instance != null)
+        if (instance != null)
             return;
 
         initSidePanelActionListeners();
-        
+
         MazeCanvas.mazeModel = mazeModel;
         MazeCanvas.mazeName = mazeName;
         MazeCanvas.user = user;
         initialiseSidePanel(mode);
         MazeCanvas.canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
+        MazeCanvas.canvasPanel.setPreferredSize(new Dimension(800, 800));
         renderCanvasPanelButtons();
 
         initialiseWindow();
-
         instance = this;
     }
 
@@ -207,15 +209,30 @@ public class MazeCanvas implements IUserInterface {
                 break;
 
             case START:
-                aBlockButton.setBackground(Color.RED);
+                if (mazeModel.getStartImage() != null) {
+                    startImageIcon = new ImageIcon(mazeModel.getStartImage());
+                    Image img = startImageIcon.getImage();
+                    Image newImg = img.getScaledInstance(800 / mazeModel.getWidth(), 800 / mazeModel.getWidth(), Image.SCALE_SMOOTH);
+                    startImageIcon = new ImageIcon(newImg);
+                    aBlockButton.setIcon(startImageIcon);
+                } else
+                    aBlockButton.setBackground(Color.RED);
                 break;
-                
+
             case END:
-                aBlockButton.setBackground(Color.GREEN);
+                System.out.println(mazeModel.getEndImage());
+                if (mazeModel.getEndImage() != null) {
+                    endImageIcon = new ImageIcon(mazeModel.getEndImage());
+                    Image img = endImageIcon.getImage();
+                    Image newImg = img.getScaledInstance(800 / mazeModel.getWidth(), 800 / mazeModel.getWidth(), Image.SCALE_SMOOTH);
+                    endImageIcon = new ImageIcon(newImg);
+                    aBlockButton.setIcon(endImageIcon);
+                } else
+                    aBlockButton.setBackground(Color.GREEN);
                 break;
-                
+
             case PATH:
-                if(isSolutionVisible)
+                if (isSolutionVisible)
                     aBlockButton.setBackground(Color.YELLOW);
                 else
                     aBlockButton.setBackground(Color.WHITE);
@@ -242,7 +259,7 @@ public class MazeCanvas implements IUserInterface {
     }
 
     private void handleRegenerateButton() {
-        MazeCanvas.mazeModel = MazeGenerator.generateMaze(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX());
+        MazeCanvas.mazeModel = MazeGenerator.generateMaze(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX(), mazeModel.getLogo(), mazeModel.getStartImage(), mazeModel.getEndImage());
 //        System.out.println(mazeModel);
         reRenderCanvasPanel();
     }
@@ -339,6 +356,7 @@ public class MazeCanvas implements IUserInterface {
                 Point clickedPosition = (Point) aBlockButton.getClientProperty("position");
                 int pressedCol = (int) clickedPosition.getX();
                 int pressedRow = (int) clickedPosition.getY();
+
 
                 switch (mazeModel.getBlock(pressedCol, pressedRow)) {
                     case BLANK:

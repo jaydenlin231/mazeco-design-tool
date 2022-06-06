@@ -4,6 +4,7 @@ import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,13 +37,25 @@ public final class MazeExporter {
                     y += cellSize;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.START)) {
-                    g.setColor(Color.RED);
-                    g.fillRect(x, y, cellSize, cellSize);
+                    if (mazeModel.getStartImage() != null) {
+                        ImageIcon icon = new ImageIcon(mazeModel.getStartImage());
+                        Image img = icon.getImage();
+                        g.drawImage(img, x, y, cellSize, cellSize, null);
+                    } else {
+                        g.setColor(Color.RED);
+                        g.fillRect(x, y, cellSize, cellSize);
+                    }
                     y += cellSize;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.END)) {
-                    g.setColor(Color.GREEN);
-                    g.fillRect(x, y, cellSize, cellSize);
+                    if (mazeModel.getEndImage() != null) {
+                        ImageIcon icon = new ImageIcon(mazeModel.getEndImage());
+                        Image img = icon.getImage();
+                        g.drawImage(img, x, y, cellSize, cellSize, null);
+                    } else {
+                        g.setColor(Color.GREEN);
+                        g.fillRect(x, y, cellSize, cellSize);
+                    }
                     y += cellSize;
                 }
                 if (mazeModel.getBlock(i, j).equals(Block.PATH)) {
@@ -66,10 +79,13 @@ public final class MazeExporter {
         Path currentPath = Paths.get(String.valueOf(path));
         Path filePath = Paths.get(currentPath.toString(), fileNameClean);
         if (withSolution == true) {
-            mazeModel.solve();
+            mazeModel.clearSolution();
             BufferedImage image = paint(mazeModel, cellSize);
-            filePath = Paths.get(currentPath.toString(), solvedName);
             ImageIO.write(image, "png", new File(String.valueOf(filePath)));
+            mazeModel.solve();
+            BufferedImage imageSolved = paint(mazeModel, cellSize);
+            filePath = Paths.get(currentPath.toString(), solvedName);
+            ImageIO.write(imageSolved, "png", new File(String.valueOf(filePath)));
             mazeModel.clearSolution();
         } else {
             BufferedImage image = paint(mazeModel, cellSize);

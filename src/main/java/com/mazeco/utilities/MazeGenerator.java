@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public final class MazeGenerator {
-    public static MazeModel generateMaze(int width, int height, int start, int end) {
-        MazeModel mazeModel = new MazeModel(width, height, start, end);
+    public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
+        MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
         mazeModel = DFS(mazeModel, 1, start);
         return mazeModel;
