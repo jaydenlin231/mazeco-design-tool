@@ -204,7 +204,7 @@ public class OptionsMenu implements IUserInterface {
                     startImage = file.getAbsolutePath();
                 if (buttonSource == endImageButton)
                     endImage = file.getAbsolutePath();
-                buttonSource.setText("Selected: " + file.getName());
+                buttonSource.setText("Selected: " + file.getName().substring(0, Math.min(file.getName().length(), 15)));
             }
         }
     }

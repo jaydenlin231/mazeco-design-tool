@@ -55,10 +55,6 @@ public class MazeModel implements Serializable{
         this.width = width;
         this.height = height;
         this.data = new Matrix<Block>(width, height, Block.BLANK);
-
-    }
-    public MazeModel() {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, 7, logo, startImage, endImage);
     }
 
     public MazeModel(int width, int height, int start, int end, String logo, String startImage, String endImage) {
@@ -81,6 +77,10 @@ public class MazeModel implements Serializable{
             }
         }
 
+    }
+
+    public MazeModel() {
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, 7, null, null, null);
     }
 
 
@@ -132,7 +132,18 @@ public class MazeModel implements Serializable{
         return endImage;
     }
 
-    public void solve() {
+    public void setStartImage(String value) {
+        startImage = value;
+    }
+
+    public void setEndImage(String value) {
+        endImage = value;
+    }
+
+    public void setLogoImage(String value) {
+        logo = value;
+    }
+
     public void solve() throws UnsolvableMazeException {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 

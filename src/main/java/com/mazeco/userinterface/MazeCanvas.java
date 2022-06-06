@@ -4,8 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -50,6 +49,7 @@ public class MazeCanvas implements IUserInterface {
 
     private static ImageIcon startImageIcon;
     private static ImageIcon endImageIcon;
+
 
 
     private MazeCanvas(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
@@ -102,13 +102,22 @@ public class MazeCanvas implements IUserInterface {
         solutionBttn.addActionListener(new SideMenuActionListener());
         regenBttn.addActionListener(new SideMenuActionListener());
         exportBttn.addActionListener(new SideMenuActionListener());
+        startImgBttn.addActionListener(new SideMenuActionListener());
+        endImgBttn.addActionListener(new SideMenuActionListener());
+        logoBttn.addActionListener(new SideMenuActionListener());
+
     }
 
     private void initialiseSidePanel(CanvasMode mode) {
         sidePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         sidePanel.add(logoBttn);
         sidePanel.add(startImgBttn);
+        if (mazeModel.getStartImage() != null) {
+            startImgBttn.setText("Remove Start Image");
+        }
         sidePanel.add(endImgBttn);
+        if (mazeModel.getEndImage() != null)
+            endImgBttn.setText("Remove End Image");
         // Draw
         if (mode == CanvasMode.DRAW) {
             sidePanel.add(clearBttn);
@@ -116,7 +125,7 @@ public class MazeCanvas implements IUserInterface {
                 JLabel blankPlaceHolder = new JLabel();
                 sidePanel.add(blankPlaceHolder);
             }
-        // Generate and Edit 
+            // Generate and Edit
         } else {
             sidePanel.add(regenBttn);
             sidePanel.add(clearBttn);
@@ -228,7 +237,6 @@ public class MazeCanvas implements IUserInterface {
                 break;
                 
             case END:
-                System.out.println(mazeModel.getEndImage());
                 if (mazeModel.getEndImage() != null) {
                     endImageIcon = new ImageIcon(mazeModel.getEndImage());
                     Image img = endImageIcon.getImage();
@@ -310,6 +318,28 @@ public class MazeCanvas implements IUserInterface {
         System.out.println("Saved");
     }
 
+    private void openImageBrowser(JButton source) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int option = fileChooser.showOpenDialog(null);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (source == startImgBttn) {
+                mazeModel.setStartImage(file.getAbsolutePath());
+                startImgBttn.setText("Remove Start Image");
+            }
+            if (source == endImgBttn) {
+                mazeModel.setEndImage(file.getAbsolutePath());
+                endImgBttn.setText("Remove End Image");
+            }
+            if (source == logoBttn) {
+                mazeModel.setLogoImage(file.getAbsolutePath());
+                logoBttn.setText("Remove Logo");
+            }
+            reRenderCanvasPanel();
+        }
+    }
+
     @Override
     public void show() {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -335,6 +365,30 @@ public class MazeCanvas implements IUserInterface {
                     handleSolutionButton();
                 } else if (source == regenBttn) {
                     handleRegenerateButton();
+                } else if (source == startImgBttn) {
+                    if (mazeModel.getStartImage() != null) {
+                        mazeModel.setStartImage(null);
+                        reRenderCanvasPanel();
+                        startImgBttn.setText("Place Start Image");
+                    } else if (mazeModel.getStartImage() == null) {
+                        openImageBrowser((JButton) source);
+                    }
+                } else if (source == endImgBttn) {
+                    if (mazeModel.getEndImage() != null) {
+                        mazeModel.setEndImage(null);
+                        reRenderCanvasPanel();
+                        startImgBttn.setText("Place End Image");
+                    } else if (mazeModel.getEndImage() == null) {
+                        openImageBrowser((JButton) source);
+                    }
+                } else if (source == logoBttn) {
+                    if (mazeModel.getLogo() != null) {
+                        mazeModel.setLogoImage(null);
+                        reRenderCanvasPanel();
+                        startImgBttn.setText("Place Logo");
+                    } else if (mazeModel.getLogo() == null) {
+                        openImageBrowser((JButton) source);
+                    }
                 }
             } catch (SQLException exception) {
                 JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
