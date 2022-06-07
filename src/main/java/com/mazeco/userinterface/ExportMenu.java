@@ -158,8 +158,8 @@ public class ExportMenu implements IUserInterface {
                     User user = mazeRecord.getAuthor();
                     String dateTime = mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HHmmss");
                     MazeExporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, maze, cellSize, saveWithSolution);
-                    window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
                 }
+                window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
                 resetParameters();
             } catch (IOException  e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
