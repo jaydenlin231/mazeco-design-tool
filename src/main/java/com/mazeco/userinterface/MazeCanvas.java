@@ -203,6 +203,7 @@ public class MazeCanvas implements IUserInterface {
     }
 
     private void renderLogoImage() {
+        reRenderCanvasPanel();
         if (mazeModel.getLogo() != null) {
             int LogoStartX = logoStartButton.getX();
             int LogoStartY = logoStartButton.getY();
