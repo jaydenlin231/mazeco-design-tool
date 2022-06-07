@@ -1,4 +1,4 @@
-package com.mazeco.utilities;
+package com.mazeco.userinterface;
 
 public enum SortCriteria {
     BY_AUTHOR("Author"), 
