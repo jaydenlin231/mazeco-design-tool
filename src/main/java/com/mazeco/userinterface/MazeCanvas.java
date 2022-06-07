@@ -35,6 +35,7 @@ public class MazeCanvas implements IUserInterface {
 
     private static JPanel sidePanel = new JPanel(new GridLayout(14, 1, 1, 8));
     private static JPanel canvasPanel;
+    private static JLayeredPane layeredPane = new JLayeredPane();
     private static MazeModel mazeModel;
 
     private static boolean isSolutionVisible = false;
@@ -49,7 +50,7 @@ public class MazeCanvas implements IUserInterface {
 
     private static ImageIcon startImageIcon;
     private static ImageIcon endImageIcon;
-
+    private static ImageIcon logoIcon;
 
 
     private MazeCanvas(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
@@ -65,8 +66,9 @@ public class MazeCanvas implements IUserInterface {
         MazeCanvas.canvasPanel = new JPanel(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
         MazeCanvas.canvasPanel.setPreferredSize(new Dimension(800, 800));
         renderCanvasPanelButtons();
-
+        renderLogoImage();
         initialiseWindow();
+
 
         instance = this;
     }
@@ -84,6 +86,7 @@ public class MazeCanvas implements IUserInterface {
             MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
             instance.reRenderSidePanel(mode);
             instance.reRenderCanvasPanel();
+            instance.reRenderLogoImage();
         }
         resetCheckSolSaveButtons();
         return instance;
@@ -114,10 +117,15 @@ public class MazeCanvas implements IUserInterface {
         sidePanel.add(startImgBttn);
         if (mazeModel.getStartImage() != null) {
             startImgBttn.setText("Remove Start Image");
+        } else {
+            startImgBttn.setText("Place Start Image");
         }
         sidePanel.add(endImgBttn);
-        if (mazeModel.getEndImage() != null)
+        if (mazeModel.getEndImage() != null) {
             endImgBttn.setText("Remove End Image");
+        } else {
+            endImgBttn.setText("Place End Image");
+        }
         // Draw
         if (mode == CanvasMode.DRAW) {
             sidePanel.add(clearBttn);
@@ -146,14 +154,21 @@ public class MazeCanvas implements IUserInterface {
     private void initialiseWindow() {
         window.addWindowListener(new ClosingListener());
         window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        window.setMinimumSize(new Dimension(900, 800));
+        window.setMinimumSize(new Dimension(985, 830));
         window.setLayout(new BorderLayout());
         window.setResizable(false);
 
+        layeredPane.setMinimumSize(new Dimension(800, 800));
+        layeredPane.setBounds(0, 0, 800, 800);
+
+        canvasPanel.setBounds(0, 0, 800, 800);
+        layeredPane.add(canvasPanel, JLayeredPane.DEFAULT_LAYER);
+
+        window.add(layeredPane, BorderLayout.CENTER);
         window.add(sidePanel, BorderLayout.WEST);
-        window.add(canvasPanel, BorderLayout.CENTER);
+//        window.add(canvasPanel, BorderLayout.CENTER);
         window.pack();
-        
+
     }
 
     private void reRenderSidePanel(CanvasMode mode){
@@ -164,12 +179,46 @@ public class MazeCanvas implements IUserInterface {
         window.pack();
     }
 
-    private void reRenderCanvasPanel(){
+    private void reRenderCanvasPanel() {
         removeAllAndRepaintCanvasPanel();
         renderCanvasPanelButtons();
+
         canvasPanel.repaint();
         window.repaint();
         window.pack();
+    }
+
+    private void reRenderLogoImage() {
+        layeredPane.removeAll();
+        layeredPane.add(canvasPanel, JLayeredPane.DEFAULT_LAYER);
+        renderLogoImage();
+
+        layeredPane.repaint();
+        window.repaint();
+        window.pack();
+    }
+
+    private void renderLogoImage() {
+        if (mazeModel.getLogo() != null) {
+            int LogoStartX = mazeModel.getStartLogoPoint().x * 800 / mazeModel.getWidth();
+            int LogoStartY = mazeModel.getStartLogoPoint().y * 800 / mazeModel.getWidth();
+            int LogoSize = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * 800 / mazeModel.getWidth();
+
+            System.out.println("Logo X: " + LogoStartX);
+            System.out.println("Logo Y: " + LogoStartY);
+            System.out.println("Size: " + LogoSize);
+
+
+            logoIcon = new ImageIcon(mazeModel.getLogo());
+            Image img = logoIcon.getImage();
+            Image newImg = img.getScaledInstance(LogoSize, LogoSize, Image.SCALE_SMOOTH);
+            logoIcon = new ImageIcon(newImg);
+
+            JLabel label2 = new JLabel();
+            label2.setIcon(logoIcon);
+            label2.setBounds(LogoStartX, LogoStartY, LogoSize, LogoSize);
+            layeredPane.add(label2, JLayeredPane.POPUP_LAYER);
+        }
     }
 
     private void renderCanvasPanelButtons() {
@@ -194,6 +243,7 @@ public class MazeCanvas implements IUserInterface {
             }
         }
     }
+
 
     private void removeAllAndRepaintCanvasPanel() {
         if (canvasPanel != null) {
@@ -223,6 +273,10 @@ public class MazeCanvas implements IUserInterface {
 
             case WALL:
                 aBlockButton.setBackground(Color.BLACK);
+                break;
+
+            case LOGO:
+                aBlockButton.setBackground(Color.PINK);
                 break;
 
             case START:

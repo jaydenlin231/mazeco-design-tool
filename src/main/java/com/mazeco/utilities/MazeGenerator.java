@@ -10,6 +10,10 @@ public final class MazeGenerator {
     public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
+        mazeModel.setBlock(Block.LOGO, 3, 3);
+        mazeModel.setBlock(Block.LOGO, 4, 3);
+        mazeModel.setBlock(Block.LOGO, 3, 4);
+        mazeModel.setBlock(Block.LOGO, 4, 4);
         mazeModel = DFS(mazeModel, 1, start);
         return mazeModel;
     }
@@ -20,6 +24,9 @@ public final class MazeGenerator {
             switch (randomDirs[i]) {
                 case 1 -> { //Up
                     if (row - 1 == 0 || mazeModel.getBlock(col, row - 2).equals(Block.START)) {
+                        continue;
+                    }
+                    if (mazeModel.getBlock(col, row - 2).equals(Block.LOGO)) {
                         continue;
                     }
                     if (!mazeModel.getBlock(col, row - 2).equals(Block.BLANK)) {
@@ -38,6 +45,9 @@ public final class MazeGenerator {
                     if (mazeModel.getBlock(col + 1, row + 1).equals(Block.END)) {
                         mazeModel.setBlock(Block.BLANK, col + 1, row);
                     }
+                    if (mazeModel.getBlock(col + 2, row).equals(Block.LOGO)) {
+                        continue;
+                    }
                     if (!mazeModel.getBlock(col + 2, row).equals(Block.BLANK)) {
                         mazeModel.setBlock(Block.BLANK, col + 1, row);
                         if (!(col + 2 == mazeModel.getWidth() - 1)) {
@@ -48,6 +58,9 @@ public final class MazeGenerator {
                 }
                 case 3 -> { //Down
                     if (row + 1 == mazeModel.getHeight() - 1 || mazeModel.getBlock(col, row + 2).equals(Block.START)) {
+                        continue;
+                    }
+                    if (mazeModel.getBlock(col, row + 2).equals(Block.LOGO)) {
                         continue;
                     }
                     if (!mazeModel.getBlock(col, row + 2).equals(Block.BLANK)) {
@@ -64,6 +77,9 @@ public final class MazeGenerator {
                     }
                     if (mazeModel.getBlock(col - 1, row + 1).equals(Block.END)) {
                         mazeModel.setBlock(Block.BLANK, col - 1, row);
+                    }
+                    if (mazeModel.getBlock(col - 2, row).equals(Block.LOGO)) {
+                        continue;
                     }
                     if (!mazeModel.getBlock(col - 2, row).equals(Block.BLANK)) {
                         mazeModel.setBlock(Block.BLANK, col - 1, row);

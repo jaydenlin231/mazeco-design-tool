@@ -104,6 +104,33 @@ public class MazeModel implements Serializable{
         data.insert(Block.END, endX, height - 1);
     }
 
+    public Point getStartLogoPoint() {
+        if (logo != null) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if (data.get(j, i).equals(Block.LOGO)) {
+                        return new Point(i, j);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Point getEndLogoPoint() {
+        Point point = null;
+        if (logo != null) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if (data.get(j, i).equals(Block.LOGO)) {
+                        point = new Point(i, j);
+                    }
+                }
+            }
+        }
+        return point;
+    }
+
     public Point getStartPosition() {
         return startPosition;
     }

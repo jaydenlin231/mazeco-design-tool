@@ -65,6 +65,9 @@ public final class MazeExporter {
                     g.fillRect(x, y, cellSize, cellSize);
                     y += cellSize;
                 }
+                if (mazeModel.getBlock(i, j).equals(Block.LOGO)) {
+                    y += cellSize;
+                }
 
             }
             x += cellSize;
@@ -72,6 +75,15 @@ public final class MazeExporter {
         }
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, width - 1, height - 1);
+        if (mazeModel.getLogo() != null) {
+            int logoX = mazeModel.getStartLogoPoint().x * cellSize;
+            int logoY = mazeModel.getStartLogoPoint().y * cellSize;
+            int LogoSize = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * cellSize;
+
+            ImageIcon icon = new ImageIcon(mazeModel.getLogo());
+            Image img = icon.getImage();
+            g.drawImage(img, logoX, logoY, LogoSize, LogoSize, null);
+        }
         return image;
     }
 
