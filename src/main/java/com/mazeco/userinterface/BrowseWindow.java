@@ -5,14 +5,13 @@ import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.CanvasMode;
-import com.mazeco.utilities.SortCriteria;
-import com.mazeco.utilities.SortOrder;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -163,6 +162,7 @@ public class BrowseWindow implements IUserInterface {
         JPanel mazeSortPanel = new JPanel(new GridLayout(1, 2));
         mazeSortDropdown.addItemListener(new MazeSortListener());
         mazeSortOrderButton.addActionListener(new MazeSortListener());
+        mazeSortOrderButton.setFocusPainted(false);
         mazeSortPanel.add(mazeSortDropdown);
         mazeSortPanel.add(mazeSortOrderButton);
         
@@ -379,10 +379,9 @@ public class BrowseWindow implements IUserInterface {
             if (mazeList.getSelectedValue() == null)
                 return;
 
-            MazeRecord selectedMazeRecord = mazeList.getSelectedValue();
+            ArrayList<MazeRecord> selectedMazeRecord = new ArrayList<MazeRecord>(mazeList.getSelectedValuesList());
 
-            ExportMenu exportMenu = new ExportMenu(selectedMazeRecord.getMazeModel(), selectedMazeRecord.getName(), selectedMazeRecord.getAuthor(), selectedMazeRecord.getDateTimeCreatedString("yyyy:MM:dd-HH-mm"));
-            exportMenu.show();
+            ExportMenu.getInstance(selectedMazeRecord).show();
         }
 
         private void handleToggleSolutionButton() {

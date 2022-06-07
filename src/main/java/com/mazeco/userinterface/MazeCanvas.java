@@ -409,6 +409,16 @@ public class MazeCanvas implements IUserInterface {
         public void actionPerformed(ActionEvent e){
             Component source = (Component) e.getSource();
             try {
+                if (source == regenBttn || source == clearBttn){
+                    int confirmation = JOptionPane.showConfirmDialog(window, 
+                                                                 "Do you wish to clear the drawing canvas? Your current changes will be lost.", 
+                                                                 "Warning", 
+                                                                 JOptionPane.YES_NO_OPTION, 
+                                                                 JOptionPane.WARNING_MESSAGE);
+                    
+                    if(confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION)
+                        return;
+                }
                 if (source == saveBttn) {
                     handleSaveButton();
                 } else if (source == clearBttn) {
