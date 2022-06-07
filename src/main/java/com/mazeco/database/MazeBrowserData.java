@@ -13,8 +13,8 @@ import javax.swing.ListModel;
 
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
-import com.mazeco.utilities.SortCriteria;
-import com.mazeco.utilities.SortOrder;
+import com.mazeco.userinterface.SortCriteria;
+import com.mazeco.userinterface.SortOrder;
 
 public class MazeBrowserData {
     private static DefaultListModel<MazeRecord> listModel;
