@@ -3,6 +3,7 @@ package com.mazeco.models;
 import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.utilities.MazeProblem;
@@ -104,12 +105,57 @@ public class MazeModel implements Serializable{
         data.insert(Block.END, endX, height - 1);
     }
 
+    public void prepForLogo() {
+        int logoSize = 0;
+
+        if (width <= 15)
+            logoSize = 2;
+        else if (width <= 30)
+            logoSize = 4;
+        else if (width <= 45)
+            logoSize = 6;
+        else if (width <= 60)
+            logoSize = 8;
+        else if (width <= 75)
+            logoSize = 10;
+        else if (width <= 90)
+            logoSize = 13;
+        else if (width <= 100)
+            logoSize = 15;
+
+        Random rand = new Random();
+        int x = rand.nextInt(width - logoSize * 2) + logoSize;
+        int y = rand.nextInt(height - logoSize * 2) + logoSize;
+//        System.out.println(x +", " + y);
+
+        if (x + logoSize != width && y + logoSize != height && !getBlock(x, y + logoSize).equals(Block.END))
+            for (int i = x; i < x + logoSize; i++) {
+                for (int j = y; j < y + logoSize; j++) {
+                    data.insert(Block.LOGO, i, j);
+                }
+            }
+        else {
+            prepForLogo();
+        }
+    }
+
+    public void removeLogo() {
+        Point start = getStartLogoPoint();
+        Point end = getEndLogoPoint();
+        for (int i = start.x; i <= end.x; i++) {
+            for (int j = start.y; j <= end.y; j++) {
+                data.insert(Block.BLANK, i, j);
+            }
+        }
+
+    }
+
     public Point getStartLogoPoint() {
         if (logo != null) {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     if (data.get(j, i).equals(Block.LOGO)) {
-                        return new Point(i, j);
+                        return new Point(j, i);
                     }
                 }
             }
@@ -123,7 +169,7 @@ public class MazeModel implements Serializable{
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     if (data.get(j, i).equals(Block.LOGO)) {
-                        point = new Point(i, j);
+                        point = new Point(j, i);
                     }
                 }
             }

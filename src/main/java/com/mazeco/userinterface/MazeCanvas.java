@@ -160,7 +160,7 @@ public class MazeCanvas implements IUserInterface {
     private void initialiseWindow() {
         window.addWindowListener(new ClosingListener());
         window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        window.setMinimumSize(new Dimension(980, 830));
+        window.setMinimumSize(new Dimension(990, 830));
         window.setLayout(new BorderLayout());
         window.setResizable(false);
 
@@ -208,10 +208,6 @@ public class MazeCanvas implements IUserInterface {
             int LogoStartX = logoStartButton.getX();
             int LogoStartY = logoStartButton.getY();
             int LogoSize = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * 800 / mazeModel.getWidth();
-
-            System.out.println("Logo X: " + LogoStartX);
-            System.out.println("Logo Y: " + LogoStartY);
-            System.out.println("Size: " + LogoSize);
 
             logoIcon = new ImageIcon(mazeModel.getLogo());
             Image img = logoIcon.getImage();
@@ -341,16 +337,20 @@ public class MazeCanvas implements IUserInterface {
 
     private void handleClearButton() {
         resetCanvasMazeModel();
-        reRenderCanvasPanel();
         mazeModel.setLogoImage(null);
+        reRenderCanvasPanel();
+
         reRenderLogoImage();
         resetCheckSolSaveButtons();
+        logoBttn.setText("Place Logo");
+        startImgBttn.setText("Place Start Image");
+        endImgBttn.setText("Place End Image");
     }
 
     private void handleRegenerateButton() {
         MazeCanvas.mazeModel = MazeGenerator.generateMaze(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX(), mazeModel.getLogo(), mazeModel.getStartImage(), mazeModel.getEndImage());
-//        System.out.println(mazeModel);
         reRenderCanvasPanel();
+        reRenderLogoImage();
         resetCheckSolSaveButtons();
     }
 
@@ -399,6 +399,7 @@ public class MazeCanvas implements IUserInterface {
             }
             if (source == logoBttn) {
                 mazeModel.setLogoImage(file.getAbsolutePath());
+                mazeModel.prepForLogo();
                 reRenderLogoImage();
                 logoBttn.setText("Remove Logo");
             }
@@ -421,16 +422,16 @@ public class MazeCanvas implements IUserInterface {
         public void actionPerformed(ActionEvent e){
             Component source = (Component) e.getSource();
             try {
-                if (source == regenBttn || source == clearBttn){
-                    int confirmation = JOptionPane.showConfirmDialog(window, 
-                                                                 "Do you wish to clear the drawing canvas? Your current changes will be lost.", 
-                                                                 "Warning", 
-                                                                 JOptionPane.YES_NO_OPTION, 
-                                                                 JOptionPane.WARNING_MESSAGE);
-                    
-                    if(confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION)
-                        return;
-                }
+//                if (source == regenBttn || source == clearBttn){
+//                    int confirmation = JOptionPane.showConfirmDialog(window,
+//                                                                 "Do you wish to clear the drawing canvas? Your current changes will be lost.",
+//                                                                 "Warning",
+//                                                                 JOptionPane.YES_NO_OPTION,
+//                                                                 JOptionPane.WARNING_MESSAGE);
+//
+//                    if(confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION)
+//                        return;
+//                }
                 if (source == saveBttn) {
                     handleSaveButton();
                 } else if (source == clearBttn) {
@@ -459,11 +460,14 @@ public class MazeCanvas implements IUserInterface {
                     }
                 } else if (source == logoBttn) {
                     if (mazeModel.getLogo() != null) {
+                        mazeModel.removeLogo();
                         mazeModel.setLogoImage(null);
                         reRenderLogoImage();
                         logoBttn.setText("Place Logo");
                     } else if (mazeModel.getLogo() == null) {
                         openImageBrowser((JButton) source);
+                        resetCheckSolSaveButtons();
+
                     }
                 }
             } catch (SQLException exception) {
