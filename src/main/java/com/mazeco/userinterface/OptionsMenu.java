@@ -249,12 +249,14 @@ public class OptionsMenu implements IUserInterface {
                     lastNameField.setBorder(new LineBorder(Color.RED, 1));
                 return;
             }
+            if ((Integer) mazeStartInput.getValue() % 2 == 0)
+                mazeStartInput.setValue((Integer) mazeStartInput.getValue() - 1);
             try {
                 Integer inputWidth = (Integer) mazeWidthInput.getValue();
                 Integer inputHeight = (Integer) mazeHeightInput.getValue();
                 Integer inputStartIndex = (Integer) mazeStartInput.getValue();
                 Integer inputEndIndex = (Integer) mazeEndInput.getValue();
-                if(!(inputStartIndex < inputWidth && inputEndIndex < inputWidth)){
+                if (!(inputStartIndex < inputWidth && inputEndIndex < inputWidth)) {
 
                 }
                 if (inputStartIndex < inputWidth && inputEndIndex < inputWidth && mode == CanvasMode.GENERATE) {
