@@ -156,7 +156,7 @@ public class ExportMenu implements IUserInterface {
                     MazeModel maze = mazeRecord.getMazeModel();
                     String mazeName = mazeRecord.getName();
                     User user = mazeRecord.getAuthor();
-                    String dateTime = mazeRecord.getDateTimeCreatedString("yyyy/MM/dd-HH-mm");
+                    String dateTime = mazeRecord.getDateTimeCreatedString("yyyy-MM-dd HHmmss");
                     MazeExporter.ExportPNG(path, mazeName, user.getFirstName(), user.getLastName(), dateTime, maze, cellSize, saveWithSolution);
                     window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
                 }
