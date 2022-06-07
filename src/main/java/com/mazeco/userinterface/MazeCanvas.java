@@ -52,6 +52,7 @@ public class MazeCanvas implements IUserInterface {
     private static ImageIcon endImageIcon;
     private static ImageIcon logoIcon;
 
+    private static JButton logoStartButton;
 
     private MazeCanvas(MazeModel mazeModel, CanvasMode mode, String mazeName, User user) {
         if (instance != null)
@@ -86,7 +87,6 @@ public class MazeCanvas implements IUserInterface {
             MazeCanvas.canvasPanel.setLayout(new GridLayout(mazeModel.getHeight(), mazeModel.getWidth()));
             instance.reRenderSidePanel(mode);
             instance.reRenderCanvasPanel();
-            instance.reRenderLogoImage();
         }
         resetCheckSolSaveButtons();
         return instance;
@@ -160,7 +160,7 @@ public class MazeCanvas implements IUserInterface {
     private void initialiseWindow() {
         window.addWindowListener(new ClosingListener());
         window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        window.setMinimumSize(new Dimension(971, 828));
+        window.setMinimumSize(new Dimension(980, 830));
         window.setLayout(new BorderLayout());
         window.setResizable(false);
 
@@ -204,9 +204,9 @@ public class MazeCanvas implements IUserInterface {
 
     private void renderLogoImage() {
         if (mazeModel.getLogo() != null) {
-            int LogoStartX = mazeModel.getStartLogoPoint().x * canvasPanel.getWidth() / mazeModel.getWidth();
-            int LogoStartY = mazeModel.getStartLogoPoint().y * canvasPanel.getWidth() / mazeModel.getHeight();
-            int LogoSize = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * canvasPanel.getWidth() / mazeModel.getWidth();
+            int LogoStartX = logoStartButton.getX();
+            int LogoStartY = logoStartButton.getY();
+            int LogoSize = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * 800 / mazeModel.getWidth();
 
             System.out.println("Logo X: " + LogoStartX);
             System.out.println("Logo Y: " + LogoStartY);
@@ -239,6 +239,9 @@ public class MazeCanvas implements IUserInterface {
                 setBlockButtonStyle(aBlockButton, aBlockModel);
 
                 aBlockButton.putClientProperty("position", new Point(col, row));
+                if(mazeModel.getLogo() != null && mazeModel.getStartLogoPoint().x == col && mazeModel.getStartLogoPoint().y == row){
+                    logoStartButton = aBlockButton;
+                }
                 aBlockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
                 aBlockButton.setFocusPainted(false);
 
@@ -407,6 +410,7 @@ public class MazeCanvas implements IUserInterface {
             public void run() {
                 window.setLocationRelativeTo(null);
                 window.setVisible(true);
+                reRenderLogoImage();
             }
         });
     }

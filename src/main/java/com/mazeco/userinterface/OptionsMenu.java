@@ -66,6 +66,7 @@ public class OptionsMenu implements IUserInterface {
         generateButtonListener = new GenerateButtonListener(mode);
         generateButton.addActionListener(generateButtonListener);
         OptionsMenu.instance = this;
+        initialiseButtonListeners();
         initialisePanel(mode);
         initialiseWindow(mode);
     }
@@ -168,11 +169,12 @@ public class OptionsMenu implements IUserInterface {
         });
         configSpinners(mazeWidthInput);
         configSpinners(mazeHeightInput);
+    }
+
+    private void initialiseButtonListeners(){
         logoImageButton.addActionListener(new BrowseButtonListener());
         startImageButton.addActionListener(new BrowseButtonListener());
         endImageButton.addActionListener(new BrowseButtonListener());
-
-
     }
 
     public static void resetParameters() {
