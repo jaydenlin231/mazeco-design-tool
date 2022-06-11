@@ -13,7 +13,18 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * This class allows any MazeModel to be converted to a BufferedImage then exported as a PNG image
+ */
 public final class MazeExporter {
+
+    /**
+     * This static method converts any MazeModel data into a BufferedImage equivalent.
+     *
+     * @param mazeModel Maze to be converted to BufferedImage.
+     * @param cellSize  Size of each cell in the Maze in pixels.
+     * @return A BufferedImage converted MazeModel.
+     */
     public static BufferedImage paint(MazeModel mazeModel, int cellSize) {
         int width = mazeModel.getWidth() * cellSize;
         int height = mazeModel.getHeight() * cellSize;
@@ -62,7 +73,22 @@ public final class MazeExporter {
         return image;
     }
 
-    public static void ExportPNG(File path, String name, String firstName, String lastName, String date, MazeModel mazeModel, int cellSize,  boolean withSolution) throws IOException, UnsolvableMazeException{
+    /**
+     * This method converts any MazeModel into a shareable PNG format image with
+     * either the solved solution or just plain maze to a path.
+     *
+     * @param path         The File path to the resulting PNG images.
+     * @param name         The name of the maze.
+     * @param firstName    The first name of the author.
+     * @param lastName     The last name of the author.
+     * @param date         The date of the maze.
+     * @param mazeModel    The maze itself to be exported.
+     * @param cellSize     Size of each cell in the Maze in pixels.
+     * @param withSolution Boolean input to save with or without solution of the maze. True saves with solution.
+     * @throws IOException             Incorrect file destination.
+     * @throws UnsolvableMazeException If the maze is unsolvable.
+     */
+    public static void ExportPNG(File path, String name, String firstName, String lastName, String date, MazeModel mazeModel, int cellSize, boolean withSolution) throws IOException, UnsolvableMazeException {
         String solvedName = name + "Solved" + "_" + lastName + "_" + firstName + "_" + date + ".png";
         String fileNameClean = name + "_" + lastName + "_" + firstName + "_" + date + ".png";
         Path currentPath = Paths.get(String.valueOf(path));
