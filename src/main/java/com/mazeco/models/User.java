@@ -1,7 +1,7 @@
 package com.mazeco.models;
 
 /**
- * Represents a user of the MazeCo Desing Tool GUI Application with generic access level
+ * Represents a user of the MazeCo Design Tool GUI Application with generic access level
  */
 public class User {
     protected String id;
@@ -58,8 +58,8 @@ public class User {
 
     /**
      * Returns String representation of the User in the format {@code "lastName, firstName"}
-     * 
-     * @return string string representation of the User 
+     *
+     * @return string representation of the User
      */
     @Override
     public String toString(){

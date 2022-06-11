@@ -1,7 +1,6 @@
 package com.mazeco.database;
 
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,8 +12,8 @@ import javax.swing.ListModel;
 
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
-import com.mazeco.userinterface.SortCriteria;
-import com.mazeco.userinterface.SortOrder;
+import com.mazeco.utilities.SortCriteria;
+import com.mazeco.utilities.SortOrder;
 
 public class MazeBrowserData {
     private static DefaultListModel<MazeRecord> listModel;

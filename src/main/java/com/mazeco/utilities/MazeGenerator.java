@@ -19,6 +19,7 @@ public final class MazeGenerator {
      * @param start  Start column index of the maze in the top row.
      * @param end    End column index of the maze in the bottom row.
      * @return Returns MazeModel that has been automatically generated through Depth First Search algorithm.
+     * @see MazeModel
      */
     public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);

@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.mazeco.exception.UnsolvableMazeException;
+import com.mazeco.utilities.MazeGenerator;
 import com.mazeco.utilities.MazeProblem;
 import com.mazeco.utilities.MazeSolver;
 import com.mazeco.utilities.Node;
+
 /**
- *  Represents the data and configuration of a maze to be stored in {@code MazeRecord}.
- * 
- *  @see MazeRecord
+ * Represents the data and configuration of a maze to be stored in MazeRecord.
+ *
+ * @see MazeRecord
  */
 public class MazeModel implements Serializable{
     private static final long serialVersionUID = -4565786099626384425L;
@@ -40,10 +42,10 @@ public class MazeModel implements Serializable{
     private String endImage;
 
     /**
-     * Construct a MazeModel with the given the {@code width} and {@code height} of the maze representation in blocks.
+     * Construct a MazeModel with the given the width and height of the maze representation in blocks.
      *
-     * @param width  width of the maze representation in blocks in the range 10 to 100
-     * @param height height of the maze representation in blocks in the range 10 to 100
+     * @param width  Width of the maze representation in blocks in the range 10 to 100
+     * @param height Height of the maze representation in blocks in the range 10 to 100
      * @throws IllegalArgumentException
      */
     public MazeModel(int width, int height) {
@@ -58,6 +60,15 @@ public class MazeModel implements Serializable{
         this.data = new Matrix<Block>(width, height, Block.BLANK);
     }
 
+
+    /**
+     * Construct a MazeModel with the given the width, height, start and end of the maze representation in blocks.
+     *
+     * @param width  Width of the maze representation in blocks in the range 10 to 100
+     * @param height Height of the maze representation in blocks in the range 10 to 100
+     * @param start  Start column index of the maze in the top row.
+     * @param end    End column index of the maze in the top row.
+     */
     public MazeModel(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         this(width, height);
         startX = start;
@@ -79,39 +90,57 @@ public class MazeModel implements Serializable{
         }
     }
 
-    public MazeModel(int width, int height, int start, int end){
+    public MazeModel(int width, int height, int start, int end) {
         this(width, height, start, end, null, null, null);
     }
 
     public MazeModel() {
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, 7, null, null, null);
+
     }
 
-
+    /**
+     * Get the width of the MazeModel.
+     *
+     * @return Width of the maze.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get the Height of the MazeModel.
+     *
+     * @return Height of the maze.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Resets the MazeModel to a Blank state where the Start and End are still intact.
+     */
     public void resetData() {
         data.reset(Block.BLANK);
         data.insert(Block.START, startX, 0);
         data.insert(Block.END, endX, height - 1);
     }
 
+    /**
+     * Prepares the MazeModel for automatic generation setting all but Start and End to Walls.
+     *
+     * @see MazeGenerator
+     */
     public void prepForGenerator() {
         data.reset(Block.WALL);
         data.insert(Block.START, startX, 0);
         data.insert(Block.END, endX, height - 1);
     }
 
-    private boolean logoClearanceWarning(int x, int y, int logoSize){
+    private boolean logoClearanceWarning(int x, int y, int logoSize) {
         for (int i = y - 2; i < y + logoSize + 2; i++) {
             for (int j = x - 2; j < x + logoSize + 2; j++) {
-                if(getBlock(j, i).equals(Block.START) || getBlock(j, i).equals(Block.END)||getBlock(j, i).equals(Block.PATH))
+                if (getBlock(j, i).equals(Block.START) || getBlock(j, i).equals(Block.END) || getBlock(j, i).equals(Block.PATH))
                     return true;
             }
         }
@@ -206,22 +235,48 @@ public class MazeModel implements Serializable{
         }
     }
 
+    /**
+     * Get the Point of the Start in the MazeModel.
+     *
+     * @return Start Point of the maze.
+     */
     public Point getStartPosition() {
         return startPosition;
     }
 
+    /**
+     * Get the Point of the End in the MazeModel.
+     *
+     * @return End Point of the maze.
+     */
     public Point getEndPosition() {
         return endPosition;
     }
 
+    /**
+     * Get the x coordinate of the start of the MazeModel.
+     *
+     * @return Start x coordinate of the maze.
+     */
     public int getStartX() {
         return startX;
     }
 
+    /**
+     * Get the x coordinate of the end of the MazeModel.
+     *
+     * @return End x coordinate of the maze.
+     */
     public int getEndX() {
         return endX;
     }
 
+    /**
+     * Solves the current MazeModel using MazeSolver
+     *
+     * @throws UnsolvableMazeException
+     * @see MazeSolver
+     */
     public String getLogo() {
         return logo;
     }
@@ -263,7 +318,15 @@ public class MazeModel implements Serializable{
         }
     }
 
-    public Double getSolutionPercentage() throws UnsolvableMazeException{
+
+    /**
+     * converts the solution into a quantifiable measure as percentage of the maze required
+     * to visit to solve.
+     *
+     * @return Solution percentage.
+     * @throws UnsolvableMazeException
+     */
+    public Double getSolutionPercentage() throws UnsolvableMazeException {
         solve();
         int pathCount = 0;
         int explorableblockCount = 0;
@@ -272,34 +335,41 @@ public class MazeModel implements Serializable{
                 if (getBlock(j, i) == Block.PATH) {
                     pathCount++;
                     explorableblockCount++;
-                }
-                else if (getBlock(j, i) == Block.BLANK) {
+                } else if (getBlock(j, i) == Block.BLANK) {
                     explorableblockCount++;
                 }
             }
         }
-        
+
         solutionPercentage = (((double) pathCount / (double) explorableblockCount) * 100);
         // truncate
-        int temp = (int)(solutionPercentage*100.0);
-        solutionPercentage = ((double)temp)/100.0;
+        int temp = (int) (solutionPercentage * 100.0);
+        solutionPercentage = ((double) temp) / 100.0;
         return solutionPercentage;
     }
 
-    public ArrayList<Point> getSolution(){
+    /**
+     * Get the ArrayList of the solution path of the MazeModel.
+     *
+     * @return An ArrayList of Points of the solution path of the maze.
+     */
+    public ArrayList<Point> getSolution() {
         return solution;
     }
 
-    public void clearSolution(){
-        if(solution == null)
-            return; 
-            
+    /**
+     * Clear the solution of the MazeModel to its unsolved state.
+     */
+    public void clearSolution() {
+        if (solution == null)
+            return;
+
         for (Point aPathPoint : solution) {
             int currentCol = (int) aPathPoint.getX();
             int currentRow = (int) aPathPoint.getY();
 
-            if(this.getBlock(currentCol, currentRow).equals(Block.START) 
-            || this.getBlock(currentCol, currentRow).equals(Block.END))
+            if (this.getBlock(currentCol, currentRow).equals(Block.START)
+                    || this.getBlock(currentCol, currentRow).equals(Block.END))
                 continue;
 
             this.setBlock(Block.BLANK, currentCol, currentRow);
@@ -309,11 +379,11 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Gets the {@code Block} object with the given row and column index from the maze representation.
+     * Gets the Block object with the given row and column index from the maze representation.
      *
      * @param row index of the row to access
      * @param col index of the column to access
-     * @return Block {@code Block} object at the given row and column index of the maze representation
+     * @return Block objects at the given row and column index of the maze representation
      */
     public Block getBlock(int col, int row){
         if(col > width - 1)
@@ -325,9 +395,9 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Sets the {@code Block} object of the given row and column index in the maze representation.
+     * Sets the Block object of the given row and column index in the maze representation.
      *
-     * @param block {@code Block} Object to set
+     * @param block Block Object to set
      * @param row index of the row to access
      * @param col index of the column to access
      */
@@ -348,16 +418,16 @@ public class MazeModel implements Serializable{
 
 
      /**
-     * Returns String representation of the maze in a grid like fashion,
-     * each non space character in the string represents a {@code Block}.
-     * 
-     * @return string string representation of the maze 
-     * @see Block#toString()
-     */
-    @Override
-    public String toString() {
-       return data.toString();
-    }
+      * Returns String representation of the maze in a grid like fashion,
+      * each non-space character in the string represents a Block.
+      *
+      * @return string representation of the maze
+      * @see Block#toString()
+      */
+     @Override
+     public String toString() {
+         return data.toString();
+     }
 
-    
+
 }

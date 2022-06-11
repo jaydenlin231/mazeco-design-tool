@@ -17,8 +17,8 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
     /**
      * Constructs a Matrix.
      *
-     * @param rows the number of rows.
-     * @param columns the number of columns.
+     * @param width  the number of rows.
+     * @param height the number of columns.
      */
     public Matrix(int width, int height) {
         this(width, height, null);
@@ -63,10 +63,9 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
     /**
      * Assigns a value to a given cell, specified by its row, column coordinates.
      *
-     * @param row the row index with 0-based indexing.
-     * @param column the column index with 0-based indexing.
+     * @param row   the row index with 0-based indexing.
+     * @param col   the column index with 0-based indexing.
      * @param value the value to be assigned to the given cell.
-     * 
      * @throws IndexOutOfBoundsException
      */
     public void insert(E value, int col, int row) {
@@ -78,9 +77,9 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
      * Gets the value at a given cell, specified by its row, column coordinates.
      *
      * @param row the row index with 0-based indexing.
-     * @param column the column index with 0-based indexing.
+     * @param col the column index with 0-based indexing.
      * @return the value located at the given cell.
-     * 
+     *
      * @throws IndexOutOfBoundsException
      */
     public E get(int col, int row) {

@@ -25,6 +25,7 @@ public final class MazeExporter {
      * @param mazeModel Maze to be converted to BufferedImage.
      * @param cellSize  Size of each cell in the Maze in pixels.
      * @return A BufferedImage converted MazeModel.
+     * @see MazeModel
      */
     public static BufferedImage paint(MazeModel mazeModel, int cellSize) {
         int width = mazeModel.getWidth() * cellSize;

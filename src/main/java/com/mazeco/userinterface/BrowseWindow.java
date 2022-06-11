@@ -2,21 +2,18 @@ package com.mazeco.userinterface;
 
 import com.mazeco.database.MazeBrowserData;
 import com.mazeco.exception.UnsolvableMazeException;
-import com.mazeco.models.MazeModel;
 import com.mazeco.models.MazeRecord;
 import com.mazeco.utilities.CanvasMode;
+import com.mazeco.utilities.SortCriteria;
+import com.mazeco.utilities.SortOrder;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -26,7 +23,7 @@ public class BrowseWindow implements IUserInterface {
     private final static SortCriteria[] mazeSortOptions = SortCriteria.class.getEnumConstants();
     private final static JComboBox<SortCriteria> mazeSortDropdown = new JComboBox<SortCriteria>(mazeSortOptions);
     private static SortCriteria selectedMazeSortCriteria = SortCriteria.BY_CREATED;
-    private static SortOrder selectedMazeSortOrder = SortOrder.ASC;
+    private static com.mazeco.utilities.SortOrder selectedMazeSortOrder = com.mazeco.utilities.SortOrder.ASC;
     private final JButton mazeSortOrderButton = new JButton(selectedMazeSortOrder.toString());
 
     private final Icon editIcon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/pen2.png"));
@@ -88,7 +85,7 @@ public class BrowseWindow implements IUserInterface {
         return selectedMazeSortCriteria;
     }
 
-    public static SortOrder getSelectedMazeSortOrder() {
+    public static com.mazeco.utilities.SortOrder getSelectedMazeSortOrder() {
         return selectedMazeSortOrder;
     }
 
@@ -320,17 +317,17 @@ public class BrowseWindow implements IUserInterface {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                if(selectedMazeSortCriteria == null || selectedMazeSortOrder == null)
+                if (selectedMazeSortCriteria == null || selectedMazeSortOrder == null)
                     return;
 
-                if(selectedMazeSortOrder == SortOrder.ASC){
-                    MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.DSC);
-                    selectedMazeSortOrder = SortOrder.DSC;
+                if (selectedMazeSortOrder == com.mazeco.utilities.SortOrder.ASC) {
+                    MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, com.mazeco.utilities.SortOrder.DSC);
+                    selectedMazeSortOrder = com.mazeco.utilities.SortOrder.DSC;
                     mazeSortOrderButton.setText(selectedMazeSortOrder.toString());
                     return;
                 }
-                
-                MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, SortOrder.ASC);
+
+                MazeBrowserData.sortMazeRecords(selectedMazeSortCriteria, com.mazeco.utilities.SortOrder.ASC);
                 selectedMazeSortOrder = SortOrder.ASC;
                 mazeSortOrderButton.setText(selectedMazeSortOrder.toString());
             } catch (SQLException e1) {
