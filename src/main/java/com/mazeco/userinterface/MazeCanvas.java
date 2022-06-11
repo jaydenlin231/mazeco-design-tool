@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -137,7 +138,6 @@ public class MazeCanvas implements IUserInterface {
 
     private void initialiseSidePanel(CanvasMode mode) {
         sidePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        sidePanel.add(logoBttn);
         if (mazeModel.getLogo() != null) {
             logoBttn.setText("Remove Logo Image");
         } else {
@@ -155,6 +155,7 @@ public class MazeCanvas implements IUserInterface {
         } else {
             endImgBttn.setText("Place End Image");
         }
+        sidePanel.add(logoBttn);
         // Draw
         if (mode == CanvasMode.DRAW) {
             sidePanel.add(clearBttn);
@@ -412,6 +413,9 @@ public class MazeCanvas implements IUserInterface {
 
     private void openImageBrowser(JButton source) {
         JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Images", "jpg", "JPEG", "png");
+        fileChooser.setFileFilter(filter);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int option = fileChooser.showOpenDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
