@@ -1,4 +1,6 @@
 com.mazeco
+com.mazeco.database
+com.mazeco.exception
 com.mazeco.models
 com.mazeco.userinterface
 com.mazeco.utilities

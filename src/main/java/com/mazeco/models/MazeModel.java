@@ -271,12 +271,6 @@ public class MazeModel implements Serializable{
         return endX;
     }
 
-    /**
-     * Solves the current MazeModel using MazeSolver
-     *
-     * @throws UnsolvableMazeException
-     * @see MazeSolver
-     */
     public String getLogo() {
         return logo;
     }
@@ -301,6 +295,12 @@ public class MazeModel implements Serializable{
         logo = value;
     }
 
+    /**
+     * Solves the current MazeModel using MazeSolver
+     *
+     * @throws UnsolvableMazeException
+     * @see MazeSolver
+     */
     public void solve() throws UnsolvableMazeException {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 
