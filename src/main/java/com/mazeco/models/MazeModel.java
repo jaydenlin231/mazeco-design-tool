@@ -105,7 +105,19 @@ public class MazeModel implements Serializable{
         data.insert(Block.END, endX, height - 1);
     }
 
+    private boolean logoClearanceWarning(int x, int y, int logoSize){
+        for (int i = y - 2; i < y + logoSize + 2; i++) {
+            for (int j = x - 2; j < x + logoSize + 2; j++) {
+                if(getBlock(j, i).equals(Block.START) || getBlock(j, i).equals(Block.END)||getBlock(j, i).equals(Block.PATH))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public void prepForLogo() {
+        clearSolution();
+
         int logoSize = 0;
 
         if (width <= 15)
@@ -126,37 +138,34 @@ public class MazeModel implements Serializable{
         Random rand = new Random();
         int x = rand.nextInt(width - logoSize * 2) + logoSize;
         int y = rand.nextInt(height - logoSize * 2) + logoSize;
-//        System.out.println(x +", " + y);
+        while(((x + logoSize) >= width - 1 || (y + logoSize) >= height - 1) || logoClearanceWarning(x, y, logoSize)){
+            x = rand.nextInt(width - logoSize * 2) + logoSize;
+            y = rand.nextInt(height - logoSize * 2) + logoSize;
+        }
 
-        if (x + logoSize != width && y + logoSize != height && !getBlock(x, y + logoSize).equals(Block.END))
-            for (int i = x; i < x + logoSize; i++) {
-                for (int j = y; j < y + logoSize; j++) {
-                    data.insert(Block.LOGO, i, j);
-                }
+        for (int i = y; i < y + logoSize; i++) {
+            for (int j = x; j < x + logoSize; j++) {
+                data.insert(Block.LOGO, j, i);
             }
-        else {
-            prepForLogo();
         }
     }
 
     public void removeLogo() {
         Point start = getStartLogoPoint();
         Point end = getEndLogoPoint();
-        for (int i = start.x; i <= end.x; i++) {
-            for (int j = start.y; j <= end.y; j++) {
-                data.insert(Block.BLANK, i, j);
+        for (int i = start.y; i <= end.y; i++) {
+            for (int j = start.x; j <= end.x; j++) {
+                data.insert(Block.WALL, j, i);
             }
         }
 
     }
 
     public Point getStartLogoPoint() {
-        if (logo != null) {
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    if (data.get(j, i).equals(Block.LOGO)) {
-                        return new Point(j, i);
-                    }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (data.get(j, i).equals(Block.LOGO)) {
+                    return new Point(j, i);
                 }
             }
         }
@@ -165,16 +174,33 @@ public class MazeModel implements Serializable{
 
     public Point getEndLogoPoint() {
         Point point = null;
-        if (logo != null) {
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    if (data.get(j, i).equals(Block.LOGO)) {
-                        point = new Point(j, i);
-                    }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (data.get(j, i).equals(Block.LOGO)) {
+                    point = new Point(j, i);
                 }
             }
         }
         return point;
+    }
+
+    public synchronized void setLogoArea(Point start, Point end) {
+        int minX = Math.min(start.x, end.x);
+        int minY = Math.min(start.y, end.y);
+        int maxX = Math.max(start.x, end.x);
+        int maxY = Math.max(start.y, end.y);
+        for (int i = minY; i <= maxY; i++) {
+            for (int j = minX; j <= maxX; j++) {
+                if(getBlock(j, i) == Block.START || getBlock(j, i) == Block.END || getBlock(j, i) == Block.PATH){
+                    return;
+                }
+            }
+        }
+        for (int i = minY; i <= maxY; i++) {
+            for (int j = minX; j <= maxX; j++) {
+                setBlock(Block.LOGO, j, i);
+            }
+        }
     }
 
     public Point getStartPosition() {

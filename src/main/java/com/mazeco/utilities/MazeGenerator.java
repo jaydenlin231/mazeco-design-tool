@@ -10,7 +10,7 @@ public final class MazeGenerator {
     public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
-        if (mazeModel.getLogo() != null)
+        if (mazeModel.getLogo()!= null && mazeModel.getStartLogoPoint() == null)
             mazeModel.prepForLogo();
         mazeModel = DFS(mazeModel, 1, start);
         return mazeModel;
