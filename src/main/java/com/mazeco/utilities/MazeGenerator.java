@@ -20,12 +20,15 @@ public final class MazeGenerator {
      * @param end    End column index of the maze in the bottom row.
      * @return Returns MazeModel that has been automatically generated through Depth First Search algorithm.
      */
-    public static MazeModel generateMaze(int width, int height, int start, int end) {
-        MazeModel mazeModel = new MazeModel(width, height, start, end);
+    public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
+        MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
+        if (mazeModel.getLogo()!= null && mazeModel.getStartLogoPoint() == null)
+            mazeModel.prepForLogo();
         mazeModel = DFS(mazeModel, 1, start);
         return mazeModel;
     }
+
 
     /**
      * Depth First Search algorithm to create a solvable maze starting from the given row and col.
@@ -44,6 +47,9 @@ public final class MazeGenerator {
                     if (row - 1 == 0 || mazeModel.getBlock(col, row - 2).equals(Block.START)) {
                         continue;
                     }
+                    if (mazeModel.getBlock(col, row - 2).equals(Block.LOGO)) {
+                        continue;
+                    }
                     if (!mazeModel.getBlock(col, row - 2).equals(Block.BLANK)) {
                         mazeModel.setBlock(Block.BLANK, col, row - 1);
                         if (!(row - 2 == mazeModel.getHeight() - 1)) {
@@ -60,6 +66,9 @@ public final class MazeGenerator {
                     if (mazeModel.getBlock(col + 1, row + 1).equals(Block.END)) {
                         mazeModel.setBlock(Block.BLANK, col + 1, row);
                     }
+                    if (mazeModel.getBlock(col + 2, row).equals(Block.LOGO)) {
+                        continue;
+                    }
                     if (!mazeModel.getBlock(col + 2, row).equals(Block.BLANK)) {
                         mazeModel.setBlock(Block.BLANK, col + 1, row);
                         if (!(col + 2 == mazeModel.getWidth() - 1)) {
@@ -70,6 +79,9 @@ public final class MazeGenerator {
                 }
                 case 3 -> { //Down
                     if (row + 1 == mazeModel.getHeight() - 1 || mazeModel.getBlock(col, row + 2).equals(Block.START)) {
+                        continue;
+                    }
+                    if (mazeModel.getBlock(col, row + 2).equals(Block.LOGO)) {
                         continue;
                     }
                     if (!mazeModel.getBlock(col, row + 2).equals(Block.BLANK)) {
@@ -87,6 +99,9 @@ public final class MazeGenerator {
                     if (mazeModel.getBlock(col - 1, row + 1).equals(Block.END)) {
                         mazeModel.setBlock(Block.BLANK, col - 1, row);
                     }
+                    if (mazeModel.getBlock(col - 2, row).equals(Block.LOGO)) {
+                        continue;
+                    }
                     if (!mazeModel.getBlock(col - 2, row).equals(Block.BLANK)) {
                         mazeModel.setBlock(Block.BLANK, col - 1, row);
                         if (!(col - 2 == mazeModel.getWidth() - 1)) {
@@ -99,6 +114,7 @@ public final class MazeGenerator {
         }
         return mazeModel;
     }
+
 
     /**
      * Generates an array of random integers from 1-4 to randomise the traversal of DFS.

@@ -20,7 +20,7 @@ public class MazeGeneratorTest {
 
     @BeforeEach
     public void constructMazeGenerator() {
-        mazeModel = MazeGenerator.generateMaze(TEST_WIDTH, TEST_HEIGHT, TEST_START, TEST_END);
+        mazeModel = MazeGenerator.generateMaze(TEST_WIDTH, TEST_HEIGHT, TEST_START, TEST_END, null, null ,null);
     }
 
     @Test

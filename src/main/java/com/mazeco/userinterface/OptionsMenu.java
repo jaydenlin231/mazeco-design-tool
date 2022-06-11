@@ -8,6 +8,7 @@ import com.mazeco.utilities.MazeGenerator;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
@@ -50,33 +51,38 @@ public class OptionsMenu implements IUserInterface {
 
     private static CanvasMode mode;
 
+    private static String logoImage;
+    private static String startImage;
+    private static String endImage;
+
     private final static JPanel mainPanel = new JPanel(new GridBagLayout());
 
     private static OptionsMenu instance = null;
-    
-    private static GenerateButtonListener genrateButtonListener;
+
+    private static GenerateButtonListener generateButtonListener;
 
     private OptionsMenu(CanvasMode mode) {
         OptionsMenu.mode = mode;
-        genrateButtonListener  = new GenerateButtonListener(mode);
-        generateButton.addActionListener(genrateButtonListener);
+        generateButtonListener = new GenerateButtonListener(mode);
+        generateButton.addActionListener(generateButtonListener);
         OptionsMenu.instance = this;
+        initialiseButtonListeners();
         initialisePanel(mode);
         initialiseWindow(mode);
     }
 
-    public static OptionsMenu getInstance(CanvasMode mode){
-        if(instance == null){
+    public static OptionsMenu getInstance(CanvasMode mode) {
+        if (instance == null) {
             new OptionsMenu(mode);
         } else {
             OptionsMenu.mode = mode;
             reRenderPanel(mode);
             initialiseWindow(mode);
         }
-        generateButton.removeActionListener(genrateButtonListener);
-        genrateButtonListener = new GenerateButtonListener(mode);
-        generateButton.addActionListener(genrateButtonListener);
-        
+        generateButton.removeActionListener(generateButtonListener);
+        generateButtonListener = new GenerateButtonListener(mode);
+        generateButton.addActionListener(generateButtonListener);
+
         return instance;
     }
 
@@ -165,6 +171,12 @@ public class OptionsMenu implements IUserInterface {
         configSpinners(mazeHeightInput);
     }
 
+    private void initialiseButtonListeners(){
+        logoImageButton.addActionListener(new BrowseButtonListener());
+        startImageButton.addActionListener(new BrowseButtonListener());
+        endImageButton.addActionListener(new BrowseButtonListener());
+    }
+
     public static void resetParameters() {
         mazeWidthInput.setValue(10);
         mazeHeightInput.setValue(10);
@@ -176,6 +188,27 @@ public class OptionsMenu implements IUserInterface {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         System.out.println(window);
+    }
+
+    private static class BrowseButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton buttonSource = (JButton) e.getSource();
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int option = fileChooser.showOpenDialog(null);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                if (buttonSource == logoImageButton)
+                    logoImage = file.getAbsolutePath();
+                if (buttonSource == startImageButton)
+                    startImage = file.getAbsolutePath();
+                if (buttonSource == endImageButton)
+                    endImage = file.getAbsolutePath();
+                buttonSource.setText("Selected: " + file.getName().substring(0, Math.min(file.getName().length(), 15)));
+            }
+        }
     }
 
     private interface TextFieldDocumentListener extends DocumentListener {
@@ -218,18 +251,20 @@ public class OptionsMenu implements IUserInterface {
                     lastNameField.setBorder(new LineBorder(Color.RED, 1));
                 return;
             }
+            if ((Integer) mazeStartInput.getValue() % 2 == 0)
+                mazeStartInput.setValue((Integer) mazeStartInput.getValue() - 1);
             try {
                 Integer inputWidth = (Integer) mazeWidthInput.getValue();
                 Integer inputHeight = (Integer) mazeHeightInput.getValue();
                 Integer inputStartIndex = (Integer) mazeStartInput.getValue();
                 Integer inputEndIndex = (Integer) mazeEndInput.getValue();
-                if(!(inputStartIndex < inputWidth && inputEndIndex < inputWidth)){
+                if (!(inputStartIndex < inputWidth && inputEndIndex < inputWidth)) {
 
                 }
                 if (inputStartIndex < inputWidth && inputEndIndex < inputWidth && mode == CanvasMode.GENERATE) {
-                    aModel = MazeGenerator.generateMaze(inputWidth, inputHeight, inputStartIndex, inputEndIndex);
+                    aModel = MazeGenerator.generateMaze(inputWidth, inputHeight, inputStartIndex, inputEndIndex, logoImage, startImage, endImage);
                 } else if (inputStartIndex < inputWidth && inputEndIndex < inputWidth) {
-                    aModel = new MazeModel(inputWidth, inputHeight, inputStartIndex, inputEndIndex);
+                    aModel = new MazeModel(inputWidth, inputHeight, inputStartIndex, inputEndIndex, logoImage, startImage, endImage);
                     System.out.println(aModel);
                 }
 
@@ -239,6 +274,7 @@ public class OptionsMenu implements IUserInterface {
             window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
             mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName, "tba", "tba"));
             mazeCanvas.show();
+
             resetParameters();
         }
     }

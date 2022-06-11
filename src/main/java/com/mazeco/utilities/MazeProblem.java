@@ -22,22 +22,22 @@ public final class MazeProblem {
         int currentRow = (int) state.getY();
         
         if((currentCol + 1) < mazeModel.getWidth()){
-            if(!mazeModel.getBlock(currentCol + 1, currentRow).equals(Block.WALL)){
+            if(!mazeModel.getBlock(currentCol + 1, currentRow).equals(Block.WALL)&&!mazeModel.getBlock(currentCol + 1, currentRow).equals(Block.LOGO)){
                 availableActions.add("Right");
             }
         }
         if((currentCol - 1) >= 0){
-            if(!mazeModel.getBlock(currentCol - 1, currentRow).equals(Block.WALL)){
+            if(!mazeModel.getBlock(currentCol - 1, currentRow).equals(Block.WALL)&&!mazeModel.getBlock(currentCol - 1, currentRow).equals(Block.LOGO)){
                 availableActions.add("Left");
             }
         }
         if((currentRow + 1) < mazeModel.getHeight()){
-            if(!mazeModel.getBlock(currentCol, currentRow + 1).equals(Block.WALL)){
+            if(!mazeModel.getBlock(currentCol, currentRow + 1).equals(Block.WALL)&&!mazeModel.getBlock(currentCol, currentRow + 1).equals(Block.LOGO)){
                 availableActions.add("Down");
             }
         }
         if((currentRow - 1) >= 0){
-            if(!mazeModel.getBlock(currentCol, currentRow - 1).equals(Block.WALL)){
+            if(!mazeModel.getBlock(currentCol, currentRow - 1).equals(Block.WALL)&&!mazeModel.getBlock(currentCol, currentRow - 1).equals(Block.LOGO)){
                 availableActions.add("Up");
             }
         }
