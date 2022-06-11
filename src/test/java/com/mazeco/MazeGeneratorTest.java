@@ -63,15 +63,15 @@ public class MazeGeneratorTest {
     public void testSolvable() {
         int numberOfTests = 100;
 
-        for (int i = 0; i <= numberOfTests; i++) {
-            constructMazeGenerator();
-            try {
-                MazeSolver.aStarGraphSearch(new MazeProblem(mazeModel));
-            } catch (UnsolvableMazeException e) {
-                fail("Generated maze not solvable");
+        for (int j = 10; j <= 100; j += 1) {
+            mazeModel = MazeGenerator.generateMaze(j, j, TEST_START, j - 3, null, null, null);
+            for (int i = 0; i <= numberOfTests; i++) {
+                try {
+                    MazeSolver.aStarGraphSearch(new MazeProblem(mazeModel));
+                } catch (UnsolvableMazeException e) {
+                    fail("Generated maze not solvable");
+                }
             }
         }
     }
-
-
 }
