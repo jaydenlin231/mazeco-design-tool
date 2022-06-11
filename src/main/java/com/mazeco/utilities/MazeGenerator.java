@@ -6,7 +6,20 @@ import com.mazeco.models.Block;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Automatically generates a solvable maze through using Depth First Search algorithm
+ */
 public final class MazeGenerator {
+
+    /**
+     * Constructor to create an automatically generated and solvable MazeModel with declared start and finish.
+     *
+     * @param width  Width of the maze in number of cells.
+     * @param height Height of the maze in number of cells.
+     * @param start  Start column index of the maze in the top row.
+     * @param end    End column index of the maze in the bottom row.
+     * @return Returns MazeModel that has been automatically generated through Depth First Search algorithm.
+     */
     public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
@@ -16,6 +29,16 @@ public final class MazeGenerator {
         return mazeModel;
     }
 
+
+    /**
+     * Depth First Search algorithm to create a solvable maze starting from the given row and col.
+     *
+     * @param mazeModel Requires a MazeModel that has been prepared for the Generator where all the
+     *                  cells except from the Start and End are Walls.
+     * @param row       Starting cell row.
+     * @param col       Starting cell column.
+     * @return Returns a automatically generated mazeModel that is solvable.
+     */
     private static MazeModel DFS(MazeModel mazeModel, int row, int col) {
         Integer[] randomDirs = generateRandomDirs();
         for (int i = 0; i < randomDirs.length; i++) {
@@ -92,6 +115,12 @@ public final class MazeGenerator {
         return mazeModel;
     }
 
+
+    /**
+     * Generates an array of random integers from 1-4 to randomise the traversal of DFS.
+     *
+     * @return Returns an Integer array of 4 elements where numbers from 1-4 are shuffled.
+     */
     private static Integer[] generateRandomDirs() {
         ArrayList<Integer> rand = new ArrayList<Integer>();
         for (int i = 0; i < 4; i++) {

@@ -77,7 +77,10 @@ public class MazeModel implements Serializable{
                 }
             }
         }
+    }
 
+    public MazeModel(int width, int height, int start, int end){
+        this(width, height, start, end, null, null, null);
     }
 
     public MazeModel() {
