@@ -2,6 +2,7 @@ package com.mazeco;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.mazeco.exception.InvalidMazeException;
 import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
@@ -20,7 +21,11 @@ public class MazeGeneratorTest {
 
     @BeforeEach
     public void constructMazeGenerator() {
-        mazeModel = MazeGenerator.generateMaze(TEST_WIDTH, TEST_HEIGHT, TEST_START, TEST_END, null, null ,null);
+        try {
+            mazeModel = MazeGenerator.generateMaze(TEST_WIDTH, TEST_HEIGHT, TEST_START, TEST_END, null, null ,null);
+        } catch (InvalidMazeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -63,9 +68,14 @@ public class MazeGeneratorTest {
     public void testSolvable() {
         int numberOfTests = 100;
 
-        for (int j = 10; j <= 100; j += 1) {
-            mazeModel = MazeGenerator.generateMaze(j, j, TEST_START, j - 3, null, null, null);
-            for (int i = 0; i <= numberOfTests; i++) {
+        for (int mazeSize = 10; mazeSize <= 100; mazeSize += 1) {
+            try {
+                mazeModel = MazeGenerator.generateMaze(mazeSize, mazeSize, TEST_START, mazeSize - 3, null, null, null);
+            } catch (InvalidMazeException e1) {
+                e1.printStackTrace();
+            }
+
+            for (int iteration = 0; iteration <= numberOfTests; iteration++) {
                 try {
                     MazeSolver.aStarGraphSearch(new MazeProblem(mazeModel));
                 } catch (UnsolvableMazeException e) {

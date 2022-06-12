@@ -46,7 +46,7 @@ public class MazeModel implements Serializable{
      *
      * @param width  Width of the maze representation in blocks in the range 10 to 100
      * @param height Height of the maze representation in blocks in the range 10 to 100
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if the input width and height are out of bounds.
      */
     public MazeModel(int width, int height) {
         if (width < MIN_WIDTH || width > MAX_WIDTH)
@@ -62,12 +62,16 @@ public class MazeModel implements Serializable{
 
 
     /**
-     * Construct a MazeModel with the given the width, height, start and end of the maze representation in blocks.
+     * Construct a MazeModel with the given the width, height, start and end of the maze, along with absolute 
+     * file paths for the images used in the maze.
      *
-     * @param width  Width of the maze representation in blocks in the range 10 to 100
-     * @param height Height of the maze representation in blocks in the range 10 to 100
+     * @param width  Width of the maze representation in blocks in the range 10 to 100.
+     * @param height Height of the maze representation in blocks in the range 10 to 100.
      * @param start  Start column index of the maze in the top row.
      * @param end    End column index of the maze in the top row.
+     * @param logo   a String representing the absolute path of the logo image.
+     * @param startImage  a String representing the absolute path of the starting image.
+     * @param endImage    a String representing the absolute path of the ending image. 
      */
     public MazeModel(int width, int height, int start, int end, String logo, String startImage, String endImage) {
         this(width, height);
@@ -90,13 +94,24 @@ public class MazeModel implements Serializable{
         }
     }
 
+    /**
+     * Construct a MazeModel with the given the width, height, start and end of the maze representation in blocks, and no images.
+     *
+     * @param width  Width of the maze representation in blocks in the range 10 to 100.
+     * @param height Height of the maze representation in blocks in the range 10 to 100.
+     * @param start  Start column index of the maze in the top row.
+     * @param end    End column index of the maze in the top row.
+     */
     public MazeModel(int width, int height, int start, int end) {
         this(width, height, start, end, null, null, null);
     }
 
+    /**
+     * Constructs a default MazeModel with the default width and height of 10 blocks, 
+     * starting index at 1, ending index at 7 and no images.
+     */
     public MazeModel() {
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, 7, null, null, null);
-
     }
 
     /**
@@ -127,7 +142,7 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Prepares the MazeModel for automatic generation setting all but Start and End to Walls.
+     * Prepares the MazeModel for automatic generation setting all but Start and End to {@code Block.WALL}.
      *
      * @see MazeGenerator
      */
@@ -137,6 +152,14 @@ public class MazeModel implements Serializable{
         data.insert(Block.END, endX, height - 1);
     }
 
+    /**
+     * Checks if the placement of the logo requires to be repositioned.
+     * 
+     * @param x the logo's top left corner x coordinate.
+     * @param y the logo's top left corner y coordinate.
+     * @param logoSize the size of the logo in number of blocks.
+     * @return {@code true} if the placement of the logo doees not have any clearance, {@code false} otherwise.
+     */
     private boolean logoClearanceWarning(int x, int y, int logoSize) {
         for (int i = y - 2; i < y + logoSize + 2; i++) {
             for (int j = x - 2; j < x + logoSize + 2; j++) {
@@ -147,6 +170,10 @@ public class MazeModel implements Serializable{
         return false;
     }
 
+
+    /**
+     * Generate random coordinates for logo placement, check for valid positions and place {@code Block.LOGO}.
+     */
     public void prepForLogo() {
         clearSolution();
 
@@ -182,6 +209,9 @@ public class MazeModel implements Serializable{
         }
     }
 
+    /**
+     * Remove {@code Block.LOGO} Objects from the maze data and replace with {@code Block.WALL} Objects.
+     */
     public void removeLogo() {
         Point start = getStartLogoPoint();
         Point end = getEndLogoPoint();
@@ -193,6 +223,12 @@ public class MazeModel implements Serializable{
 
     }
 
+    /**
+     * Gets the logo's starting (top left corner) coordinates.
+     * 
+     * @return a {@code Point} Object storing x, y coordinates of the 
+     *         first {@code Block.LOGO} Object in the maze data.
+     */
     public Point getStartLogoPoint() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -204,6 +240,12 @@ public class MazeModel implements Serializable{
         return null;
     }
 
+    /**
+     * Gets the logo's ending (bottom right corner) coordinates.
+     * 
+     * @return a {@code Point} Object storing x, y coordinates of the 
+     *         last {@code Block.LOGO} Object in the maze data.
+     */
     public Point getEndLogoPoint() {
         Point point = null;
         for (int i = 0; i < height; i++) {
@@ -216,6 +258,16 @@ public class MazeModel implements Serializable{
         return point;
     }
 
+
+    /**
+     * Sets the logo area in the data given two {@code Point} Objects 
+     * representing opposing corners of the logo placement. This method
+     * prevents illegal logo placements such as masking the start, end
+     * and logo blocks.
+     * 
+     * @param start {@code Point} Object sotring the x,y coordinates of the starting corner for the logo.
+     * @param end {@code Point} Object sotring the x,y coordinates of the ending corner for the logo.
+     */
     public synchronized void setLogoArea(Point start, Point end) {
         int minX = Math.min(start.x, end.x);
         int minY = Math.min(start.y, end.y);
@@ -272,35 +324,65 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Solves the current MazeModel using MazeSolver
+     * Get the absolute path of the logo image.
      *
-     * @throws UnsolvableMazeException
-     * @see MazeSolver
+     * @return the absolute path of the logo image
      */
     public String getLogo() {
         return logo;
     }
 
+    /**
+     * Get the absolute path of the starting image.
+     *
+     * @return the absolute path of the starting image
+     */
     public String getStartImage() {
         return startImage;
     }
 
+    /**
+     * Get the absolute path of the ending image.
+     *
+     * @return the absolute path of the ending image
+     */
     public String getEndImage() {
         return endImage;
     }
 
-    public void setStartImage(String value) {
-        startImage = value;
+    /**
+     * Sets the absolute path of the image file used as the starting image.
+     * 
+     * @param path the absolute path of the image file.
+     */
+    public void setStartImage(String path) {
+        startImage = path;
     }
 
-    public void setEndImage(String value) {
-        endImage = value;
+    /**
+     * Sets the absolute path of the image file used as the ending image.
+     * 
+     * @param path the absolute path of the image file.
+     */
+    public void setEndImage(String path) {
+        endImage = path;
     }
 
-    public void setLogoImage(String value) {
-        logo = value;
+    /**
+     * Sets the absolute path of the image file used as the logo image.
+     * 
+     * @param path the absolute path of the image file.
+     */
+    public void setLogoImage(String path) {
+        logo = path;
     }
 
+     /**
+     * Solves the current MazeModel using MazeSolver
+     *
+     * @throws UnsolvableMazeException if the maze configuration cannot be solved.
+     * @see MazeSolver
+     */
     public void solve() throws UnsolvableMazeException {
         Node solutionNode = MazeSolver.aStarGraphSearch(new MazeProblem(this));
 
@@ -320,11 +402,12 @@ public class MazeModel implements Serializable{
 
 
     /**
-     * converts the solution into a quantifiable measure as percentage of the maze required
+     * Converts the solution into a quantifiable measure as percentage of the maze required
      * to visit to solve.
      *
-     * @return Solution percentage.
-     * @throws UnsolvableMazeException
+     * @return a double representing the optimal solution's percentage. 
+     *         (i.e. num of PATH blocks/ num of {@code BLANK} + {@code PATH} blocks)
+     * @throws UnsolvableMazeException if the maze configuration cannot be solved.
      */
     public Double getSolutionPercentage() throws UnsolvableMazeException {
         solve();
@@ -358,7 +441,7 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Clear the solution of the MazeModel to its unsolved state.
+     * Clear the solution of the MazeModel to its unsolved state. 
      */
     public void clearSolution() {
         if (solution == null)

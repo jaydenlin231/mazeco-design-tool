@@ -1,5 +1,6 @@
 package com.mazeco.userinterface;
 
+import com.mazeco.exception.InvalidMazeException;
 import com.mazeco.models.MazeModel;
 import com.mazeco.models.User;
 import com.mazeco.utilities.CanvasMode;
@@ -15,6 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
 
 public class OptionsMenu implements IUserInterface {
@@ -180,7 +182,15 @@ public class OptionsMenu implements IUserInterface {
     public static void resetParameters() {
         mazeWidthInput.setValue(10);
         mazeHeightInput.setValue(10);
+        mazeStartInput.setValue(1);
+        mazeEndInput.setValue(7);
         mazeNameField.setText("");
+        logoImage = null;
+        startImage = null;
+        endImage = null;
+        startImageButton.setText("Select Image...");
+        endImageButton.setText("Select Image...");
+        logoImageButton.setText("Select Image...");
     }
 
     @Override
@@ -196,6 +206,9 @@ public class OptionsMenu implements IUserInterface {
         public void actionPerformed(ActionEvent e) {
             JButton buttonSource = (JButton) e.getSource();
             JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Images", "jpg", "JPEG", "png");
+            fileChooser.setFileFilter(filter);
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int option = fileChooser.showOpenDialog(null);
             if (option == JFileChooser.APPROVE_OPTION) {
@@ -268,11 +281,18 @@ public class OptionsMenu implements IUserInterface {
                     System.out.println(aModel);
                 }
 
-            } catch (NumberFormatException e) {
-                System.out.println("number error");
+            } catch (NumberFormatException exception) {
+                exception.printStackTrace();
+            } catch (InvalidMazeException exception){
+                JOptionPane.showMessageDialog(window, "This particular maze configuration cannot be generated. Please select different parameters and try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                resetParameters();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                JOptionPane.showMessageDialog(window, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
+            
             window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
-            mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName, "tba", "tba"));
+            mazeCanvas = MazeCanvas.getInstance(aModel, mode, mazeName, new User(firstName, lastName));
             mazeCanvas.show();
 
             resetParameters();

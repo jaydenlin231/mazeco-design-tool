@@ -9,6 +9,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 import javax.swing.JOptionPane;
 
+/**
+ * Provides a SQL database connection for <code>JDBCMazeBrowserDataSource</code> 
+ * using properties in /config/db.props.
+ * 
+ * @see JDBCMazeBrowserDataSource
+ */   
 public class DBConnection {
 
    /**
@@ -17,26 +23,21 @@ public class DBConnection {
    private static Connection instance = null;
 
    /**
-    * Constructor intializes the connection.
+    * Constructs a DBConnection Object.
     */
    private DBConnection() {
       Properties props = new Properties();
       InputStream in = null;
       try {
-        //  in = new FileInputStream("./db.props");
-        //  in = getClass().getResourceAsStream("database/db.props");
+         // get database properties config file
          in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/db.props");
-
-         
          props.load(in);
          in.close();
-
          // specify the data source, username and password
          String url = props.getProperty("jdbc.url");
          String username = props.getProperty("jdbc.username");
          String password = props.getProperty("jdbc.password");
          String schema = props.getProperty("jdbc.schema");
-
          // get a connection
          instance = DriverManager.getConnection(url + "/" + schema, username, password);
       } catch (SQLException exception) {

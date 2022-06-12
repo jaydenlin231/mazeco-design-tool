@@ -7,8 +7,6 @@ public class User {
     protected String id;
     protected String firstName;
     protected String lastName;
-    protected String username;
-    protected String password;
 
     /**
      * Construct a User with the given the {@code firstName}, {@code lastName}, {@code username} and {@code password} of the User.
@@ -17,43 +15,45 @@ public class User {
      * @param username
      * @param password
      */
-    public User(String firstName, String lastName, String username, String password) {
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-    }
-    public String getFirstName() {
-        return firstName;
-    }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    public String getLastName() {
-        return lastName;
-    }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    public String getUsername() {
-        return username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**
-     * Deletes a MazeRecord with admin permissions, 
-     * the MazeRecord can only be deleted if the User was the author of the MazeRecord.
+     * Gets the first name of the User.
      * 
-     * @param aMazeRecord the MazeRecord to be deleted.
-     * @return true if the MazeRecord has been succesfully deleted, false otherwise.
+     * @return the first name of the User.
      */
-    public boolean deleteMaze(MazeRecord aMazeRecord){
-        return true;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * Sets the first name of the User.
+     * 
+     * @param firstName the first name of the User.
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * Gets the last name of the User.
+     * 
+     * @return the last name of the User.
+     */
+    public String getLastName() {
+        return lastName;
+    }
+    
+    /**
+     * Sets the last name of the User.
+     * 
+     * @param lastName the last name of the User.
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**

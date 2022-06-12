@@ -1,6 +1,7 @@
 package com.mazeco.utilities;
 
 import com.mazeco.models.MazeModel;
+import com.mazeco.exception.InvalidMazeException;
 import com.mazeco.models.Block;
 
 import java.util.ArrayList;
@@ -18,10 +19,13 @@ public final class MazeGenerator {
      * @param height Height of the maze in number of cells.
      * @param start  Start column index of the maze in the top row.
      * @param end    End column index of the maze in the bottom row.
+     * @param logo   a String representing the absolute path of the logo image.
+     * @param startImage a String representing the absolute path of the starting image.
+     * @param endImage   a String representing the absolute path of the ending image. 
      * @return Returns MazeModel that has been automatically generated through Depth First Search algorithm.
      * @see MazeModel
      */
-    public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) {
+    public static MazeModel generateMaze(int width, int height, int start, int end, String logo, String startImage, String endImage) throws InvalidMazeException {
         MazeModel mazeModel = new MazeModel(width, height, start, end, logo, startImage, endImage);
         mazeModel.prepForGenerator();
         if (mazeModel.getLogo()!= null && mazeModel.getStartLogoPoint() == null)
@@ -40,79 +44,84 @@ public final class MazeGenerator {
      * @param col       Starting cell column.
      * @return Returns a automatically generated mazeModel that is solvable.
      */
-    private static MazeModel DFS(MazeModel mazeModel, int row, int col) {
+    private static MazeModel DFS(MazeModel mazeModel, int row, int col) throws InvalidMazeException {
         Integer[] randomDirs = generateRandomDirs();
-        for (int i = 0; i < randomDirs.length; i++) {
-            switch (randomDirs[i]) {
-                case 1 -> { //Up
-                    if (row - 1 == 0 || mazeModel.getBlock(col, row - 2).equals(Block.START)) {
-                        continue;
-                    }
-                    if (mazeModel.getBlock(col, row - 2).equals(Block.LOGO)) {
-                        continue;
-                    }
-                    if (!mazeModel.getBlock(col, row - 2).equals(Block.BLANK)) {
-                        mazeModel.setBlock(Block.BLANK, col, row - 1);
-                        if (!(row - 2 == mazeModel.getHeight() - 1)) {
-                            mazeModel.setBlock(Block.BLANK, col, row - 2);
-                            mazeModel = DFS(mazeModel, row - 2, col);
+        try {
+            for (int i = 0; i < randomDirs.length; i++) {
+                switch (randomDirs[i]) {
+                    case 1 -> { //Up
+                        if (row - 1 == 0 || mazeModel.getBlock(col, row - 2).equals(Block.START)) {
+                            continue;
                         }
+                        if (mazeModel.getBlock(col, row - 2).equals(Block.LOGO)) {
+                            continue;
+                        }
+                        if (!mazeModel.getBlock(col, row - 2).equals(Block.BLANK)) {
+                            mazeModel.setBlock(Block.BLANK, col, row - 1);
+                            if (!(row - 2 == mazeModel.getHeight() - 1)) {
+                                mazeModel.setBlock(Block.BLANK, col, row - 2);
+                                mazeModel = DFS(mazeModel, row - 2, col);
+                            }
 
-                    }
-                }
-                case 2 -> { //Right
-                    if (col + 1 == mazeModel.getWidth() - 1 || mazeModel.getBlock(col + 2, row).equals(Block.START)) {
-                        continue;
-                    }
-                    if (mazeModel.getBlock(col + 1, row + 1).equals(Block.END)) {
-                        mazeModel.setBlock(Block.BLANK, col + 1, row);
-                    }
-                    if (mazeModel.getBlock(col + 2, row).equals(Block.LOGO)) {
-                        continue;
-                    }
-                    if (!mazeModel.getBlock(col + 2, row).equals(Block.BLANK)) {
-                        mazeModel.setBlock(Block.BLANK, col + 1, row);
-                        if (!(col + 2 == mazeModel.getWidth() - 1)) {
-                            mazeModel.setBlock(Block.BLANK, col + 2, row);
-                            mazeModel = DFS(mazeModel, row, col + 2);
                         }
                     }
-                }
-                case 3 -> { //Down
-                    if (row + 1 == mazeModel.getHeight() - 1 || mazeModel.getBlock(col, row + 2).equals(Block.START)) {
-                        continue;
-                    }
-                    if (mazeModel.getBlock(col, row + 2).equals(Block.LOGO)) {
-                        continue;
-                    }
-                    if (!mazeModel.getBlock(col, row + 2).equals(Block.BLANK)) {
-                        mazeModel.setBlock(Block.BLANK, col, row + 1);
-                        if (!(row + 2 == mazeModel.getHeight() - 1)) {
-                            mazeModel.setBlock(Block.BLANK, col, row + 2);
-                            mazeModel = DFS(mazeModel, row + 2, col);
+                    case 2 -> { //Right
+                        if (col + 1 == mazeModel.getWidth() - 1 || mazeModel.getBlock(col + 2, row).equals(Block.START)) {
+                            continue;
+                        }
+                        if (mazeModel.getBlock(col + 1, row + 1).equals(Block.END)) {
+                            mazeModel.setBlock(Block.BLANK, col + 1, row);
+                        }
+                        if (mazeModel.getBlock(col + 2, row).equals(Block.LOGO)) {
+                            continue;
+                        }
+                        if (!mazeModel.getBlock(col + 2, row).equals(Block.BLANK)) {
+                            mazeModel.setBlock(Block.BLANK, col + 1, row);
+                            if (!(col + 2 == mazeModel.getWidth() - 1)) {
+                                mazeModel.setBlock(Block.BLANK, col + 2, row);
+                                mazeModel = DFS(mazeModel, row, col + 2);
+                            }
                         }
                     }
-                }
-                case 4 -> { //Left
-                    if (col - 1 == 0 || mazeModel.getBlock(col - 2, row).equals(Block.START)) {
-                        continue;
+                    case 3 -> { //Down
+                        if (row + 1 == mazeModel.getHeight() - 1 || mazeModel.getBlock(col, row + 2).equals(Block.START)) {
+                            continue;
+                        }
+                        if (mazeModel.getBlock(col, row + 2).equals(Block.LOGO)) {
+                            continue;
+                        }
+                        if (!mazeModel.getBlock(col, row + 2).equals(Block.BLANK)) {
+                            mazeModel.setBlock(Block.BLANK, col, row + 1);
+                            if (!(row + 2 == mazeModel.getHeight() - 1)) {
+                                mazeModel.setBlock(Block.BLANK, col, row + 2);
+                                mazeModel = DFS(mazeModel, row + 2, col);
+                            }
+                        }
                     }
-                    if (mazeModel.getBlock(col - 1, row + 1).equals(Block.END)) {
-                        mazeModel.setBlock(Block.BLANK, col - 1, row);
-                    }
-                    if (mazeModel.getBlock(col - 2, row).equals(Block.LOGO)) {
-                        continue;
-                    }
-                    if (!mazeModel.getBlock(col - 2, row).equals(Block.BLANK)) {
-                        mazeModel.setBlock(Block.BLANK, col - 1, row);
-                        if (!(col - 2 == mazeModel.getWidth() - 1)) {
-                            mazeModel.setBlock(Block.BLANK, col - 2, row);
-                            mazeModel = DFS(mazeModel, row, col - 2);
+                    case 4 -> { //Left
+                        if (col - 1 == 0 || mazeModel.getBlock(col - 2, row).equals(Block.START)) {
+                            continue;
+                        }
+                        if (mazeModel.getBlock(col - 1, row + 1).equals(Block.END)) {
+                            mazeModel.setBlock(Block.BLANK, col - 1, row);
+                        }
+                        if (mazeModel.getBlock(col - 2, row).equals(Block.LOGO)) {
+                            continue;
+                        }
+                        if (!mazeModel.getBlock(col - 2, row).equals(Block.BLANK)) {
+                            mazeModel.setBlock(Block.BLANK, col - 1, row);
+                            if (!(col - 2 == mazeModel.getWidth() - 1)) {
+                                mazeModel.setBlock(Block.BLANK, col - 2, row);
+                                mazeModel = DFS(mazeModel, row, col - 2);
+                            }
                         }
                     }
                 }
             }
+        } catch (IndexOutOfBoundsException exception) {
+            throw new InvalidMazeException(exception);
         }
+        
         return mazeModel;
     }
 

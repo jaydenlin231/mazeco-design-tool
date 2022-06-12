@@ -15,7 +15,7 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
     private ArrayList<ArrayList<E>> data;
 
     /**
-     * Constructs a Matrix.
+     * Constructs a {@code Matrix} Object of {@code null} elements given the width and height.
      *
      * @param width  the number of rows.
      * @param height the number of columns.
@@ -24,6 +24,13 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
         this(width, height, null);
     }
 
+    /**
+     * Constructs a {@code Matrix} Object given the width, height and cell type.
+     * 
+     * @param width the number of rows.
+     * @param height the number of columns.
+     * @param e the cell type.
+     */
     public Matrix(int width, int height, E e) {
         this.data = new ArrayList<ArrayList<E>>();
 
@@ -38,10 +45,18 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
         }
     }
 
+    /**
+     * Reset the {@code Matrix} Object with {@code null} elements.
+     */
     public void reset(){
         reset(null);
     }
 
+    /**
+     * Reset the {@code Matrix} Object with the given cell type Objects.
+     * 
+     * @param e the cell type.
+     */
     public void reset(E e){
         int height = data.size();
         
@@ -150,10 +165,20 @@ public class Matrix<E> extends AbstractCollection<E> implements Serializable{
         };
     }
 
+    /**
+     * Gets the width of the matrix.
+     * 
+     * @return an integer representing the width of the {@code Matrix} Object. 
+     */
     public int getWidth() {
         return data.get(0).size();
     }
 
+    /**
+     * Gets the height of the matrix.
+     * 
+     * @return an integer representing the height of the {@code Matrix} Object.
+     */
     public int getHeight() {
         return data.size();
     }

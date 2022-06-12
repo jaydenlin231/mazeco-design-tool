@@ -85,7 +85,7 @@ public class BrowseWindow implements IUserInterface {
         return selectedMazeSortCriteria;
     }
 
-    public static com.mazeco.utilities.SortOrder getSelectedMazeSortOrder() {
+    public static SortOrder getSelectedMazeSortOrder() {
         return selectedMazeSortOrder;
     }
 
@@ -178,9 +178,6 @@ public class BrowseWindow implements IUserInterface {
               .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller
               .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        // scroller.setMinimumSize(new Dimension(200, 150));
-        // scroller.setPreferredSize(new Dimension(250, 150));
-        // scroller.setMaximumSize(new Dimension(250, 200));
 
         return scroller;
     }
@@ -351,11 +348,7 @@ public class BrowseWindow implements IUserInterface {
                     handleEditMazeButton();
                 }
             } catch (SQLException exception) {
-                // TODO Auto-generated catch block
                 JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                // JOptionPane.showMessageDialog(null, "Database file is corrupted. Please delete \"mazeco.db\" and restart the application.", "Error", JOptionPane.ERROR_MESSAGE);
-                // System.exit(0);
-                // MainMenu.browseButton.setEnabled(false);
             } 
         }
 

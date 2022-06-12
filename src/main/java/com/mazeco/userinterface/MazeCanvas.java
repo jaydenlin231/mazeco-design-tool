@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import com.mazeco.database.MazeBrowserData;
+import com.mazeco.exception.InvalidMazeException;
 import com.mazeco.exception.UnsolvableMazeException;
 import com.mazeco.models.Block;
 import com.mazeco.models.MazeModel;
@@ -346,6 +347,7 @@ public class MazeCanvas implements IUserInterface {
     }
 
     private static void resetCheckSolSaveButtons(){
+        checkBttn.setText("Check Maze");
         checkBttn.setEnabled(true);
         solutionBttn.setEnabled(false);
         saveBttn.setEnabled(false);
@@ -356,6 +358,7 @@ public class MazeCanvas implements IUserInterface {
         mazeModel.solve();
 
         isSolutionVisible = true;
+        checkBttn.setText("Solution: " + mazeModel.getSolutionPercentage().toString() + "%");
         checkBttn.setEnabled(false);
         solutionBttn.setEnabled(true);
         saveBttn.setEnabled(true);
@@ -376,7 +379,7 @@ public class MazeCanvas implements IUserInterface {
         endImgBttn.setText("Place End Image");
     }
 
-    private void handleRegenerateButton() {
+    private void handleRegenerateButton() throws InvalidMazeException {
         MazeCanvas.mazeModel = MazeGenerator.generateMaze(mazeModel.getWidth(), mazeModel.getHeight(), mazeModel.getStartX(), mazeModel.getEndX(), mazeModel.getLogo(), mazeModel.getStartImage(), mazeModel.getEndImage());
         reRenderCanvasPanel();
         reRenderLogoImage();
@@ -456,16 +459,16 @@ public class MazeCanvas implements IUserInterface {
         public void actionPerformed(ActionEvent e){
             Component source = (Component) e.getSource();
             try {
-//                if (source == regenBttn || source == clearBttn){
-//                    int confirmation = JOptionPane.showConfirmDialog(window,
-//                                                                 "Do you wish to clear the drawing canvas? Your current changes will be lost.",
-//                                                                 "Warning",
-//                                                                 JOptionPane.YES_NO_OPTION,
-//                                                                 JOptionPane.WARNING_MESSAGE);
-//
-//                    if(confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION)
-//                        return;
-//                }
+               if (source == regenBttn || source == clearBttn){
+                   int confirmation = JOptionPane.showConfirmDialog(window,
+                                                                "Do you wish to clear the drawing canvas? Your current changes will be lost.",
+                                                                "Warning",
+                                                                JOptionPane.YES_NO_OPTION,
+                                                                JOptionPane.WARNING_MESSAGE);
+
+                   if(confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION)
+                       return;
+               }
                 if (source == saveBttn) {
                     handleSaveButton();
                 } else if (source == clearBttn) {
@@ -486,6 +489,10 @@ public class MazeCanvas implements IUserInterface {
             } catch (SQLException exception) {
                 JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch (UnsolvableMazeException exception) {
+                JOptionPane.showMessageDialog(window, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                saveBttn.setEnabled(false);
+                solutionBttn.setEnabled(false);
+            } catch (InvalidMazeException exception) {
                 JOptionPane.showMessageDialog(window, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 saveBttn.setEnabled(false);
                 solutionBttn.setEnabled(false);
