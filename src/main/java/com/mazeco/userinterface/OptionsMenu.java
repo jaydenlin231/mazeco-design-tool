@@ -197,7 +197,6 @@ public class OptionsMenu implements IUserInterface {
     public void show() {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-        System.out.println(window);
     }
 
     private static class BrowseButtonListener implements ActionListener {
@@ -278,7 +277,6 @@ public class OptionsMenu implements IUserInterface {
                     aModel = MazeGenerator.generateMaze(inputWidth, inputHeight, inputStartIndex, inputEndIndex, logoImage, startImage, endImage);
                 } else if (inputStartIndex < inputWidth && inputEndIndex < inputWidth) {
                     aModel = new MazeModel(inputWidth, inputHeight, inputStartIndex, inputEndIndex, logoImage, startImage, endImage);
-                    System.out.println(aModel);
                 }
 
             } catch (NumberFormatException exception) {

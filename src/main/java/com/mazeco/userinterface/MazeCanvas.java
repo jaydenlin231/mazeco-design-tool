@@ -232,9 +232,6 @@ public class MazeCanvas implements IUserInterface {
         if (mazeModel.getLogo() != null) {
             int LogoStartX = logoStartButton.getX();
             int LogoStartY = logoStartButton.getY();
-            System.out.println(logoStartButton.getX());
-            System.out.println(logoStartButton.getY());
-            System.out.println(logoStartButton.getSize());
             int LogoWidth = (mazeModel.getEndLogoPoint().x - mazeModel.getStartLogoPoint().x + 1) * (int)logoStartButton.getSize().getWidth();
             int LogoHeight = (mazeModel.getEndLogoPoint().y - mazeModel.getStartLogoPoint().y + 1) * (int)logoStartButton.getSize().getHeight();
 
@@ -403,7 +400,6 @@ public class MazeCanvas implements IUserInterface {
 
         MazeBrowserData dbMazeBrowserData = MazeBrowserData.getInstance();
         if(mode == CanvasMode.EDIT && currentMazeID != null){
-            System.out.println(currentMazeID);
             dbMazeBrowserData.update(currentMazeID, mazeModel, cleanImage, solvedImage);
         } else {
             dbMazeBrowserData.add(new MazeRecord(mazeName, user, mazeModel, cleanImage, solvedImage));
@@ -411,7 +407,6 @@ public class MazeCanvas implements IUserInterface {
         window.dispose();
         MazeBrowserData.sortMazeRecords(BrowseWindow.getSelectedMazeSortCriteria(), BrowseWindow.getSelectedMazeSortOrder());
         MazeBrowserData.reSyncMazeRecords();
-        System.out.println("Saved");
     }
 
     private void openImageBrowser(JButton source) {
