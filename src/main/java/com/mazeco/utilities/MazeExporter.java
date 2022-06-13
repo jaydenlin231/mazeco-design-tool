@@ -129,6 +129,7 @@ public final class MazeExporter {
             ImageIO.write(imageSolved, "png", new File(String.valueOf(filePath)));
             mazeModel.clearSolution();
         } else {
+            mazeModel.clearSolution();
             BufferedImage image = paint(mazeModel, cellSize);
             ImageIO.write(image, "png", new File(String.valueOf(filePath)));
         }
