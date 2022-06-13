@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*;
 public class AppTest 
 {
     /**
-     * Rigorous Test :-)
+     * Calibration test.
      */
     @Test
     public void shouldAnswerWithTrue()

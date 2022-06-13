@@ -65,14 +65,14 @@ public class MazeGeneratorTest {
     }
 
     @Test
-    public void testSolvable() {
+    public void testAllPossibleMazeSizesHundredIterationsPerSizeShouldAllBeSolvable() {
         int numberOfTests = 100;
 
         for (int mazeSize = 10; mazeSize <= 100; mazeSize += 1) {
             try {
                 mazeModel = MazeGenerator.generateMaze(mazeSize, mazeSize, TEST_START, mazeSize - 3, null, null, null);
-            } catch (InvalidMazeException e1) {
-                e1.printStackTrace();
+            } catch (InvalidMazeException ie) {
+                ie.printStackTrace();
             }
 
             for (int iteration = 0; iteration <= numberOfTests; iteration++) {

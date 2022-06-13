@@ -432,15 +432,6 @@ public class MazeModel implements Serializable{
     }
 
     /**
-     * Get the ArrayList of the solution path of the MazeModel.
-     *
-     * @return An ArrayList of Points of the solution path of the maze.
-     */
-    public ArrayList<Point> getSolution() {
-        return solution;
-    }
-
-    /**
      * Clear the solution of the MazeModel to its unsolved state. 
      */
     public void clearSolution() {

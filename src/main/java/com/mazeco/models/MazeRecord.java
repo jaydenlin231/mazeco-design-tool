@@ -128,13 +128,7 @@ public class MazeRecord {
     public ZonedDateTime getDateTimeModified() {
         return dateTimeModified;
     }
-    /**
-     * 
-     * @param dateModified
-     */
-    public void setDateModified(ZonedDateTime dateModified) {
-        this.dateTimeModified = dateModified;
-    }
+   
     /**
      * Gets the the String representation of the date and time the {@code MazeRecord} was created.
      * 
