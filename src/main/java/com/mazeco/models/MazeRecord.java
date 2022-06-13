@@ -59,7 +59,6 @@ public class MazeRecord {
      * @param cleanImage the updated {@code ImageIcon} representation of the unsolved {@code MazeModel}
      * @param solvedImage the updated {@code ImageIcon} representation of the solved {@code MazeModel}
      * 
-     * @see JDBCMazeBrowserDataSource#retrieveMazeRecord
      */
     public MazeRecord(String id, String name, String author, ZonedDateTime dateTimeCreated, ZonedDateTime dateTimeModified, MazeModel mazeModel, ImageIcon cleanImage, ImageIcon solvedImage) {
         this.id = UUID.fromString(id);

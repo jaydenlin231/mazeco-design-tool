@@ -1,6 +1,8 @@
 package com.mazeco.utilities;
 
 
+import com.mazeco.userinterface.BrowseWindow;
+
 /**
  * Enumerate to specify the criteria to sort the MazeRecords by in the Maze Browser Window.
  *

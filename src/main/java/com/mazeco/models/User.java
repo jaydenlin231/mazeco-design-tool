@@ -12,8 +12,6 @@ public class User {
      * Construct a User with the given the {@code firstName}, {@code lastName}, {@code username} and {@code password} of the User.
      * @param firstName
      * @param lastName
-     * @param username
-     * @param password
      */
     public User(String firstName, String lastName) {
         this.firstName = firstName;
